@@ -12,18 +12,20 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 ---
 
 ## Faz 0 — Proje iskeleti & kalite altyapısı
-- [ ] `.nvmrc`, `.editorconfig` (git/remote kullanıcı tarafından bağlanır)
-- [ ] Vite + Vue 3 + TS projesi (`create-vue`: TS, Pinia, Vitest, Playwright, ESLint, Prettier)
-- [ ] Demo dosyalarını temizle, klasör yapısını kur (ARCHITECTURE §3)
-- [ ] Path alias `@/`, strict TS
-- [ ] Mimari sınır kontrolü: `eslint-plugin-boundaries` (domain → Vue/Pinia import edemez) · X7
-- [ ] `vue-i18n` kurulumu, `tr` / `en` locale dosyaları, tarayıcı dilinden otomatik seçim · X9
-- [ ] Sass + design token'ları (açık/koyu tema)
-- [ ] npm scripts: `dev`, `build`, `preview`, `lint`, `format`, `type-check`, `test:unit`, `test:coverage`, `test:e2e`, `test:visual`, `simulate`, `report:traceability`, `verify`
-- [ ] Temel GitHub Actions CI: lint + type-check + unit (PR ve push'ta) · X6
+
+- [x] `.nvmrc`, `.editorconfig` (git/remote kullanıcı tarafından bağlanır)
+- [x] Vite + Vue 3 + TS projesi (`create-vue`: TS, Pinia, Vitest, Playwright, ESLint, Prettier)
+- [x] Demo dosyalarını temizle, klasör yapısını kur (ARCHITECTURE §3)
+- [x] Path alias `@/`, strict TS
+- [x] Mimari sınır kontrolü: `eslint-plugin-boundaries` (domain → Vue/Pinia import edemez) · X7
+- [x] `vue-i18n` kurulumu, `tr` / `en` locale dosyaları, tarayıcı dilinden otomatik seçim · X9
+- [x] Sass + design token'ları (açık/koyu tema)
+- [x] npm scripts: `dev`, `build`, `preview`, `lint`, `format`, `type-check`, `test:unit`, `test:coverage`, `test:e2e`, `test:visual`, `simulate`, `report:traceability`, `verify`
+- [x] Temel GitHub Actions CI: lint + type-check + unit (PR ve push'ta) · X6
 - **Çıktı:** boş ama çalışan app, CI yeşil.
 
 ## Faz 1 — Domain katmanı (saf TS) · R2, R3, C1–C6
+
 - [ ] `constants.ts`, `types.ts`
 - [ ] `random.ts` (seeded RNG, shuffle, sample)
 - [ ] `horses.ts` → 20 at, 20 benzersiz renk, kondisyon 1–100, pioneer isimleri
@@ -35,6 +37,7 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 - **Çıktı:** UI olmadan tüm oyun mantığı test edilmiş.
 
 ## Faz 2 — State management (Pinia) & servisler · T1, R4, R5
+
 - [ ] `horses.store`, `schedule.store`, `race.store` (durum makinesi)
 - [ ] generate / start / pause / resume / next-round / finish aksiyonları
 - [ ] Getter'lar: currentRound, completedResults, canGenerate, canToggle
@@ -44,6 +47,7 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 - **Çıktı:** oyun store üzerinden uçtan uca çalışıyor.
 
 ## Faz 3 — Shared UI, layout, i18n & erişilebilirlik · T2, responsive
+
 - [ ] `BaseButton`, `BasePanel`, `BaseTable`, `BaseBadge`, `BaseTabs`
 - [ ] `AppHeader` (Generate Program + Start/Pause + dil + tema), `ResponsiveLayout`, `MobileTabBar`
 - [ ] Breakpoint'ler, `useMediaQuery`, `useReducedMotion`
@@ -52,6 +56,7 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 - **Çıktı:** responsive iskelet, iki dilde, klavyeyle kullanılabilir.
 
 ## Faz 4 — Özellik bileşenleri · R2, R3, R5
+
 - [ ] `HorseList` (Name / Condition / Color, kondisyon barı, renk swatch)
 - [ ] `ProgramPanel` + `RoundTable` (6 tur, "1st Lap – 1200m" / "1. Tur – 1200m")
 - [ ] `ResultsPanel` + `RoundResultTable` (tur bittikçe sırayla, `aria-live`)
@@ -59,6 +64,7 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 - **Çıktı:** generate ile liste + program dolu, sonuç paneli hazır.
 
 ## Faz 5 — Pist & animasyon (performans odaklı) · R4, R6
+
 - [ ] `RaceTrack`, `TrackLane`, `HorseRunner` (renkli SVG at silueti), `FinishLine`
 - [ ] `useRaceLoop` (requestAnimationFrame, pause/resume, hız çarpanı 1×/2×/4×)
 - [ ] Pozisyonlar Pinia'ya **her karede yazılmaz**; saat + `positionAt` ile hesaplanır · X10
@@ -67,6 +73,7 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 - **Çıktı:** ✅ MVP tamam — PDF'teki tüm zorunlu maddeler karşılanıyor.
 
 ## Faz 6 — Ürün katmanı (Insider'a özel) · X4, X5, X11, X12
+
 - [ ] **Kazananı tahmin et**: her turdan önce tahmin, puan sistemi, toplam skor · X4
 - [ ] **Önerilen at**: kondisyon + önceki turlardaki forma göre öneri ve kısa gerekçe · X4
 - [ ] Event'ler: `program_generated`, `race_started`, `race_paused`, `round_finished`, `prediction_made`, `prediction_result`, `language_changed` · X5
@@ -77,6 +84,7 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 - **Çıktı:** ürün düşüncesi gösteren, ayırt edici deneyim.
 
 ## Faz 7 — Kanıt katmanı (testler & ölçümler) · B1, B2, B3, X1–X3, X8, X10
+
 - [ ] **Adalet simülasyonu**: `npm run simulate` → 10.000 seed'li yarış, kondisyon → kazanma oranı · X1
 - [ ] Simülasyon çıktısından grafik (SVG) + README'ye tablo · X1
 - [ ] İstatistiksel test: kondisyon arttıkça ortalama sıralama iyileşir (monoton) · X1
@@ -90,6 +98,7 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 - **Çıktı:** her iddia ölçülmüş ve kanıtlanmış.
 
 ## Faz 8 — Teslim · X6, X14
+
 - [ ] Tam CI: lint, type-check, coverage, E2E, visual, axe, Lighthouse CI, bundle boyut bütçesi · X6
 - [ ] README badge'leri (CI, coverage, Lighthouse)
 - [ ] ADR'leri tamamla (`docs/adr/`) · X14
@@ -101,6 +110,7 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 ---
 
 ## Sürekli kurallar (her fazda)
+
 - Küçük, anlamlı Conventional Commit'ler (faz başına birkaç commit) · X15
 - Faz başına bir branch + bir PR (şablon: `.github/pull_request_template.md`), `main`'e direkt commit yok
 - Yeni bir mimari karar → `/adr` ile kayıt
