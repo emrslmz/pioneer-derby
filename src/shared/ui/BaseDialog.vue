@@ -6,7 +6,15 @@ import BaseButton from './BaseButton.vue'
  * Modal built on the native <dialog>: focus trapping, Escape to close and the backdrop come
  * from the platform. `v-model:open` keeps Vue state and the element in sync.
  */
-defineProps<{ title: string; closeLabel: string }>()
+withDefaults(
+  defineProps<{
+    title: string
+    closeLabel: string
+    /** `end` slides in from the side as a drawer. */
+    placement?: 'center' | 'end'
+  }>(),
+  { placement: 'center' },
+)
 
 const open = defineModel<boolean>('open', { required: true })
 const dialog = ref<HTMLDialogElement | null>(null)
@@ -36,6 +44,7 @@ function onBackdropClick(event: MouseEvent) {
   <dialog
     ref="dialog"
     class="dialog"
+    :class="`dialog--${placement}`"
     :aria-labelledby="titleId"
     @close="open = false"
     @click="onBackdropClick"
@@ -72,6 +81,22 @@ function onBackdropClick(event: MouseEvent) {
   &::backdrop {
     background: rgb(4 7 16 / 0.6);
     backdrop-filter: blur(4px);
+  }
+}
+
+.dialog--end {
+  width: min(420px, 100vw);
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0 0 0 auto;
+  border-width: 0 0 0 1px;
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  animation: slide-in var(--duration-base) var(--easing-standard);
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
   }
 }
 

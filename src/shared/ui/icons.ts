@@ -26,6 +26,20 @@ export const ICONS = {
   },
   close: { d: 'M6 6l12 12M18 6 6 18', fill: false },
   speed: { d: 'M12 14l4-4M4.5 18a9 9 0 1 1 15 0', fill: false },
+  share: {
+    d: 'M18 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 22a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4',
+    fill: false,
+  },
+  replay: { d: 'M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5', fill: false },
+  star: {
+    d: 'M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z',
+    fill: true,
+  },
+  check: { d: 'M5 12.5l4.5 4.5L19 7.5', fill: false },
+  bug: {
+    d: 'M8 8h8v8a4 4 0 0 1-8 0zM9 4l2 4M15 4l-2 4M4 12h4M16 12h4M5 18l3-2M19 18l-3-2M5 7l3 2M19 7l-3 2',
+    fill: false,
+  },
 } as const
 
 export type IconName = keyof typeof ICONS
