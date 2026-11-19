@@ -23,6 +23,23 @@ What makes it distinct while staying faithful to the spec layout:
 
 Core (MVP) features come first (phases 0–5); the extras above follow in phases 6–8.
 
+### Improving on the brief's example screenshot
+
+We keep the example's layout (horse list · track · program + results) so the reviewer recognises it,
+and fix what it does poorly:
+
+| In the example                                                           | In Pioneer Derby                                                                     | Phase |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ----- |
+| All runners are identical black silhouettes — you can't tell who is who  | Each runner is drawn in its horse's unique colour, with its number                   | 5     |
+| Colour is only a word ("Yellow") in the list                             | Colour swatch + translated colour name                                               | 4     |
+| Condition is a bare number                                               | Number + condition bar, sortable list                                                | 4     |
+| Program table has a "Position" column before the race is run             | Program shows **Lane**; Results show **Position** (plus time)                        | 4     |
+| Typos: "2ST Lap", "1.st Lap"                                             | Locale-aware ordinals: "2nd Lap – 1400 m" / "2. Tur – 1400 m"                        | 3–4   |
+| Nothing tells you who is leading mid-race                                | Live leaderboard, commentary ticker, photo finish and podium                         | 6     |
+| Six cramped tables in one scroll box, results duplicated next to program | Current round highlighted and auto-scrolled; results appear one by one (`aria-live`) | 4     |
+| Fixed desktop canvas, pastel headers with low contrast                   | Responsive (360 px → desktop), dark/light themes, WCAG-checked contrast (axe)        | 3, 7  |
+| No feedback on fairness or replay                                        | Seeded replay/share link, fairness simulation, horse statistics                      | 6–7   |
+
 ## 2. Stack
 
 | Concern         | Choice                                                          |
@@ -103,7 +120,7 @@ type HorseId = number // 1..20
 interface Horse {
   id: HorseId
   name: string
-  color: { name: string; hex: string }
+  color: { key: HorseColorKey; hex: string } // key is translated by the UI (A9)
   condition: number
 }
 interface Round {
@@ -111,6 +128,18 @@ interface Round {
   distance: number
   horseIds: HorseId[]
 } // 10 ids, lane order
+interface SpeedProfile {
+  horseId: HorseId
+  lane: number
+  finishTimeMs: number
+  surges: Surge[]
+}
+interface RoundRace {
+  round: Round
+  profiles: SpeedProfile[]
+  durationMs: number
+  result: RoundResult
+}
 interface RoundResult {
   roundIndex: number
   distance: number
@@ -126,7 +155,10 @@ type RaceStatus = 'idle' | 'ready' | 'running' | 'paused' | 'intermission' | 'fi
 - `positionAt(profile, elapsedMs)` is a **pure function** → the UI just asks "where is horse X at time t".
 - Finishing order = sorted finish times, computed up front ⇒ results are testable without animation.
 - Pause = freeze the clock; resume = continue from the same elapsed time. Speed multiplier scales the clock.
-- Visual duration is normalized (e.g. ~6–10 s per round regardless of meters) for good UX.
+- Visual duration is normalized (6 s for 1200 m → 9 s for 2200 m for an average horse) for good UX.
+- Progress curve: `p(u) = u + Σ a·(sin(2πfu + φ) − sin φ) / 2πf` with `u = t / finishTime`.
+  Whole-number `f` makes `p(1) = 1`; `Σ a < 1` keeps `p′ > 0`, so horses surge and fade but never stop,
+  and each one crosses the line exactly at its precomputed finish time.
 
 ## 6. State machine (race.store)
 
