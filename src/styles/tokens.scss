@@ -1,61 +1,114 @@
-// Design tokens. Components use these CSS variables only — no hard-coded colors.
-// Dark "night track" is the default; light follows the system or an explicit [data-theme].
+// Design tokens. Components use these CSS variables only — no hard-coded colours.
+// Dark "night track" broadcast is the default; light follows the system or an explicit [data-theme].
 
 @mixin dark-theme {
-  --color-bg: #0b1020;
-  --color-surface: #141b2f;
-  --color-surface-raised: #1c2540;
-  --color-border: #2a3557;
-  --color-text: #eef1f8;
-  --color-text-muted: #9aa5c4;
-  --color-track: #1f5133;
-  --color-track-line: rgb(255 255 255 / 0.35);
+  --color-bg: #060a16;
+  --color-bg-glow:
+    radial-gradient(1200px 600px at 50% -10%, rgb(244 72 43 / 0.16), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgb(79 140 255 / 0.12), transparent 55%);
+  --color-surface: #0e1528;
+  --color-surface-raised: #152039;
+  --color-surface-sunken: #0a1020;
+  --color-surface-glass: rgb(14 21 40 / 0.72);
+  --color-border: #233056;
+  --color-border-strong: #34467a;
+  --color-text: #eef2fb;
+  --color-text-muted: #9ba8c9;
+  --color-text-subtle: #6f7ca0;
+  --color-row-alt: rgb(255 255 255 / 0.025);
+  --color-row-hover: rgb(255 255 255 / 0.05);
+  --color-track: #123a26;
+  --color-track-lane: #16452d;
+  --color-track-line: rgb(255 255 255 / 0.28);
   --color-finish: #ff3b3b;
-  --shadow-panel: 0 8px 24px rgb(0 0 0 / 0.35);
+  --shadow-panel: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px rgb(0 0 0 / 0.45);
+  --shadow-raised: 0 8px 24px rgb(0 0 0 / 0.4);
 }
 
 @mixin light-theme {
-  --color-bg: #f5f6fa;
+  --color-bg: #eef1f7;
+  --color-bg-glow:
+    radial-gradient(1200px 600px at 50% -10%, rgb(244 72 43 / 0.1), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgb(79 140 255 / 0.1), transparent 55%);
   --color-surface: #ffffff;
-  --color-surface-raised: #eef0f6;
-  --color-border: #d9dde8;
-  --color-text: #141b2f;
-  --color-text-muted: #56607a;
-  --color-track: #3f9a5c;
-  --color-track-line: rgb(255 255 255 / 0.6);
+  --color-surface-raised: #f4f6fb;
+  --color-surface-sunken: #e8ecf4;
+  --color-surface-glass: rgb(255 255 255 / 0.78);
+  --color-border: #d8deea;
+  --color-border-strong: #b9c3d8;
+  --color-text: #0f172a;
+  --color-text-muted: #4a5675;
+  --color-text-subtle: #6b7591;
+  --color-row-alt: rgb(15 23 42 / 0.025);
+  --color-row-hover: rgb(15 23 42 / 0.05);
+  --color-track: #2f8a52;
+  --color-track-lane: #349a5b;
+  --color-track-line: rgb(255 255 255 / 0.55);
   --color-finish: #d91f1f;
-  --shadow-panel: 0 4px 16px rgb(20 27 47 / 0.08);
+  --shadow-panel: 0 1px 2px rgb(15 23 42 / 0.06), 0 8px 24px rgb(15 23 42 / 0.06);
+  --shadow-raised: 0 6px 18px rgb(15 23 42 / 0.12);
 }
 
 :root {
   // Brand (Insider One coral → orange)
   --color-accent: #f4482b;
   --color-accent-strong: #d9361b;
+  --color-accent-soft: rgb(244 72 43 / 0.14);
   --color-accent-contrast: #ffffff;
   --gradient-accent: linear-gradient(135deg, #f4482b 0%, #ff8a3d 100%);
+
+  // Status
+  --color-live: #ff3b5c;
+  --color-live-soft: rgb(255 59 92 / 0.16);
   --color-success: #22c55e;
+  --color-success-soft: rgb(34 197 94 / 0.16);
+  --color-warning: #f5a524;
+  --color-warning-soft: rgb(245 165 36 / 0.16);
+  --color-info: #4f8cff;
+  --color-info-soft: rgb(79 140 255 / 0.16);
+
+  // Panel identities — a refined take on the example's yellow / blue / green headers
+  --color-panel-horses: #f5c518;
+  --color-panel-track: #22c55e;
+  --color-panel-program: #4f8cff;
+  --color-panel-results: #2fd08a;
+
+  // Medals
   --color-gold: #f5c518;
   --color-silver: #c0c7d4;
   --color-bronze: #cd7f32;
 
   // Typography
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Barlow Condensed', var(--font-sans);
   --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-size-xs: clamp(0.6875rem, 0.66rem + 0.1vw, 0.75rem);
   --font-size-sm: clamp(0.75rem, 0.72rem + 0.15vw, 0.8125rem);
   --font-size-md: clamp(0.875rem, 0.84rem + 0.2vw, 1rem);
   --font-size-lg: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
   --font-size-xl: clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem);
+  --letter-spacing-caps: 0.08em;
 
   // Spacing & shape
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
   --space-4: 1rem;
+  --space-5: 1.25rem;
   --space-6: 1.5rem;
   --space-8: 2rem;
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  // Layout
+  --header-height: 64px;
+  --tabbar-height: 64px;
+  --layout-gap: var(--space-4);
+  --z-header: 20;
+  --z-tabbar: 20;
+  --z-dialog: 50;
 
   // Motion
   --duration-fast: 150ms;
@@ -76,6 +129,11 @@
 :root[data-theme='light'] {
   color-scheme: light;
   @include light-theme;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  @include dark-theme;
 }
 
 @media (prefers-reduced-motion: reduce) {
