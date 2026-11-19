@@ -37,5 +37,6 @@ export default defineConfig({
     command: isCI ? 'npm run build-only && npm run preview' : 'npm run dev',
     port,
     reuseExistingServer: !isCI,
+    env: { NO_DEVTOOLS: '1' },
   },
 })
