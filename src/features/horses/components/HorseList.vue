@@ -8,7 +8,9 @@ import BasePanel from '@/shared/ui/BasePanel.vue'
 import BaseTable, { type TableColumn, type TableSort } from '@/shared/ui/BaseTable.vue'
 import { useHorsesStore } from '@/stores/horses.store'
 import { useRaceStore } from '@/stores/race.store'
+import { analytics } from '@/shared/analytics'
 import ConditionBar from './ConditionBar.vue'
+import HorseStatsDrawer from './HorseStatsDrawer.vue'
 
 /** R2 — "Horse List (1-20)": number, name, condition and colour, sortable, with live lane badges. */
 const { t } = useI18n()
@@ -16,6 +18,15 @@ const { horses } = storeToRefs(useHorsesStore())
 const { currentRound, status } = storeToRefs(useRaceStore())
 
 const sort = ref<TableSort>({ key: 'number', direction: 'ascending' })
+
+const statsOpen = ref(false)
+const statsHorseId = ref<HorseId | null>(null)
+
+function openStats(horse: Horse) {
+  statsHorseId.value = horse.id
+  statsOpen.value = true
+  analytics.track('horse_stats_opened', { horseId: horse.id })
+}
 
 /** Lane of each horse in the current round (only once a program exists). */
 const lanes = computed(() => {
@@ -71,7 +82,15 @@ function onSort(key: string) {
       <template #cell="{ row, column }">
         <span v-if="column.key === 'number'" class="number">{{ row.id }}</span>
         <span v-else-if="column.key === 'name'" class="name">
-          <span class="name__text">{{ row.name }}</span>
+          <button
+            type="button"
+            class="name__text"
+            :aria-label="t('stats.open', { name: row.name })"
+            data-testid="horse-name"
+            @click="openStats(row)"
+          >
+            {{ row.name }}
+          </button>
           <span
             v-if="lanes.has(row.id)"
             class="name__lane"
@@ -90,6 +109,7 @@ function onSort(key: string) {
         />
       </template>
     </BaseTable>
+    <HorseStatsDrawer v-model:open="statsOpen" :horse-id="statsHorseId" />
   </BasePanel>
 </template>
 
@@ -129,7 +149,21 @@ function onSort(key: string) {
 }
 
 .name__text {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
   font-weight: 600;
+  text-align: start;
+  text-decoration: underline dotted var(--color-text-subtle);
+  text-underline-offset: 3px;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-accent-text);
+    text-decoration-color: currentColor;
+  }
 }
 
 .name__lane {
