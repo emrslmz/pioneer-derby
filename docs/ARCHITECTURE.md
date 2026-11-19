@@ -230,6 +230,7 @@ No horizontal page scroll at 360px.
 - **Statistical**: fairness simulation asserts average placing improves with condition.
 - **E2E**: generate → program shows 6 rounds → start → results appear one by one → pause/resume →
   all 6 results; language switch; prediction flow. Uses `?seed=` and the fastest speed.
+  Locally Playwright starts its own dev server on port 5199 (never reuses another app's server).
 - **Accessibility**: axe scan in idle, running and finished states.
 - **Visual**: seeded, animations disabled; desktop / tablet / mobile × light / dark × tr / en.
 - **Performance**: frame timing during a race, no long tasks > 50 ms.
