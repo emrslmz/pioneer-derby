@@ -69,6 +69,8 @@ src/
 │  ├─ horses.ts             # createHorses(rng)
 │  ├─ schedule.ts           # createSchedule(horses, rng)
 │  ├─ race-engine.ts        # speed profiles, positionAt(t), finishing order
+│  ├─ race-machine.ts       # status transition table (pure)
+│  ├─ game.ts               # one seed → horses, schedule, round races (A11)
 │  ├─ stats.ts              # per-horse statistics
 │  └─ recommendation.ts     # recommended horse + reason codes
 ├─ stores/                  # Pinia — orchestrates domain functions
@@ -162,17 +164,21 @@ type RaceStatus = 'idle' | 'ready' | 'running' | 'paused' | 'intermission' | 'fi
 
 ## 6. State machine (race.store)
 
+The transitions live as data in `domain/race-machine.ts`; the store only sends events.
+
 ```
-idle ──generate──▶ ready ──start──▶ running ──pause──▶ paused
-                     ▲                 │  ▲──resume────────┘
-                     │            round done
+idle ──GENERATE──▶ ready ──START──▶ running ──PAUSE──▶ paused ──RESUME──▶ running
+                     ▲                 │                  │
+                     │          ROUND_FINISHED            └──GENERATE──▶ ready
                      │                 ▼
-                 generate      intermission ──(auto)──▶ running (next round)
-                     │                 │ last round done
-                     └──────────── finished
+                 GENERATE      intermission ──NEXT_ROUND (auto)──▶ running
+                     │                 └──PAUSE──▶ paused
+                     │
+                 finished ◀──PROGRAM_FINISHED── running (last round)
 ```
 
-Button rules: Generate disabled while `running`; Start/Pause disabled in `idle`/`finished`.
+Button rules: Generate disabled while `running` / `intermission`; Start/Pause disabled in `idle` / `finished`.
+Clock: checkpoints + one timer per round (ADR 0005).
 
 ## 7. Responsive layout
 
