@@ -1,0 +1,13 @@
+@use 'sass:map';
+
+// Mobile-first breakpoints (docs/ARCHITECTURE.md §7).
+$breakpoints: (
+  tablet: 768px,
+  desktop: 1280px,
+);
+
+@mixin from($name) {
+  @media (min-width: map.get($breakpoints, $name)) {
+    @content;
+  }
+}

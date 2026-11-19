@@ -1,0 +1,11 @@
+{
+  "app": {
+    "title": "Pioneer Derby",
+    "tagline": "Six rounds. Twenty pioneers. One champion."
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "tr": "Türkçe"
+  }
+}

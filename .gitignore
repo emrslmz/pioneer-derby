@@ -1,8 +1,15 @@
 # deps & builds
 node_modules/
 dist/
+dist-ssr/
 coverage/
 *.tsbuildinfo
+*.local
+.eslintcache
+*.timestamp-*-*.mjs
+
+# logs
+*.log
 
 # playwright
 test-results/
