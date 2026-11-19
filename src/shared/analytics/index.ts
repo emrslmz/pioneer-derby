@@ -2,7 +2,12 @@ import { createConsoleAdapter, createMemoryAdapter, type MemoryAdapter } from '.
 import { createAnalyticsClient, type AnalyticsAdapter, type AnalyticsClient } from './client'
 
 export type { AnalyticsAdapter, AnalyticsClient } from './client'
-export type { AnalyticsEvent, AnalyticsEventMap, AnalyticsEventName } from './events'
+export type {
+  AnalyticsEvent,
+  AnalyticsEventMap,
+  AnalyticsEventName,
+  ThemePreference,
+} from './events'
 export { createAnalyticsClient } from './client'
 export { createConsoleAdapter, createMemoryAdapter, type MemoryAdapter } from './adapters'
 

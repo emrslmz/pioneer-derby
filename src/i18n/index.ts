@@ -42,9 +42,14 @@ export function createAppI18n(locale: AppLocale = detectLocale()) {
 
 export type AppI18n = ReturnType<typeof createAppI18n>
 
-/** Switches the UI language, keeps `<html lang>` in sync (screen readers) and persists the choice. */
-export function applyLocale(i18n: AppI18n, locale: AppLocale): void {
-  i18n.global.locale.value = locale
+/** Keeps `<html lang>` in sync (screen readers, hyphenation) and persists the choice. */
+export function persistLocale(locale: AppLocale): void {
   if (typeof document !== 'undefined') document.documentElement.lang = locale
   writeStorage(LOCALE_STORAGE_KEY, locale)
+}
+
+/** Switches the UI language of an i18n instance outside components (app bootstrap). */
+export function applyLocale(i18n: AppI18n, locale: AppLocale): void {
+  i18n.global.locale.value = locale
+  persistLocale(locale)
 }

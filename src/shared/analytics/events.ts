@@ -1,5 +1,7 @@
 import type { HorseId, RaceSpeed } from '@/domain/types'
 
+export type ThemePreference = 'system' | 'light' | 'dark'
+
 /**
  * Typed event catalogue (X5). Adding an event = adding a key here; every `track` call is checked
  * against it, so payloads can't drift from what dashboards expect.
@@ -12,6 +14,8 @@ export interface AnalyticsEventMap {
   round_finished: { roundIndex: number; distance: number; winnerId: HorseId; durationMs: number }
   race_finished: { seed: number; rounds: number }
   speed_changed: { from: RaceSpeed; to: RaceSpeed }
+  language_changed: { from: string; to: string }
+  theme_changed: { from: ThemePreference; to: ThemePreference }
 }
 
 export type AnalyticsEventName = keyof AnalyticsEventMap
