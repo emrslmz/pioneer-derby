@@ -189,6 +189,7 @@ Clock: checkpoints + one timer per round (ADR 0005).
 | < 768 mobile     | Sticky compact header, track with compact lanes, bottom tab bar, sticky action buttons |
 
 Fluid type with `clamp()`, lanes sized by container width, tables scroll inside their panel.
+The header is sticky: brand, status and utilities on top, Generate / Start full width below on small screens.
 No horizontal page scroll at 360px.
 
 ## 8. Internationalization
@@ -198,6 +199,7 @@ No horizontal page scroll at 360px.
   against it (missing key = type error).
 - Ordinals (1st / 1.), meters and numbers via `Intl` APIs. Horse names are not translated.
 - `<html lang>` follows the active locale (screen readers, a11y).
+- Components use `useLocale()` for `lapLabel`, `ordinal`, `distance`; Base components never import i18n.
 
 ## 9. Prediction & analytics (product layer)
 
