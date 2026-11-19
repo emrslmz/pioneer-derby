@@ -19,6 +19,7 @@ withDefaults(
 <style scoped lang="scss">
 .badge {
   --badge-color: var(--color-text-muted);
+  --badge-text: var(--color-text-muted);
   --badge-bg: var(--color-row-hover);
 
   display: inline-flex;
@@ -28,7 +29,7 @@ withDefaults(
   border: 1px solid color-mix(in srgb, var(--badge-color) 35%, transparent);
   border-radius: var(--radius-pill);
   background: var(--badge-bg);
-  color: var(--badge-color);
+  color: var(--badge-text);
   font-family: var(--font-display);
   font-size: var(--font-size-sm);
   font-weight: 700;
@@ -39,26 +40,31 @@ withDefaults(
 
 .badge--accent {
   --badge-color: var(--color-accent);
+  --badge-text: var(--color-accent-text);
   --badge-bg: var(--color-accent-soft);
 }
 
 .badge--live {
   --badge-color: var(--color-live);
+  --badge-text: var(--color-live-text);
   --badge-bg: var(--color-live-soft);
 }
 
 .badge--success {
   --badge-color: var(--color-success);
+  --badge-text: var(--color-success-text);
   --badge-bg: var(--color-success-soft);
 }
 
 .badge--warning {
   --badge-color: var(--color-warning);
+  --badge-text: var(--color-warning-text);
   --badge-bg: var(--color-warning-soft);
 }
 
 .badge--info {
   --badge-color: var(--color-info);
+  --badge-text: var(--color-info-text);
   --badge-bg: var(--color-info-soft);
 }
 
@@ -66,7 +72,7 @@ withDefaults(
   width: 0.5em;
   height: 0.5em;
   border-radius: 50%;
-  background: currentColor;
+  background: var(--badge-color);
 }
 
 .badge__dot--pulse {

@@ -23,6 +23,13 @@
   --color-finish: #ff3b3b;
   --shadow-panel: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px rgb(0 0 0 / 0.45);
   --shadow-raised: 0 8px 24px rgb(0 0 0 / 0.4);
+
+  // Status colours tuned for small text on tinted backgrounds (WCAG AA ≥ 4.5:1)
+  --color-accent-text: #ff9a80;
+  --color-live-text: #ff8fa3;
+  --color-success-text: #5ee08f;
+  --color-warning-text: #ffc561;
+  --color-info-text: #8fb6ff;
 }
 
 @mixin light-theme {
@@ -47,6 +54,13 @@
   --color-finish: #d91f1f;
   --shadow-panel: 0 1px 2px rgb(15 23 42 / 0.06), 0 8px 24px rgb(15 23 42 / 0.06);
   --shadow-raised: 0 6px 18px rgb(15 23 42 / 0.12);
+
+  // Status colours tuned for small text on tinted backgrounds (WCAG AA ≥ 4.5:1)
+  --color-accent-text: #a3260f;
+  --color-live-text: #990d2f;
+  --color-success-text: #11713a;
+  --color-warning-text: #8a5300;
+  --color-info-text: #1d4fbf;
 }
 
 :root {

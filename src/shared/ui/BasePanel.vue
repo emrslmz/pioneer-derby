@@ -25,7 +25,14 @@ const headingId = useId()
       <h2 :id="headingId" class="panel__title">{{ title }}</h2>
       <div class="panel__actions"><slot name="actions" /></div>
     </header>
-    <div class="panel__body" :class="{ 'panel__body--scroll': scroll }">
+    <!-- A scrollable region must be reachable by keyboard (WCAG 2.1.1); it reads as the panel. -->
+    <div
+      class="panel__body"
+      :class="{ 'panel__body--scroll': scroll }"
+      :tabindex="scroll ? 0 : undefined"
+      :aria-labelledby="scroll ? headingId : undefined"
+      :role="scroll ? 'region' : undefined"
+    >
       <slot />
     </div>
   </section>
