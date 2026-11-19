@@ -3,9 +3,17 @@ import { createPinia } from 'pinia'
 
 import App from '@/app/App.vue'
 import { applyLocale, createAppI18n } from '@/i18n'
+import { useRaceStore } from '@/stores/race.store'
+import { readSeedFromUrl } from '@/shared/utils/seed'
 import '@/styles/main.scss'
 
 const i18n = createAppI18n()
 applyLocale(i18n, i18n.global.locale.value)
 
-createApp(App).use(createPinia()).use(i18n).mount('#app')
+const pinia = createPinia()
+const app = createApp(App).use(pinia).use(i18n)
+
+// A2: horses exist from the first paint; `?seed=` replays a shared game (X11).
+useRaceStore(pinia).initialize(readSeedFromUrl())
+
+app.mount('#app')
