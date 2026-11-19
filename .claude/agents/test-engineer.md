@@ -7,6 +7,7 @@ tools: Read, Grep, Glob, Edit, Write, Bash
 You write tests for a Vue 3 + Pinia + TypeScript project.
 
 Rules:
+
 - Unit tests live in `tests/unit/` mirroring `src/`. Use Vitest + @vue/test-utils; `createTestingPinia` or real Pinia for stores.
 - Test game rules from docs/REQUIREMENTS.md explicitly (20 horses, unique colors, condition 1–100, 6 rounds, 10 distinct horses/round, distances, sequential results).
 - Determinism: inject a seeded RNG; never rely on `Math.random()`. Use `vi.useFakeTimers()` / a controllable clock for race timing.
