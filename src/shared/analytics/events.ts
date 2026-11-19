@@ -7,7 +7,11 @@ export type ThemePreference = 'system' | 'light' | 'dark'
  * against it, so payloads can't drift from what dashboards expect.
  */
 export interface AnalyticsEventMap {
-  program_generated: { seed: number; roundCount: number; source: 'initial' | 'regenerate' }
+  program_generated: {
+    seed: number
+    roundCount: number
+    source: 'initial' | 'regenerate' | 'replay'
+  }
   race_started: { seed: number }
   race_paused: { roundIndex: number; elapsedMs: number }
   race_resumed: { roundIndex: number; elapsedMs: number }
@@ -16,6 +20,15 @@ export interface AnalyticsEventMap {
   speed_changed: { from: RaceSpeed; to: RaceSpeed }
   language_changed: { from: string; to: string }
   theme_changed: { from: ThemePreference; to: ThemePreference }
+  prediction_made: { roundIndex: number; horseId: HorseId; followedRecommendation: boolean }
+  prediction_result: {
+    roundIndex: number
+    horseId: HorseId
+    outcome: 'winner' | 'podium' | 'miss'
+    points: number
+  }
+  link_shared: { seed: number; method: 'clipboard' | 'share-sheet' }
+  horse_stats_opened: { horseId: HorseId }
 }
 
 export type AnalyticsEventName = keyof AnalyticsEventMap

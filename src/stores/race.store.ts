@@ -134,10 +134,10 @@ export const useRaceStore = defineStore('race', () => {
   /** Same seed, same horses, same program, same results — watch it again (X11). */
   function replay(): boolean {
     if (!canReplay.value) return false
-    return buildProgram('regenerate')
+    return buildProgram('replay')
   }
 
-  function buildProgram(source: 'initial' | 'regenerate'): boolean {
+  function buildProgram(source: 'initial' | 'regenerate' | 'replay'): boolean {
     const gameSeed = seed.value as number
     resetProgress()
     scheduleStore.generate(horsesStore.horses, gameSeed)
