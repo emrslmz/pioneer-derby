@@ -8,6 +8,7 @@ export default mergeConfig(
     test: {
       environment: 'jsdom',
       include: ['tests/unit/**/*.spec.ts'],
+      setupFiles: ['tests/unit/setup.ts'],
       root: fileURLToPath(new URL('./', import.meta.url)),
       restoreMocks: true,
       // Node ≥ 25 ships a global `localStorage` that shadows jsdom's and is undefined without
