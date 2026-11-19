@@ -5,7 +5,8 @@
 An interactive horse racing game built with **Vue 3, TypeScript and Pinia** for the Insider One Front-end Developer case study.
 Twenty horses — named after computing pioneers — race across six rounds from 1200 m to 2200 m.
 
-> 🚧 Work in progress. The project is built phase by phase; see the [implementation plan](docs/PLAN.md).
+> The MVP is complete: every requirement of the brief works and is tested. Extra product, evidence and
+> delivery layers follow phase by phase; see the [implementation plan](docs/PLAN.md).
 
 ## Highlights (planned)
 
