@@ -5,6 +5,8 @@ import App from '@/app/App.vue'
 import { applyLocale, createAppI18n } from '@/i18n'
 import { useRaceStore } from '@/stores/race.store'
 import { readSeedFromUrl } from '@/shared/utils/seed'
+import '@fontsource/barlow-condensed/600.css'
+import '@fontsource/barlow-condensed/700.css'
 import '@/styles/main.scss'
 
 const i18n = createAppI18n()

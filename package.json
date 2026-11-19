@@ -24,11 +24,13 @@
     "verify": "run-s lint:check format:check type-check \"test:unit --run\""
   },
   "dependencies": {
+    "@fontsource/barlow-condensed": "^5.3.0",
     "pinia": "^4.0.3",
     "vue": "^3.5.42",
     "vue-i18n": "^11.4.23"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.63.0",
     "@tsconfig/node24": "^24.0.5",
     "@types/jsdom": "^30.0.0",
