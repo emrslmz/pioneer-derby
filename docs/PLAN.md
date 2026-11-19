@@ -1,6 +1,8 @@
 # Uygulama Planı — Pioneer Derby
 
-Her faz bağımsız, test edilebilir bir çıktı üretir. Faz bitince: `npm run verify` yeşil → checkbox işaretlenir → commit.
+Her faz bağımsız, test edilebilir bir çıktı üretir. Faz bitince: `npm run verify` yeşil → checkbox işaretlenir → commit → PR.
+
+Git akışı ([ADR 0004](./adr/0004-github-flow-branching.md)): `main` her zaman yayına hazır; her faz `main`'den açılan kısa ömürlü bir branch'te yapılır (`chore/phase-0-scaffold`, `feat/phase-1-domain` …), CI yeşilse **rebase and merge** ile birleşir. Ayrı `development` branch'i yok (tek geliştirici için gereksiz).
 Çalıştırma: Claude Code içinde `/phase 0`, `/phase 1` … (veya "Faz 2'yi yap").
 
 İlgili dokümanlar: [REQUIREMENTS.md](./REQUIREMENTS.md) · [ARCHITECTURE.md](./ARCHITECTURE.md) · [ADR'ler](./adr/README.md)
@@ -100,6 +102,7 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 
 ## Sürekli kurallar (her fazda)
 - Küçük, anlamlı Conventional Commit'ler (faz başına birkaç commit) · X15
+- Faz başına bir branch + bir PR (şablon: `.github/pull_request_template.md`), `main`'e direkt commit yok
 - Yeni bir mimari karar → `/adr` ile kayıt
 - Tüm UI metinleri i18n'den; hard-coded string yok
 
