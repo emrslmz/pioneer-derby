@@ -99,8 +99,11 @@ export const SPEED_MODEL = {
 /** Positions that count as a podium finish (stats, predictions). */
 export const PODIUM_SIZE = 3
 
-/** Pause between two rounds before the next one starts on its own (A4), in race time. */
-export const INTERMISSION_MS = 1500
+/**
+ * Pause between two rounds before the next one starts on its own (A4), in real time.
+ * Not scaled by the race speed: the podium needs a moment to be read even at 4× (A28).
+ */
+export const INTERMISSION_MS = 2500
 
 /** Playback speeds the race clock supports. */
 export const RACE_SPEEDS = [1, 2, 4] as const
@@ -123,3 +126,20 @@ export const PREDICTION_POINTS = { winner: 3, podium: 1, miss: 0 } as const
  * horse has raced. Weights sum to 1.
  */
 export const RECOMMENDATION_WEIGHTS = { condition: 0.65, form: 0.35 } as const
+
+/** X13 — commentary generation (race time). */
+export const COMMENTARY = {
+  /** Resolution of the timeline scan. */
+  sampleMs: 50,
+  /** Ignore lead changes in the first part of the race (everyone is bunched at the gate). */
+  ignoreLeadChangesBelow: 0.12,
+  /** Minimum race time between two lead-change calls, so the ticker stays readable. */
+  minLeadChangeGapMs: 700,
+  halfway: 0.5,
+  finalStretch: 0.8,
+  /** A photo finish is called this long before the winner reaches the line. */
+  photoFinishLeadMs: 400,
+} as const
+
+/** X13 — a finish this close between 1st and 2nd (race time) is a photo finish (~15 % of rounds). */
+export const PHOTO_FINISH_MS = 45

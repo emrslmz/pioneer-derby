@@ -188,6 +188,20 @@ describe('race store', () => {
       expect(race.currentRoundIndex).toBe(1)
     })
 
+    it('[R4] the intermission is real time, whatever the race speed (A28)', () => {
+      const race = setupRace()
+      race.generateProgram()
+      race.setSpeed(4)
+      race.start()
+      vi.advanceTimersByTime(msToRoundEnd(race))
+      expect(race.status).toBe('intermission')
+
+      vi.advanceTimersByTime(INTERMISSION_MS - 1)
+      expect(race.status).toBe('intermission')
+      vi.advanceTimersByTime(1)
+      expect(race.status).toBe('running')
+    })
+
     it('[X10] 4× speed finishes a round four times faster', () => {
       const race = setupRace()
       race.generateProgram()
