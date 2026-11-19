@@ -11,7 +11,8 @@
     "pause": "Pause",
     "resume": "Resume",
     "shortcuts": "Keyboard shortcuts",
-    "close": "Close"
+    "close": "Close",
+    "replay": "Replay"
   },
   "status": {
     "label": "Race status",
@@ -70,7 +71,8 @@
     "language": "Switch language",
     "theme": "Switch theme",
     "help": "Show this help",
-    "close": "Close this dialog"
+    "close": "Close this dialog",
+    "replay": "Replay the same race"
   },
   "announce": {
     "generated": "New program ready: {rounds} rounds. Press Start to begin.",
@@ -145,5 +147,57 @@
     "finish": "Finish",
     "lane": "Lane {lane}",
     "marker": "{distance}"
+  },
+  "prediction": {
+    "title": "Predict the Winner",
+    "points": "{points} pts",
+    "score": "Score: {points} points, {correct} correct winners",
+    "question": "Who wins the {lap}?",
+    "pickLabel": "Your pick for the {lap}",
+    "recommended": "Tip",
+    "recommendation": "Recommended: {name} — {reasons}.",
+    "yourPick": "Your pick: {name}",
+    "noPick": "No pick for this round.",
+    "locked": "Picks are locked while the round runs.",
+    "idle": "Generate a program to start predicting.",
+    "final": "Final score: {points} points · {correct} of {rounds} winners called.",
+    "rules": "Winner 3 pts · podium 1 pt",
+    "outcome": {
+      "winner": "{lap}: {name} won! +{points} pts",
+      "podium": "{lap}: {name} finished {ordinal}. +{points} pt",
+      "miss": "{lap}: {name} finished {ordinal}. No points."
+    },
+    "reasons": {
+      "TOP_CONDITION": "best condition in the field",
+      "IN_FORM": "in form",
+      "PREVIOUS_WINNER": "already won a round",
+      "BEST_RATING": "best overall rating"
+    }
+  },
+  "stats": {
+    "open": "Show statistics for {name}",
+    "title": "{name}",
+    "number": "No {number}",
+    "condition": "Condition",
+    "roundsRun": "Rounds run",
+    "wins": "Wins",
+    "podiums": "Podiums",
+    "average": "Avg. position",
+    "none": "—",
+    "form": "Form",
+    "formCaption": "Finishing position per round run (1 = winner).",
+    "noForm": "No rounds finished yet.",
+    "formPoint": "{lap}: {ordinal}"
+  },
+  "share": {
+    "button": "Copy share link",
+    "copied": "Link copied — anyone with it watches the same race.",
+    "failed": "Could not copy the link."
+  },
+  "debug": {
+    "title": "Analytics events",
+    "empty": "No events yet.",
+    "clear": "Clear",
+    "toggle": "Toggle analytics panel"
   }
 }

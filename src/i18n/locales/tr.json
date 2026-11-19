@@ -11,7 +11,8 @@
     "pause": "Duraklat",
     "resume": "Devam Et",
     "shortcuts": "Klavye kısayolları",
-    "close": "Kapat"
+    "close": "Kapat",
+    "replay": "Tekrar İzle"
   },
   "status": {
     "label": "Yarış durumu",
@@ -70,7 +71,8 @@
     "language": "Dili değiştir",
     "theme": "Temayı değiştir",
     "help": "Bu yardımı göster",
-    "close": "Bu pencereyi kapat"
+    "close": "Bu pencereyi kapat",
+    "replay": "Aynı yarışı tekrar izle"
   },
   "announce": {
     "generated": "Yeni program hazır: {rounds} tur. Başlamak için Başlat'a basın.",
@@ -145,5 +147,57 @@
     "finish": "Bitiş",
     "lane": "{lane}. kulvar",
     "marker": "{distance}"
+  },
+  "prediction": {
+    "title": "Kazananı Tahmin Et",
+    "points": "{points} puan",
+    "score": "Puan: {points}, {correct} doğru kazanan",
+    "question": "{lap} kim kazanır?",
+    "pickLabel": "{lap} için tahminin",
+    "recommended": "Öneri",
+    "recommendation": "Önerimiz: {name} — {reasons}.",
+    "yourPick": "Tahminin: {name}",
+    "noPick": "Bu tur için tahmin yok.",
+    "locked": "Tur koşulurken tahminler kilitli.",
+    "idle": "Tahmine başlamak için bir program oluşturun.",
+    "final": "Final puanı: {points} · {rounds} turun {correct} tanesinde kazananı bildin.",
+    "rules": "Kazanan 3 puan · podyum 1 puan",
+    "outcome": {
+      "winner": "{lap}: {name} kazandı! +{points} puan",
+      "podium": "{lap}: {name} {ordinal} oldu. +{points} puan",
+      "miss": "{lap}: {name} {ordinal} oldu. Puan yok."
+    },
+    "reasons": {
+      "TOP_CONDITION": "sahadaki en iyi kondisyon",
+      "IN_FORM": "formda",
+      "PREVIOUS_WINNER": "daha önce bir tur kazandı",
+      "BEST_RATING": "en yüksek genel puan"
+    }
+  },
+  "stats": {
+    "open": "{name} istatistiklerini göster",
+    "title": "{name}",
+    "number": "No {number}",
+    "condition": "Kondisyon",
+    "roundsRun": "Koştuğu tur",
+    "wins": "Galibiyet",
+    "podiums": "Podyum",
+    "average": "Ort. sıra",
+    "none": "—",
+    "form": "Form",
+    "formCaption": "Koştuğu her turdaki bitiş sırası (1 = kazanan).",
+    "noForm": "Henüz biten tur yok.",
+    "formPoint": "{lap}: {ordinal}"
+  },
+  "share": {
+    "button": "Paylaşım linkini kopyala",
+    "copied": "Link kopyalandı — linke sahip herkes aynı yarışı izler.",
+    "failed": "Link kopyalanamadı."
+  },
+  "debug": {
+    "title": "Analytics olayları",
+    "empty": "Henüz olay yok.",
+    "clear": "Temizle",
+    "toggle": "Analytics panelini aç/kapat"
   }
 }
