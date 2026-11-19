@@ -76,7 +76,6 @@
   },
   "announce": {
     "generated": "Yeni program hazır: {rounds} tur. Başlamak için Başlat'a basın.",
-    "roundStarted": "{lap} başladı.",
     "paused": "Yarış duraklatıldı.",
     "resumed": "Yarış devam ediyor.",
     "intermission": "Tur bitti. {lap} birazdan başlıyor.",
@@ -199,5 +198,21 @@
     "empty": "Henüz olay yok.",
     "clear": "Temizle",
     "toggle": "Analytics panelini aç/kapat"
+  },
+  "broadcast": {
+    "standings": "Canlı sıralama",
+    "live": "Canlı",
+    "result": "{lap} — sonuç",
+    "photoFinish": "Foto-finiş",
+    "margin": "fark {time}",
+    "position": "{position}. sıra: {name}"
+  },
+  "commentary": {
+    "START": "{lap} başladı, atlar yola çıktı!",
+    "LEAD_CHANGE": "{name} öne geçiyor!",
+    "HALFWAY": "Yarı yol — {distance} geride, önde {name}.",
+    "FINAL_STRETCH": "Son düzlük — önde {name}!",
+    "PHOTO_FINISH": "Foto-finiş!",
+    "WINNER": "{lap}: kazanan {name}!"
   }
 }

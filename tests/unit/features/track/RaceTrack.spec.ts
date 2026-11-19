@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { INTERMISSION_MS } from '@/domain/constants'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
 import HorseRunner from '@/features/track/components/HorseRunner.vue'
@@ -11,6 +12,20 @@ afterEach(() => {
   vi.useRealTimers()
   setReducedMotion(false)
 })
+
+function setupWithSeed(seed: number) {
+  vi.useFakeTimers({
+    toFake: [
+      'setTimeout',
+      'clearTimeout',
+      'requestAnimationFrame',
+      'cancelAnimationFrame',
+      'performance',
+      'Date',
+    ],
+  })
+  return mountFeature(RaceTrack, { seed })
+}
 
 function setup(locale: 'en' | 'tr' = 'en') {
   vi.useFakeTimers({
@@ -114,21 +129,81 @@ describe('RaceTrack', () => {
     expect(wrapper.get('[data-testid="track-overlay"]').text()).toBe('Paused')
   })
 
-  it('[R6] every horse reaches the finish line, then the next line-up waits at the start', async () => {
+  it('[X13] between rounds the finished round stays on screen with its podium', async () => {
     const { wrapper, race } = setup()
     race.generateProgram()
     race.start()
     const firstLineUp = race.currentRound!.horseIds
+    const winner = race.currentRace!.result.placings[0]!.horseId
     await frames(race.currentRace!.durationMs + 1)
+    await nextTick()
     await nextTick()
 
     expect(race.status).toBe('intermission')
-    expect(painted(wrapper).every((p) => p === 0)).toBe(true)
     expect(
       wrapper.findAll('[data-testid="runner"]').map((r) => Number(r.attributes('data-horse-id'))),
-    ).not.toEqual(firstLineUp)
-    expect(wrapper.get('[data-testid="track-overlay"]').text()).toBe('Next up: 2nd Lap – 1400 m')
+    ).toEqual(firstLineUp)
+    expect(painted(wrapper).every((p) => p === 100)).toBe(true)
+    expect(wrapper.get('.lane--winner [data-testid="runner"]').attributes('data-horse-id')).toBe(
+      String(winner),
+    )
+    const podium = wrapper.get('[data-testid="podium"]')
+    expect(podium.text()).toContain('1st Lap – 1200 m — result')
+    expect(podium.text()).toContain('Next up: 2nd Lap – 1400 m')
+    expect(wrapper.get('[data-testid="track-caption"]').text()).toBe('1st Lap – 1200 m')
+
+    // The next round brings the next line-up, back at the start.
+    await frames(INTERMISSION_MS + 1)
+    await nextTick()
+    await nextTick()
+    expect(race.status).toBe('running')
+    expect(wrapper.find('[data-testid="podium"]').exists()).toBe(false)
     expect(wrapper.get('[data-testid="track-caption"]').text()).toBe('2nd Lap – 1400 m')
+  })
+
+  it('[X13] shows live standings and commentary while racing', async () => {
+    const { wrapper, race } = setup()
+    race.generateProgram()
+    await nextTick()
+    expect(wrapper.find('[data-testid="leaderboard"]').exists()).toBe(false)
+
+    race.start()
+    await frames(50)
+    expect(wrapper.findAll('[data-testid="leaderboard-entry"]')).toHaveLength(10)
+    expect(wrapper.get('[data-testid="commentary-line"]').text()).toBe(
+      "And they're off in the 1st Lap – 1200 m!",
+    )
+
+    await frames(race.currentRace!.result.placings[0]!.timeMs)
+    expect(wrapper.get('[data-testid="leaderboard-entry"]').attributes('data-horse-id')).toBe(
+      String(race.currentRace!.result.placings[0]!.horseId),
+    )
+  })
+
+  it('[X13] a photo finish flashes the camera and is stamped on the podium', async () => {
+    const { wrapper, race } = setupWithSeed(17)
+    race.generateProgram()
+    race.start()
+    await frames(race.currentRace!.result.placings[0]!.timeMs - 200)
+    expect(wrapper.get('[data-testid="commentary-line"]').text()).toBe("It's a photo finish!")
+    expect(wrapper.find('[data-testid="photo-flash"]').exists()).toBe(true)
+
+    await frames(Math.ceil(race.currentRace!.durationMs - race.elapsedMs()) + 1)
+    await nextTick()
+    await nextTick()
+    expect(race.status).toBe('intermission')
+    expect(wrapper.get('[data-testid="photo-finish"]').text()).toMatch(
+      /^Photo finish · won by 0\.\d\ds$/,
+    )
+  })
+
+  it('[X8] no camera flash under reduced motion', async () => {
+    setReducedMotion(true)
+    const { wrapper, race } = setupWithSeed(17)
+    race.generateProgram()
+    race.start()
+    await frames(race.currentRace!.result.placings[0]!.timeMs + 20)
+    expect(wrapper.find('[data-testid="photo-flash"]').exists()).toBe(false)
   })
 
   it('[X10] the store does not change while horses move (positions are never written to Pinia)', async () => {

@@ -4,13 +4,13 @@
  * whose width is the run length, so `translateX(progress × 100%)` moves the horse exactly from
  * the start to the finish line — no layout reads, no `left` animation.
  */
-defineProps<{ lane: number; laneLabel: string }>()
+defineProps<{ lane: number; laneLabel: string; winner?: boolean }>()
 
 defineSlots<{ default(): unknown }>()
 </script>
 
 <template>
-  <div class="lane" data-testid="track-lane">
+  <div class="lane" :class="{ 'lane--winner': winner }" data-testid="track-lane">
     <span class="lane__number" :aria-label="laneLabel">{{ lane }}</span>
     <div class="lane__run">
       <slot />
@@ -27,6 +27,23 @@ defineSlots<{ default(): unknown }>()
 
   &:last-child {
     border-bottom: 0;
+  }
+}
+
+.lane--winner {
+  background: linear-gradient(90deg, transparent, rgb(245 197 24 / 0.32));
+  box-shadow: inset 0 0 0 2px var(--color-gold);
+  animation: winner-glow 1.2s ease-in-out 3 alternate;
+
+  .lane__number {
+    background: var(--color-gold);
+    color: #1a1a1a;
+  }
+}
+
+@keyframes winner-glow {
+  to {
+    background-color: rgb(245 197 24 / 0.25);
   }
 }
 

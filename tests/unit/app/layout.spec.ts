@@ -119,7 +119,8 @@ describe('responsive layout & header', () => {
 
     race.start()
     await nextTick()
-    expect(announcer().text()).toBe('1st Lap – 1200 m has started.')
+    // The round start is called by the commentary ticker instead.
+    expect(announcer().text()).toBe('')
 
     race.pause()
     await nextTick()
