@@ -54,7 +54,8 @@ const language = computed({ get: () => locale.value, set: setLocale })
     <div class="header__brand">
       <AppLogo />
       <div class="header__titles">
-        <h1 class="header__title" data-testid="app-title">{{ t('app.title') }}</h1>
+        <!-- English brand name: keep English casing rules (no Turkish dotted İ). -->
+        <h1 class="header__title" lang="en" data-testid="app-title">{{ t('app.title') }}</h1>
         <p class="header__tagline">{{ t('app.tagline') }}</p>
       </div>
     </div>
