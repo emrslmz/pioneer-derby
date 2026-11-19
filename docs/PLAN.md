@@ -74,12 +74,12 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 
 ## Faz 6 — Ürün katmanı (Insider'a özel) · X4, X5, X11, X12
 
-- [ ] **Kazananı tahmin et**: her turdan önce tahmin, puan sistemi, toplam skor · X4
-- [ ] **Önerilen at**: kondisyon + önceki turlardaki forma göre öneri ve kısa gerekçe · X4
-- [ ] Event'ler: `program_generated`, `race_started`, `race_paused`, `round_finished`, `prediction_made`, `prediction_result`, `language_changed` · X5
-- [ ] Event debug paneli (geliştirici modu, `?debug=1`) · X5
-- [ ] **Replay & paylaşım**: "Linki kopyala" (`?seed=`), aynı yarışı tekrar izle · X11
-- [ ] **At istatistikleri**: drawer/modal — koştuğu turlar, ortalama sıra, form grafiği · X12
+- [x] **Kazananı tahmin et**: her turdan önce tahmin, puan sistemi, toplam skor · X4
+- [x] **Önerilen at**: kondisyon + önceki turlardaki forma göre öneri ve kısa gerekçe · X4
+- [x] Event'ler: `program_generated`, `race_started`, `race_paused`, `round_finished`, `prediction_made`, `prediction_result`, `language_changed` · X5
+- [x] Event debug paneli (geliştirici modu, `?debug=1`) · X5
+- [x] **Replay & paylaşım**: "Linki kopyala" (`?seed=`), aynı yarışı tekrar izle · X11
+- [x] **At istatistikleri**: drawer/modal — koştuğu turlar, ortalama sıra, form grafiği · X12
 - [ ] Canlı sıralama, photo-finish efekti, podyum, spiker şeridi (TR/EN) · X13
 - **Çıktı:** ürün düşüncesi gösteren, ayırt edici deneyim.
 
