@@ -2,8 +2,10 @@
 import { storeToRefs } from 'pinia'
 import { computed, ref, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { HORSE_COUNT } from '@/domain/constants'
+import HorseList from '@/features/horses/components/HorseList.vue'
+import ProgramPanel from '@/features/program/components/ProgramPanel.vue'
 import { useRaceControls } from '@/features/race/composables/useRaceControls'
+import ResultsPanel from '@/features/results/components/ResultsPanel.vue'
 import { useLocale } from '@/i18n/useLocale'
 import { useKeyboardShortcuts } from '@/shared/composables/useKeyboardShortcuts'
 import BasePanel from '@/shared/ui/BasePanel.vue'
@@ -58,15 +60,7 @@ const trackCaption = computed(() => {
   <main class="main">
     <ResponsiveLayout>
       <template #horses>
-        <BasePanel
-          tone="horses"
-          icon="horses"
-          :title="t('panels.horses', { count: HORSE_COUNT })"
-          scroll
-          data-testid="horses-panel"
-        >
-          <p class="empty">{{ t('empty.horses') }}</p>
-        </BasePanel>
+        <HorseList />
       </template>
 
       <template #track>
@@ -90,27 +84,11 @@ const trackCaption = computed(() => {
       </template>
 
       <template #program>
-        <BasePanel
-          tone="program"
-          icon="program"
-          :title="t('panels.program')"
-          scroll
-          data-testid="program-panel"
-        >
-          <p class="empty">{{ t('empty.program') }}</p>
-        </BasePanel>
+        <ProgramPanel />
       </template>
 
       <template #results>
-        <BasePanel
-          tone="results"
-          icon="results"
-          :title="t('panels.results')"
-          scroll
-          data-testid="results-panel"
-        >
-          <p class="empty">{{ t('empty.results') }}</p>
-        </BasePanel>
+        <ResultsPanel />
       </template>
     </ResponsiveLayout>
   </main>
