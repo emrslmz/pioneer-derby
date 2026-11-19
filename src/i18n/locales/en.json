@@ -58,10 +58,8 @@
   },
   "empty": {
     "horses": "The horses will line up here.",
-    "track": "Generate a program, then press Start to run the first round.",
     "program": "Press Generate Program to draw six rounds of ten horses.",
-    "results": "Results appear here as each round finishes.",
-    "trackReady": "Program ready. Press Start to run the first round."
+    "results": "Results appear here as each round finishes."
   },
   "shortcuts": {
     "title": "Keyboard shortcuts",
@@ -135,5 +133,17 @@
       "2": "Silver",
       "3": "Bronze"
     }
+  },
+  "track": {
+    "label": "Race track — {lap}. {count} horses, lane 1 at the top; finish line on the right.",
+    "idle": "Generate a program to line the horses up.",
+    "ready": "Ready — {lap}. Press Start.",
+    "paused": "Paused",
+    "intermission": "Next up: {lap}",
+    "finished": "Program complete",
+    "start": "Start",
+    "finish": "Finish",
+    "lane": "Lane {lane}",
+    "marker": "{distance}"
   }
 }
