@@ -58,10 +58,8 @@
   },
   "empty": {
     "horses": "Atlar burada sıralanacak.",
-    "track": "Bir program oluşturun, ardından ilk turu koşturmak için Başlat'a basın.",
     "program": "On atlık altı tur çekmek için Program Oluştur'a basın.",
-    "results": "Her tur bittiğinde sonuçlar burada görünür.",
-    "trackReady": "Program hazır. İlk turu koşturmak için Başlat'a basın."
+    "results": "Her tur bittiğinde sonuçlar burada görünür."
   },
   "shortcuts": {
     "title": "Klavye kısayolları",
@@ -135,5 +133,17 @@
       "2": "Gümüş",
       "3": "Bronz"
     }
+  },
+  "track": {
+    "label": "Yarış pisti — {lap}. {count} at, 1. kulvar en üstte; bitiş çizgisi sağda.",
+    "idle": "Atları dizmek için bir program oluşturun.",
+    "ready": "Hazır — {lap}. Başlat'a basın.",
+    "paused": "Duraklatıldı",
+    "intermission": "Sıradaki: {lap}",
+    "finished": "Program tamamlandı",
+    "start": "Start",
+    "finish": "Bitiş",
+    "lane": "{lane}. kulvar",
+    "marker": "{distance}"
   }
 }
