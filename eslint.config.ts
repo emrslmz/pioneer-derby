@@ -114,6 +114,8 @@ export default defineConfigWithVueTs(
       'vue/define-props-declaration': ['error', 'type-based'],
       'vue/define-emits-declaration': ['error', 'type-based'],
       'vue/multi-word-component-names': 'off',
+      // Optional typed props are `undefined` by design; forcing defaults adds noise.
+      'vue/require-default-prop': 'off',
     },
   },
 
