@@ -48,11 +48,11 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 
 ## Faz 3 — Shared UI, layout, i18n & erişilebilirlik · T2, responsive
 
-- [ ] `BaseButton`, `BasePanel`, `BaseTable`, `BaseBadge`, `BaseTabs`
-- [ ] `AppHeader` (Generate Program + Start/Pause + dil + tema), `ResponsiveLayout`, `MobileTabBar`
-- [ ] Breakpoint'ler, `useMediaQuery`, `useReducedMotion`
-- [ ] Dil seçici TR/EN (localStorage'da kalıcı), sıra sayıları/metre formatı locale'e göre · X9
-- [ ] Klavye kısayolları: `G` generate, `Space` start/pause, `?` yardım · X8
+- [x] `BaseButton`, `BasePanel`, `BaseTable`, `BaseBadge`, `BaseTabs`
+- [x] `AppHeader` (Generate Program + Start/Pause + dil + tema), `ResponsiveLayout`, `MobileTabBar`
+- [x] Breakpoint'ler, `useMediaQuery`, `useReducedMotion`
+- [x] Dil seçici TR/EN (localStorage'da kalıcı), sıra sayıları/metre formatı locale'e göre · X9
+- [x] Klavye kısayolları: `G` generate, `Space` start/pause, `?` yardım · X8
 - **Çıktı:** responsive iskelet, iki dilde, klavyeyle kullanılabilir.
 
 ## Faz 4 — Özellik bileşenleri · R2, R3, R5
