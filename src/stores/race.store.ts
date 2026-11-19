@@ -217,7 +217,7 @@ export const useRaceStore = defineStore('race', () => {
     send('ROUND_FINISHED')
     currentRoundIndex.value += 1
     elapsedAtCheckpoint.value = 0
-    timer = setTimeout(beginNextRound, INTERMISSION_MS / speed.value)
+    timer = setTimeout(beginNextRound, INTERMISSION_MS)
   }
 
   /** Intermission timer. Pausing clears it, so the transition is always valid here. */
