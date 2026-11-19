@@ -65,11 +65,11 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 
 ## Faz 5 — Pist & animasyon (performans odaklı) · R4, R6
 
-- [ ] `RaceTrack`, `TrackLane`, `HorseRunner` (renkli SVG at silueti), `FinishLine`
-- [ ] `useRaceLoop` (requestAnimationFrame, pause/resume, hız çarpanı 1×/2×/4×)
-- [ ] Pozisyonlar Pinia'ya **her karede yazılmaz**; saat + `positionAt` ile hesaplanır · X10
-- [ ] Sadece `transform` animasyonu, galop efekti, reduced-motion modu
-- [ ] Turlar arası kısa ara, alt etiket "2nd Lap 1400m"
+- [x] `RaceTrack`, `TrackLane`, `HorseRunner` (renkli SVG at silueti), `FinishLine`
+- [x] `useRaceLoop` (requestAnimationFrame, pause/resume, hız çarpanı 1×/2×/4×)
+- [x] Pozisyonlar Pinia'ya **her karede yazılmaz**; saat + `positionAt` ile hesaplanır · X10
+- [x] Sadece `transform` animasyonu, galop efekti, reduced-motion modu
+- [x] Turlar arası kısa ara, alt etiket "2nd Lap 1400m"
 - **Çıktı:** ✅ MVP tamam — PDF'teki tüm zorunlu maddeler karşılanıyor.
 
 ## Faz 6 — Ürün katmanı (Insider'a özel) · X4, X5, X11, X12

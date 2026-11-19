@@ -82,14 +82,15 @@ src/
 ├─ features/
 │  ├─ horses/components/    # HorseList, HorseRow, ConditionBar, ColorSwatch, HorseStatsDrawer
 │  ├─ track/components/     # RaceTrack, TrackLane, HorseRunner, FinishLine, LiveLeaderboard, CommentaryTicker
+│  ├─ track/composables/    # useRaceLoop (rAF → progressAt → transform, ADR 0008)
 │  ├─ program/components/   # ProgramPanel, RoundTable
 │  ├─ results/components/   # ResultsPanel, RoundResultTable, Podium
 │  ├─ prediction/components/# PredictionCard, RecommendedHorse, ScoreBadge
-│  └─ race/composables/     # useRaceLoop (rAF), useRaceControls, useKeyboardShortcuts
+│  └─ race/composables/     # useRaceControls
 ├─ shared/
 │  ├─ ui/                   # BaseButton, BasePanel, BaseTable, BaseBadge, BaseTabs, BaseDrawer
 │  ├─ analytics/            # AnalyticsClient interface, event map, console + memory adapters, DebugPanel
-│  ├─ composables/          # useMediaQuery, useReducedMotion, useShareLink
+│  ├─ composables/          # useMediaQuery, useReducedMotion, useBreakpoint, useAnimationFrame, useKeyboardShortcuts
 │  └─ utils/                # assert, storage
 ├─ i18n/
 │  ├─ index.ts              # createI18n, locale detection & persistence
