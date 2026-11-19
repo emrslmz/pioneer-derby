@@ -1,0 +1,11 @@
+{
+  "app": {
+    "title": "Pioneer Derby",
+    "tagline": "Altı tur. Yirmi öncü. Tek şampiyon."
+  },
+  "language": {
+    "label": "Dil",
+    "en": "English",
+    "tr": "Türkçe"
+  }
+}
