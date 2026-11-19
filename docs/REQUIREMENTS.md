@@ -74,13 +74,16 @@ Our own additions. They carry IDs too, so they show up in the traceability repor
 
 ## Ambiguities & decisions
 
-| #   | Ambiguity                                  | Decision                                                                                                       |
-| --- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
-| A1  | "1 to 20 horses" vs "total of 20 horses"   | Always generate exactly 20; "1–20" = list numbering (matches screenshot).                                      |
-| A2  | When is the horse list generated?          | On app load; "Generate Program" re-rolls horses + schedule.                                                    |
-| A3  | Can the same horse race in several rounds? | Yes — each round independently samples 10 of 20 (no repeat inside a round).                                    |
-| A4  | Does "Start" auto-advance between rounds?  | Yes, short intermission between rounds; Pause stops at any time.                                               |
-| A5  | How does condition affect the result?      | Higher condition → higher base speed, plus seeded per-round randomness (favorites usually but not always win). |
-| A6  | Generate during a running race?            | Disabled while running; enabled when paused/finished (resets the game).                                        |
-| A7  | Are horse names translated?                | No — names are proper nouns; only UI text, ordinals and units are localized.                                   |
-| A8  | Predictions & gambling                     | Points only, no money/odds wording — keeps it a friendly engagement feature.                                   |
+| #   | Ambiguity                                  | Decision                                                                                                                                                  |
+| --- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A1  | "1 to 20 horses" vs "total of 20 horses"   | Always generate exactly 20; "1–20" = list numbering (matches screenshot).                                                                                 |
+| A2  | When is the horse list generated?          | On app load; "Generate Program" re-rolls horses + schedule.                                                                                               |
+| A3  | Can the same horse race in several rounds? | Yes — each round independently samples 10 of 20 (no repeat inside a round).                                                                               |
+| A4  | Does "Start" auto-advance between rounds?  | Yes, short intermission between rounds; Pause stops at any time.                                                                                          |
+| A5  | How does condition affect the result?      | Higher condition → higher base speed, plus seeded per-round randomness (favorites usually but not always win).                                            |
+| A6  | Generate during a running race?            | Disabled while running; enabled when paused/finished (resets the game).                                                                                   |
+| A7  | Are horse names translated?                | No — names are proper nouns; only UI text, ordinals and units are localized.                                                                              |
+| A8  | Predictions & gambling                     | Points only, no money/odds wording — keeps it a friendly engagement feature.                                                                              |
+| A9  | Are colour names translated?               | Yes — the domain stores a colour `key` (`red`, `navy` …) plus hex; the UI translates the key.                                                             |
+| A10 | How long does a round take on screen?      | 6 s (1200 m) to 9 s (2200 m) for an average horse, whatever the metres; speed factor 0.85–1.0 from condition, ±8 % seeded noise per round.                |
+| A11 | How does one seed drive the whole game?    | `deriveSeed(seed, …parts)` gives each concern its own stream: horses `1`, schedule `2`, round _r_ `(3, r)` — replaying one round never depends on others. |

@@ -26,14 +26,14 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 
 ## Faz 1 — Domain katmanı (saf TS) · R2, R3, C1–C6
 
-- [ ] `constants.ts`, `types.ts`
-- [ ] `random.ts` (seeded RNG, shuffle, sample)
-- [ ] `horses.ts` → 20 at, 20 benzersiz renk, kondisyon 1–100, pioneer isimleri
-- [ ] `schedule.ts` → 6 tur, her turda 20'den rastgele 10 farklı at, mesafeler
-- [ ] `race-engine.ts` → hız profili, `positionAt`, bitiş sırası (deterministik)
-- [ ] `stats.ts` → at bazlı istatistik (koştuğu tur, ortalama sıra, galibiyet)
-- [ ] Unit testler — test isimlerinde gereksinim ID'si: `[C5] ...` · X3
-- [ ] Property-based testler (fast-check): her seed için tüm kurallar · X2
+- [x] `constants.ts`, `types.ts`
+- [x] `random.ts` (seeded RNG, shuffle, sample)
+- [x] `horses.ts` → 20 at, 20 benzersiz renk, kondisyon 1–100, pioneer isimleri
+- [x] `schedule.ts` → 6 tur, her turda 20'den rastgele 10 farklı at, mesafeler
+- [x] `race-engine.ts` → hız profili, `positionAt`, bitiş sırası (deterministik)
+- [x] `stats.ts` → at bazlı istatistik (koştuğu tur, ortalama sıra, galibiyet)
+- [x] Unit testler — test isimlerinde gereksinim ID'si: `[C5] ...` · X3
+- [x] Property-based testler (fast-check): her seed için tüm kurallar · X2
 - **Çıktı:** UI olmadan tüm oyun mantığı test edilmiş.
 
 ## Faz 2 — State management (Pinia) & servisler · T1, R4, R5
