@@ -98,3 +98,19 @@ export const SPEED_MODEL = {
 
 /** Positions that count as a podium finish (stats, predictions). */
 export const PODIUM_SIZE = 3
+
+/** Pause between two rounds before the next one starts on its own (A4), in race time. */
+export const INTERMISSION_MS = 1500
+
+/** Playback speeds the race clock supports. */
+export const RACE_SPEEDS = [1, 2, 4] as const
+
+/**
+ * Independent random streams derived from one game seed (A11).
+ * Changing a number here changes every seeded game — treat it as a format version.
+ */
+export const SEED_STREAMS = {
+  horses: 1,
+  schedule: 2,
+  round: 3,
+} as const
