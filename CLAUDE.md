@@ -15,7 +15,7 @@ The original brief is `Insider One Case Study - Front-end Developer.pdf`.
 - At the end of a phase: run `npm run verify`, tick the checkboxes in docs/PLAN.md, summarize, open a PR.
 - **Git flow** (ADR 0004): GitHub Flow, no `development` branch. Never commit to `main`. One short-lived branch per
   phase from up-to-date `main` (`<type>/phase-<n>-<topic>`), several small commits, then a PR using
-  `.github/pull_request_template.md`. Merge with *rebase and merge* after CI is green; delete the branch.
+  `.github/pull_request_template.md`. Merge with _rebase and merge_ after CI is green; delete the branch.
 - When a spec ambiguity appears, check "Ambiguities & decisions" in REQUIREMENTS.md; add new decisions there.
 
 ## Commands
@@ -43,7 +43,7 @@ npm run verify         # lint + type-check + unit tests (must be green before co
 - "Generate Program" creates the schedule; "Start/Pause" runs rounds **one at a time**.
 - Results appear in the Results panel **sequentially**, only after each round finishes.
 - Horses must visibly move.
-All of these live as constants in `src/domain/constants.ts` — never hard-code the numbers elsewhere.
+  All of these live as constants in `src/domain/constants.ts` — never hard-code the numbers elsewhere.
 
 ## Code conventions
 

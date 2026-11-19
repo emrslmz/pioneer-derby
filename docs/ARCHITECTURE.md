@@ -25,18 +25,18 @@ Core (MVP) features come first (phases 0–5); the extras above follow in phases
 
 ## 2. Stack
 
-| Concern          | Choice                                                      |
-| ---------------- | ----------------------------------------------------------- |
-| Framework        | Vue 3 (`<script setup>`, Composition API) + TypeScript strict |
-| Build            | Vite                                                        |
-| State            | Pinia (setup stores)                                        |
-| Styling          | Scoped SCSS + CSS custom properties (design tokens), no UI kit |
-| i18n             | vue-i18n (Composition API mode), `tr` + `en`                |
-| Unit tests       | Vitest + @vue/test-utils + jsdom + fast-check (property tests) |
-| E2E / visual     | Playwright (`toHaveScreenshot`) + @axe-core/playwright      |
-| Quality          | ESLint (flat config, vue + ts, boundaries) + Prettier + vue-tsc |
-| CI               | GitHub Actions + Lighthouse CI + bundle size budget         |
-| Package manager  | npm                                                         |
+| Concern         | Choice                                                          |
+| --------------- | --------------------------------------------------------------- |
+| Framework       | Vue 3 (`<script setup>`, Composition API) + TypeScript strict   |
+| Build           | Vite                                                            |
+| State           | Pinia (setup stores)                                            |
+| Styling         | Scoped SCSS + CSS custom properties (design tokens), no UI kit  |
+| i18n            | vue-i18n (Composition API mode), `tr` + `en`                    |
+| Unit tests      | Vitest + @vue/test-utils + jsdom + fast-check (property tests)  |
+| E2E / visual    | Playwright (`toHaveScreenshot`) + @axe-core/playwright          |
+| Quality         | ESLint (flat config, vue + ts, boundaries) + Prettier + vue-tsc |
+| CI              | GitHub Actions + Lighthouse CI + bundle size budget             |
+| Package manager | npm                                                             |
 
 ## 3. Folder structure
 
@@ -99,11 +99,24 @@ domain imports nothing from the app.
 ## 4. Domain model
 
 ```ts
-type HorseId = number;                 // 1..20
-interface Horse { id: HorseId; name: string; color: { name: string; hex: string }; condition: number }
-interface Round { index: number; distance: number; horseIds: HorseId[] }      // 10 ids, lane order
-interface RoundResult { roundIndex: number; distance: number; placings: { position: number; horseId: HorseId; timeMs: number }[] }
-type RaceStatus = 'idle' | 'ready' | 'running' | 'paused' | 'intermission' | 'finished';
+type HorseId = number // 1..20
+interface Horse {
+  id: HorseId
+  name: string
+  color: { name: string; hex: string }
+  condition: number
+}
+interface Round {
+  index: number
+  distance: number
+  horseIds: HorseId[]
+} // 10 ids, lane order
+interface RoundResult {
+  roundIndex: number
+  distance: number
+  placings: { position: number; horseId: HorseId; timeMs: number }[]
+}
+type RaceStatus = 'idle' | 'ready' | 'running' | 'paused' | 'intermission' | 'finished'
 ```
 
 ## 5. Race engine (deterministic)
@@ -131,11 +144,11 @@ Button rules: Generate disabled while `running`; Start/Pause disabled in `idle`/
 
 ## 7. Responsive layout
 
-| Breakpoint        | Layout                                                                 |
-| ----------------- | ---------------------------------------------------------------------- |
-| ≥ 1280px desktop  | 3 columns: Horse list · Track · Program + Results (as screenshot)      |
-| 768–1279 tablet   | Track full width on top; below: tabs (Horses / Program / Results)     |
-| < 768 mobile      | Sticky compact header, track with compact lanes, bottom tab bar, sticky action buttons |
+| Breakpoint       | Layout                                                                                 |
+| ---------------- | -------------------------------------------------------------------------------------- |
+| ≥ 1280px desktop | 3 columns: Horse list · Track · Program + Results (as screenshot)                      |
+| 768–1279 tablet  | Track full width on top; below: tabs (Horses / Program / Results)                      |
+| < 768 mobile     | Sticky compact header, track with compact lanes, bottom tab bar, sticky action buttons |
 
 Fluid type with `clamp()`, lanes sized by container width, tables scroll inside their panel.
 No horizontal page scroll at 360px.
@@ -151,22 +164,22 @@ No horizontal page scroll at 360px.
 ## 9. Prediction & analytics (product layer)
 
 - Before each round the player may pick a winner. Correct winner = 3 pts, podium = 1 pt.
-- `recommendation.ts` suggests a horse from condition + previous-round form and returns *reason codes*
+- `recommendation.ts` suggests a horse from condition + previous-round form and returns _reason codes_
   (e.g. `TOP_CONDITION`, `IN_FORM`) that the UI translates — logic stays testable and language-free.
 - `AnalyticsClient` interface with a typed event map (`track<'round_finished'>(payload)`); the app uses a
   console/memory adapter. A real SDK could be plugged in without touching features.
 
 ## 10. Quality gates
 
-| Gate                     | Tool                                  | Threshold                     |
-| ------------------------ | ------------------------------------- | ----------------------------- |
-| Lint + boundaries        | ESLint                                | 0 errors                      |
-| Types                    | vue-tsc                               | 0 errors                      |
-| Unit coverage            | Vitest v8                             | domain ≥ 95%, stores ≥ 90%    |
-| E2E + visual             | Playwright                            | all green                     |
-| Accessibility            | @axe-core/playwright                  | 0 serious/critical            |
-| Lighthouse               | Lighthouse CI                         | ≥ 95 perf / a11y / best-practices |
-| Bundle                   | size budget                           | JS < 120 kB gzip              |
+| Gate              | Tool                 | Threshold                         |
+| ----------------- | -------------------- | --------------------------------- |
+| Lint + boundaries | ESLint               | 0 errors                          |
+| Types             | vue-tsc              | 0 errors                          |
+| Unit coverage     | Vitest v8            | domain ≥ 95%, stores ≥ 90%        |
+| E2E + visual      | Playwright           | all green                         |
+| Accessibility     | @axe-core/playwright | 0 serious/critical                |
+| Lighthouse        | Lighthouse CI        | ≥ 95 perf / a11y / best-practices |
+| Bundle            | size budget          | JS < 120 kB gzip                  |
 
 ## 11. Testing strategy
 
