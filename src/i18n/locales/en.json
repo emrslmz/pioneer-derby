@@ -76,7 +76,6 @@
   },
   "announce": {
     "generated": "New program ready: {rounds} rounds. Press Start to begin.",
-    "roundStarted": "{lap} has started.",
     "paused": "Race paused.",
     "resumed": "Race resumed.",
     "intermission": "Round finished. {lap} starts shortly.",
@@ -199,5 +198,21 @@
     "empty": "No events yet.",
     "clear": "Clear",
     "toggle": "Toggle analytics panel"
+  },
+  "broadcast": {
+    "standings": "Live standings",
+    "live": "Live",
+    "result": "{lap} — result",
+    "photoFinish": "Photo finish",
+    "margin": "won by {time}",
+    "position": "Position {position}: {name}"
+  },
+  "commentary": {
+    "START": "And they're off in the {lap}!",
+    "LEAD_CHANGE": "{name} takes the lead!",
+    "HALFWAY": "Halfway — {name} leads at {distance}.",
+    "FINAL_STRETCH": "Into the final stretch — {name} in front!",
+    "PHOTO_FINISH": "It's a photo finish!",
+    "WINNER": "{name} wins the {lap}!"
   }
 }

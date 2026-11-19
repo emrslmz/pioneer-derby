@@ -28,9 +28,8 @@ function describe(next: RaceStatus, previous: RaceStatus | undefined): string {
     case 'ready':
       return t('announce.generated', { rounds: roundCount.value })
     case 'running':
-      return previous === 'paused'
-        ? t('announce.resumed')
-        : t('announce.roundStarted', { lap: lap() })
+      // The commentary ticker calls the start of each round ("And they're off…").
+      return previous === 'paused' ? t('announce.resumed') : ''
     case 'paused':
       return t('announce.paused')
     case 'intermission':

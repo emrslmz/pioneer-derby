@@ -1,33 +1,48 @@
-import { storeToRefs } from 'pinia'
-import { nextTick, watch } from 'vue'
+import { nextTick, watch, type Ref } from 'vue'
 import { progressAt } from '@/domain/race-engine'
-import type { SpeedProfile } from '@/domain/types'
+import type { RoundRace, SpeedProfile } from '@/domain/types'
 import { useAnimationFrame } from '@/shared/composables/useAnimationFrame'
-import { useRaceStore } from '@/stores/race.store'
+
+export interface RaceLoopOptions {
+  /** The round on screen (the running round, or the one that just finished). */
+  race: Readonly<Ref<RoundRace | null>>
+  /** Race time to draw at `now` — reads the store's checkpoint clock, never writes it. */
+  clock: (now?: number) => number
+  /** Whether the clock is moving; the loop only runs then. */
+  running: Readonly<Ref<boolean>>
+  /** Per horse, per frame. Must only touch the DOM (transform), not reactive state. */
+  paint: (profile: SpeedProfile, progress: number) => void
+  /** Once per frame, after painting — e.g. to update standings when they actually change. */
+  onFrame?: (elapsedMs: number) => void
+  /** Extra sources that require a repaint when they change while the clock is stopped. */
+  repaintOn?: readonly Readonly<Ref<unknown>>[]
+}
 
 /**
- * The race animation loop (R6, X10, ADR 0002 / 0005).
+ * The race animation loop (R6, X10, ADR 0002 / 0005 / 0008).
  *
- * Every frame: read race time from the store clock (`elapsedMs()`, no store write), compute each
- * horse's progress with the pure `progressAt`, and hand it to `paint`. Painting writes
- * `transform` straight to the DOM, so 60 fps never goes through Pinia or Vue re-rendering.
+ * Every frame: read race time from the clock, compute each horse's progress with the pure
+ * `progressAt`, and hand it to `paint`. 60 fps never goes through Pinia or Vue re-rendering.
  */
-export function useRaceLoop(paint: (profile: SpeedProfile, progress: number) => void) {
-  const race = useRaceStore()
-  const { isClockRunning, currentRace, status } = storeToRefs(race)
-
+export function useRaceLoop({
+  race,
+  clock,
+  running,
+  paint,
+  onFrame,
+  repaintOn = [],
+}: RaceLoopOptions) {
   function frame(now?: number) {
-    const profiles = currentRace.value?.profiles ?? []
-    const elapsed = race.elapsedMs(now)
-    for (const profile of profiles) paint(profile, progressAt(profile, elapsed))
+    const elapsed = clock(now)
+    for (const profile of race.value?.profiles ?? []) paint(profile, progressAt(profile, elapsed))
+    onFrame?.(elapsed)
   }
 
-  useAnimationFrame(frame, isClockRunning)
+  useAnimationFrame(frame, running)
 
-  // When the clock is stopped (ready, paused, intermission, finished) paint the frozen frame once,
-  // after the DOM for a new line-up exists.
+  // When the clock is stopped, paint the frozen frame once, after the DOM for a new line-up exists.
   watch(
-    [isClockRunning, currentRace, status],
+    [running, race, ...repaintOn],
     async () => {
       await nextTick()
       frame()
