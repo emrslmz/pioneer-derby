@@ -1,11 +1,85 @@
 {
   "app": {
     "title": "Pioneer Derby",
-    "tagline": "Six rounds. Twenty pioneers. One champion."
+    "tagline": "Six rounds. Twenty pioneers. One champion.",
+    "skipToRace": "Skip to the race"
+  },
+  "actions": {
+    "generate": "Generate Program",
+    "generateShort": "Generate",
+    "start": "Start",
+    "pause": "Pause",
+    "resume": "Resume",
+    "shortcuts": "Keyboard shortcuts",
+    "close": "Close"
+  },
+  "status": {
+    "label": "Race status",
+    "idle": "Waiting",
+    "ready": "Ready",
+    "running": "Live",
+    "paused": "Paused",
+    "intermission": "Next round",
+    "finished": "Finished"
+  },
+  "round": {
+    "lap": "{ordinal} Lap – {distance}",
+    "progress": "Round {current} of {total}",
+    "none": "No program yet"
+  },
+  "speed": {
+    "label": "Race speed",
+    "value": "{speed}×"
+  },
+  "theme": {
+    "label": "Theme",
+    "toggle": "Theme: {theme}. Switch theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
   },
   "language": {
     "label": "Language",
     "en": "English",
     "tr": "Türkçe"
+  },
+  "panels": {
+    "horses": "Horse List (1–{count})",
+    "track": "Race Track",
+    "program": "Program",
+    "results": "Results",
+    "sections": "Race sections"
+  },
+  "tabs": {
+    "horses": "Horses",
+    "track": "Track",
+    "program": "Program",
+    "results": "Results"
+  },
+  "empty": {
+    "horses": "The horses will line up here.",
+    "track": "Generate a program, then press Start to run the first round.",
+    "program": "Press Generate Program to draw six rounds of ten horses.",
+    "results": "Results appear here as each round finishes.",
+    "trackReady": "Program ready. Press Start to run the first round."
+  },
+  "shortcuts": {
+    "title": "Keyboard shortcuts",
+    "intro": "Shortcuts work anywhere except while typing in a field.",
+    "generate": "Generate a new program",
+    "toggle": "Start, pause or resume",
+    "speed": "Set race speed to 1×, 2× or 4×",
+    "language": "Switch language",
+    "theme": "Switch theme",
+    "help": "Show this help",
+    "close": "Close this dialog"
+  },
+  "announce": {
+    "generated": "New program ready: {rounds} rounds. Press Start to begin.",
+    "roundStarted": "{lap} has started.",
+    "paused": "Race paused.",
+    "resumed": "Race resumed.",
+    "intermission": "Round finished. {lap} starts shortly.",
+    "finished": "All rounds finished."
   }
 }

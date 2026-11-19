@@ -1,11 +1,85 @@
 {
   "app": {
     "title": "Pioneer Derby",
-    "tagline": "Altı tur. Yirmi öncü. Tek şampiyon."
+    "tagline": "Altı tur. Yirmi öncü. Tek şampiyon.",
+    "skipToRace": "Yarışa geç"
+  },
+  "actions": {
+    "generate": "Program Oluştur",
+    "generateShort": "Oluştur",
+    "start": "Başlat",
+    "pause": "Duraklat",
+    "resume": "Devam Et",
+    "shortcuts": "Klavye kısayolları",
+    "close": "Kapat"
+  },
+  "status": {
+    "label": "Yarış durumu",
+    "idle": "Bekliyor",
+    "ready": "Hazır",
+    "running": "Canlı",
+    "paused": "Duraklatıldı",
+    "intermission": "Sıradaki tur",
+    "finished": "Bitti"
+  },
+  "round": {
+    "lap": "{ordinal} Tur – {distance}",
+    "progress": "Tur {current} / {total}",
+    "none": "Henüz program yok"
+  },
+  "speed": {
+    "label": "Yarış hızı",
+    "value": "{speed}×"
+  },
+  "theme": {
+    "label": "Tema",
+    "toggle": "Tema: {theme}. Temayı değiştir",
+    "system": "Sistem",
+    "light": "Açık",
+    "dark": "Koyu"
   },
   "language": {
     "label": "Dil",
     "en": "English",
     "tr": "Türkçe"
+  },
+  "panels": {
+    "horses": "At Listesi (1–{count})",
+    "track": "Yarış Pisti",
+    "program": "Program",
+    "results": "Sonuçlar",
+    "sections": "Yarış bölümleri"
+  },
+  "tabs": {
+    "horses": "Atlar",
+    "track": "Pist",
+    "program": "Program",
+    "results": "Sonuçlar"
+  },
+  "empty": {
+    "horses": "Atlar burada sıralanacak.",
+    "track": "Bir program oluşturun, ardından ilk turu koşturmak için Başlat'a basın.",
+    "program": "On atlık altı tur çekmek için Program Oluştur'a basın.",
+    "results": "Her tur bittiğinde sonuçlar burada görünür.",
+    "trackReady": "Program hazır. İlk turu koşturmak için Başlat'a basın."
+  },
+  "shortcuts": {
+    "title": "Klavye kısayolları",
+    "intro": "Kısayollar, bir alana yazı yazarken hariç her yerde çalışır.",
+    "generate": "Yeni program oluştur",
+    "toggle": "Başlat, duraklat veya devam et",
+    "speed": "Yarış hızını 1×, 2× veya 4× yap",
+    "language": "Dili değiştir",
+    "theme": "Temayı değiştir",
+    "help": "Bu yardımı göster",
+    "close": "Bu pencereyi kapat"
+  },
+  "announce": {
+    "generated": "Yeni program hazır: {rounds} tur. Başlamak için Başlat'a basın.",
+    "roundStarted": "{lap} başladı.",
+    "paused": "Yarış duraklatıldı.",
+    "resumed": "Yarış devam ediyor.",
+    "intermission": "Tur bitti. {lap} birazdan başlıyor.",
+    "finished": "Tüm turlar bitti."
   }
 }
