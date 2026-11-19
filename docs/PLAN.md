@@ -57,10 +57,10 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 
 ## Faz 4 — Özellik bileşenleri · R2, R3, R5
 
-- [ ] `HorseList` (Name / Condition / Color, kondisyon barı, renk swatch)
-- [ ] `ProgramPanel` + `RoundTable` (6 tur, "1st Lap – 1200m" / "1. Tur – 1200m")
-- [ ] `ResultsPanel` + `RoundResultTable` (tur bittikçe sırayla, `aria-live`)
-- [ ] Component testleri
+- [x] `HorseList` (Name / Condition / Color, kondisyon barı, renk swatch)
+- [x] `ProgramPanel` + `RoundTable` (6 tur, "1st Lap – 1200m" / "1. Tur – 1200m")
+- [x] `ResultsPanel` + `RoundResultTable` (tur bittikçe sırayla, `aria-live`)
+- [x] Component testleri
 - **Çıktı:** generate ile liste + program dolu, sonuç paneli hazır.
 
 ## Faz 5 — Pist & animasyon (performans odaklı) · R4, R6
