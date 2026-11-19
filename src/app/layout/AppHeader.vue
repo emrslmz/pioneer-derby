@@ -4,6 +4,8 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRaceControls } from '@/features/race/composables/useRaceControls'
 import { useLocale } from '@/i18n/useLocale'
+import { analytics } from '@/shared/analytics'
+import { useShareLink } from '@/shared/composables/useShareLink'
 import BaseBadge from '@/shared/ui/BaseBadge.vue'
 import BaseButton from '@/shared/ui/BaseButton.vue'
 import BaseSegmentedControl from '@/shared/ui/BaseSegmentedControl.vue'
@@ -41,6 +43,16 @@ const roundCaption = computed(() => {
     total: controls.roundCount.value,
   })} · ${lapLabel(round.index, round.distance)}`
 })
+
+const { state: shareState, copy } = useShareLink()
+async function share() {
+  if ((await copy()) === 'copied' && controls.seed.value !== null) {
+    analytics.track('link_shared', { seed: controls.seed.value, method: 'clipboard' })
+  }
+}
+const shareMessage = computed(() =>
+  shareState.value === 'idle' ? '' : t(`share.${shareState.value}`),
+)
 
 const speed = computed({
   get: () => controls.speed.value,
@@ -87,8 +99,8 @@ const language = computed({ get: () => locale.value, set: setLocale })
         variant="primary"
         :icon="controls.toggleIcon.value"
         shortcut="Space"
-        :disabled="!controls.canToggle.value"
-        @click="controls.toggle"
+        :disabled="!controls.canPrimary.value"
+        @click="controls.primary"
       >
         {{ controls.toggleLabel.value }}
       </BaseButton>
@@ -109,6 +121,19 @@ const language = computed({ get: () => locale.value, set: setLocale })
         :label="t('language.label')"
         :options="languageOptions"
       />
+      <BaseButton
+        data-testid="share-button"
+        variant="ghost"
+        size="sm"
+        icon-only
+        :icon="shareState === 'copied' ? 'check' : 'share'"
+        :aria-label="t('share.button')"
+        :title="shareMessage || t('share.button')"
+        @click="share"
+      />
+      <span class="visually-hidden" aria-live="polite" data-testid="share-status">{{
+        shareMessage
+      }}</span>
       <BaseButton
         data-testid="theme-toggle"
         variant="ghost"

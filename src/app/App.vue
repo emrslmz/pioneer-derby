@@ -6,7 +6,10 @@ import HorseList from '@/features/horses/components/HorseList.vue'
 import ProgramPanel from '@/features/program/components/ProgramPanel.vue'
 import { useRaceControls } from '@/features/race/composables/useRaceControls'
 import ResultsPanel from '@/features/results/components/ResultsPanel.vue'
+import PredictionCard from '@/features/prediction/components/PredictionCard.vue'
 import RaceTrack from '@/features/track/components/RaceTrack.vue'
+import AnalyticsDebugPanel from '@/shared/analytics/AnalyticsDebugPanel.vue'
+import { isDebugMode } from '@/shared/utils/debug'
 import { useLocale } from '@/i18n/useLocale'
 import { useKeyboardShortcuts } from '@/shared/composables/useKeyboardShortcuts'
 import { useSettingsStore } from '@/stores/settings.store'
@@ -21,6 +24,7 @@ const controls = useRaceControls()
 const settings = useSettingsStore()
 const { theme } = storeToRefs(settings)
 const shortcutsOpen = ref(false)
+const debug = isDebugMode()
 
 // Explicit light/dark wins over the system preference (tokens.scss).
 watchEffect(() => {
@@ -31,7 +35,8 @@ watchEffect(() => {
 
 useKeyboardShortcuts({
   g: () => controls.generate(),
-  space: () => controls.toggle(),
+  space: () => controls.primary(),
+  r: () => controls.replay(),
   '1': () => controls.setSpeed(1),
   '2': () => controls.setSpeed(2),
   '4': () => controls.setSpeed(4),
@@ -52,7 +57,10 @@ useKeyboardShortcuts({
       </template>
 
       <template #track>
-        <RaceTrack />
+        <div class="race-stage">
+          <PredictionCard />
+          <RaceTrack />
+        </div>
       </template>
 
       <template #program>
@@ -67,6 +75,7 @@ useKeyboardShortcuts({
 
   <KeyboardShortcutsDialog v-model:open="shortcutsOpen" />
   <StatusAnnouncer />
+  <AnalyticsDebugPanel v-if="debug" />
 </template>
 
 <style scoped lang="scss">
@@ -89,5 +98,18 @@ useKeyboardShortcuts({
 
 .main {
   min-width: 0;
+}
+
+.race-stage {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: var(--layout-gap);
+  min-height: 0;
+
+  > :last-child {
+    flex: 1;
+    min-height: 0;
+  }
 }
 </style>

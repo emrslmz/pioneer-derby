@@ -8,6 +8,7 @@ const { t } = useI18n()
 const shortcuts = [
   { keys: ['G'], label: 'shortcuts.generate' },
   { keys: ['Space'], label: 'shortcuts.toggle' },
+  { keys: ['R'], label: 'shortcuts.replay' },
   { keys: ['1', '2', '4'], label: 'shortcuts.speed' },
   { keys: ['L'], label: 'shortcuts.language' },
   { keys: ['T'], label: 'shortcuts.theme' },

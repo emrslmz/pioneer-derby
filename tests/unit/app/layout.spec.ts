@@ -60,6 +60,28 @@ describe('responsive layout & header', () => {
     expect(wrapper.get('[data-testid="race-status"]').text()).toContain('Paused')
   })
 
+  it('[X11] when the program finishes the primary button replays the same race', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'performance', 'Date'] })
+    setViewportWidth(1440)
+    const { wrapper, race } = mountApp({ seed: 7 })
+    race.generateProgram()
+    race.start()
+    vi.runAllTimers()
+    await nextTick()
+
+    const toggle = wrapper.get('[data-testid="toggle-button"]')
+    expect(toggle.text()).toContain('Replay')
+    expect(toggle.attributes('disabled')).toBeUndefined()
+    await toggle.trigger('click')
+    expect(race.status).toBe('ready')
+    expect(race.seed).toBe(7)
+
+    race.start()
+    vi.runAllTimers()
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'r' }))
+    expect(race.status).toBe('ready')
+  })
+
   it('[X9] the header shows the round in the active language', async () => {
     setViewportWidth(1440)
     const { wrapper, race } = mountApp({ locale: 'tr' })
