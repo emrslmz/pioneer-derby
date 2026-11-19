@@ -1,7 +1,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { analytics } from '@/shared/analytics'
-import { formatDistance, formatOrdinal } from './format'
+import { formatDistance, formatOrdinal, formatRaceTime } from './format'
 import { persistLocale, SUPPORTED_LOCALES, type AppLocale } from './index'
 
 /** Current language plus locale-aware formatters for components (X9). */
@@ -25,6 +25,7 @@ export function useLocale() {
 
   const ordinal = (value: number) => formatOrdinal(value, current.value)
   const distance = (metres: number) => formatDistance(metres, current.value)
+  const raceTime = (ms: number) => formatRaceTime(ms, current.value)
 
   /** "1st Lap – 1200 m" / "1. Tur – 1200 m" for a 0-based round index. */
   const lapLabel = (roundIndex: number, metres: number) =>
@@ -37,6 +38,7 @@ export function useLocale() {
     toggleLocale,
     ordinal,
     distance,
+    raceTime,
     lapLabel,
   }
 }
