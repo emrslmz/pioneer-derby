@@ -72,7 +72,9 @@ src/
 │  ├─ race-machine.ts       # status transition table (pure)
 │  ├─ game.ts               # one seed → horses, schedule, round races (A11)
 │  ├─ stats.ts              # per-horse statistics
-│  └─ recommendation.ts     # recommended horse + reason codes
+│  ├─ prediction.ts         # prediction scoring (3 / 1 / 0)
+│  ├─ recommendation.ts     # recommended horse + reason codes (ADR 0009)
+│  └─ broadcast.ts          # standings, commentary timeline, photo finish (ADR 0010)
 ├─ stores/                  # Pinia — orchestrates domain functions
 │  ├─ horses.store.ts
 │  ├─ schedule.store.ts
@@ -82,7 +84,7 @@ src/
 ├─ features/
 │  ├─ horses/components/    # HorseList, HorseRow, ConditionBar, ColorSwatch, HorseStatsDrawer
 │  ├─ track/components/     # RaceTrack, TrackLane, HorseRunner, FinishLine, LiveLeaderboard, CommentaryTicker
-│  ├─ track/composables/    # useRaceLoop (rAF → progressAt → transform, ADR 0008)
+│  ├─ track/composables/    # useRaceLoop (rAF → progressAt → transform, ADR 0008), useBroadcast
 │  ├─ program/components/   # ProgramPanel, RoundTable
 │  ├─ results/components/   # ResultsPanel, RoundResultTable, Podium
 │  ├─ prediction/components/# PredictionCard, RecommendedHorse, ScoreBadge

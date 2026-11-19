@@ -80,7 +80,7 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 - [x] Event debug paneli (geliştirici modu, `?debug=1`) · X5
 - [x] **Replay & paylaşım**: "Linki kopyala" (`?seed=`), aynı yarışı tekrar izle · X11
 - [x] **At istatistikleri**: drawer/modal — koştuğu turlar, ortalama sıra, form grafiği · X12
-- [ ] Canlı sıralama, photo-finish efekti, podyum, spiker şeridi (TR/EN) · X13
+- [x] Canlı sıralama, photo-finish efekti, podyum, spiker şeridi (TR/EN) · X13
 - **Çıktı:** ürün düşüncesi gösteren, ayırt edici deneyim.
 
 ## Faz 7 — Kanıt katmanı (testler & ölçümler) · B1, B2, B3, X1–X3, X8, X10
