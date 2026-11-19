@@ -21,6 +21,10 @@ Use **GitHub Flow**:
 - One PR per branch, using `.github/pull_request_template.md`: summary, requirement IDs covered, test evidence.
 - A PR is merged only when CI is green, with **rebase and merge** so the granular commits stay on a linear `main`.
 - The branch is deleted after merge.
+- No stacked PRs: the next branch starts from `main` after the previous PR is merged.
+  (Deleting a merged base branch closes PRs that target it instead of retargeting them.)
+- `main` is protected: PRs required, all five CI checks must pass on an up-to-date branch,
+  linear history, no force-push or deletion.
 
 ## Alternatives considered
 

@@ -16,6 +16,7 @@ The original brief is `Insider One Case Study - Front-end Developer.pdf`.
 - **Git flow** (ADR 0004): GitHub Flow, no `development` branch. Never commit to `main`. One short-lived branch per
   phase from up-to-date `main` (`<type>/phase-<n>-<topic>`), several small commits, then a PR using
   `.github/pull_request_template.md`. Merge with _rebase and merge_ after CI is green; delete the branch.
+  No stacked PRs: start the next branch only after the previous PR is merged.
 - When a spec ambiguity appears, check "Ambiguities & decisions" in REQUIREMENTS.md; add new decisions there.
 
 ## Commands
