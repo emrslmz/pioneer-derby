@@ -114,3 +114,12 @@ export const SEED_STREAMS = {
   schedule: 2,
   round: 3,
 } as const
+
+/** X4 — points for predicting a round: the exact winner, or a horse that finishes on the podium. */
+export const PREDICTION_POINTS = { winner: 3, podium: 1, miss: 0 } as const
+
+/**
+ * X4 — how the recommended horse is rated: condition always counts, recent form counts once the
+ * horse has raced. Weights sum to 1.
+ */
+export const RECOMMENDATION_WEIGHTS = { condition: 0.65, form: 0.35 } as const
