@@ -38,12 +38,12 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 
 ## Faz 2 — State management (Pinia) & servisler · T1, R4, R5
 
-- [ ] `horses.store`, `schedule.store`, `race.store` (durum makinesi)
-- [ ] generate / start / pause / resume / next-round / finish aksiyonları
-- [ ] Getter'lar: currentRound, completedResults, canGenerate, canToggle
-- [ ] Seed yönetimi: `?seed=` okuma/yazma · X11
-- [ ] Analytics event katmanı: tipli `AnalyticsClient` arayüzü + console/panel adapter · X5
-- [ ] Store unit testleri (sahte saat ile)
+- [x] `horses.store`, `schedule.store`, `race.store` (durum makinesi)
+- [x] generate / start / pause / resume / next-round / finish aksiyonları
+- [x] Getter'lar: currentRound, completedResults, canGenerate, canToggle
+- [x] Seed yönetimi: `?seed=` okuma/yazma · X11
+- [x] Analytics event katmanı: tipli `AnalyticsClient` arayüzü + console/panel adapter · X5
+- [x] Store unit testleri (sahte saat ile)
 - **Çıktı:** oyun store üzerinden uçtan uca çalışıyor.
 
 ## Faz 3 — Shared UI, layout, i18n & erişilebilirlik · T2, responsive
