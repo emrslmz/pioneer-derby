@@ -23,6 +23,18 @@ test.describe('accessibility (axe, WCAG 2.2 AA)', () => {
     })
   }
 
+  for (const scheme of ['dark', 'light'] as const) {
+    test(`[X8] no serious violations with results on screen, ${scheme} theme`, async ({ page }) => {
+      await page.emulateMedia({ colorScheme: scheme, reducedMotion: 'reduce' })
+      await page.goto('/?seed=42')
+      await page.getByTestId('generate-button').click()
+      await page.getByRole('radio', { name: '4×' }).click()
+      await page.getByTestId('toggle-button').click()
+      await expect(page.getByTestId('result-round')).toHaveCount(1, { timeout: 10_000 })
+      expect(await seriousViolations(page)).toEqual([])
+    })
+  }
+
   test('[X8] mobile layout has no serious violations', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 })
     await page.goto('/?seed=42')

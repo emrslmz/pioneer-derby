@@ -2,7 +2,8 @@ import process from 'node:process'
 import { defineConfig, devices } from '@playwright/test'
 
 const isCI = !!process.env.CI
-const port = isCI ? 4173 : 5173
+// A dedicated port, so E2E never talks to some other dev server already running on 5173.
+const port = isCI ? 4173 : 5199
 
 /**
  * Two projects share one config:
@@ -34,9 +35,12 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: isCI ? 'npm run build-only && npm run preview' : 'npm run dev',
+    command: isCI
+      ? 'npm run build-only && npm run preview'
+      : `npm run dev -- --port ${port} --strictPort`,
     port,
-    reuseExistingServer: !isCI,
+    // Always start our own server: reusing an unknown one silently tests the wrong app.
+    reuseExistingServer: false,
     env: { NO_DEVTOOLS: '1' },
   },
 })
