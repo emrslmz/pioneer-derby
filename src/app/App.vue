@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { computed, ref, watchEffect } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import HorseList from '@/features/horses/components/HorseList.vue'
 import ProgramPanel from '@/features/program/components/ProgramPanel.vue'
 import { useRaceControls } from '@/features/race/composables/useRaceControls'
 import ResultsPanel from '@/features/results/components/ResultsPanel.vue'
+import RaceTrack from '@/features/track/components/RaceTrack.vue'
 import { useLocale } from '@/i18n/useLocale'
 import { useKeyboardShortcuts } from '@/shared/composables/useKeyboardShortcuts'
-import BasePanel from '@/shared/ui/BasePanel.vue'
 import { useSettingsStore } from '@/stores/settings.store'
 import AppHeader from './layout/AppHeader.vue'
 import KeyboardShortcutsDialog from './layout/KeyboardShortcutsDialog.vue'
@@ -16,7 +16,7 @@ import ResponsiveLayout from './layout/ResponsiveLayout.vue'
 import StatusAnnouncer from './layout/StatusAnnouncer.vue'
 
 const { t } = useI18n()
-const { toggleLocale, lapLabel } = useLocale()
+const { toggleLocale } = useLocale()
 const controls = useRaceControls()
 const settings = useSettingsStore()
 const { theme } = storeToRefs(settings)
@@ -39,18 +39,6 @@ useKeyboardShortcuts({
   t: settings.cycleTheme,
   '?': () => (shortcutsOpen.value = true),
 })
-
-// Placeholder until the animated track lands in Phase 5.
-const trackHint = computed(() => {
-  if (controls.status.value === 'idle') return t('empty.track')
-  if (controls.status.value === 'ready') return t('empty.trackReady')
-  return ''
-})
-
-const trackCaption = computed(() => {
-  const round = controls.currentRound.value
-  return round ? lapLabel(round.index, round.distance) : ''
-})
 </script>
 
 <template>
@@ -64,23 +52,7 @@ const trackCaption = computed(() => {
       </template>
 
       <template #track>
-        <BasePanel
-          id="race-track"
-          tone="track"
-          icon="track"
-          :title="t('panels.track')"
-          tabindex="-1"
-          data-testid="track-panel"
-        >
-          <div class="stage">
-            <div class="stage__track">
-              <p v-if="trackHint" class="stage__hint">{{ trackHint }}</p>
-            </div>
-            <p v-if="trackCaption" class="stage__caption" data-testid="track-caption">
-              {{ trackCaption }}
-            </p>
-          </div>
-        </BasePanel>
+        <RaceTrack />
       </template>
 
       <template #program>
@@ -117,52 +89,5 @@ const trackCaption = computed(() => {
 
 .main {
   min-width: 0;
-}
-
-.stage {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.stage__track {
-  display: grid;
-  flex: 1;
-  place-content: center;
-  min-height: 260px;
-  padding: var(--space-6);
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      transparent 0 calc(10% - 1px),
-      var(--color-track-line) calc(10% - 1px) 10%
-    ),
-    linear-gradient(180deg, var(--color-track-lane), var(--color-track));
-  text-align: center;
-}
-
-.stage__hint {
-  max-width: 34ch;
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
-  background: var(--color-surface-glass);
-  color: var(--color-text);
-}
-
-.stage__caption {
-  padding: var(--space-2) var(--space-4);
-  border-top: 1px solid var(--color-border);
-  color: var(--color-finish);
-  font-family: var(--font-display);
-  font-size: var(--font-size-lg);
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  text-align: center;
-}
-
-.empty {
-  padding: var(--space-6) var(--space-4);
-  color: var(--color-text-muted);
-  text-align: center;
 }
 </style>
