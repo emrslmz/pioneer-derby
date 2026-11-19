@@ -1,4 +1,4 @@
-import type { HORSE_COLORS } from './constants'
+import type { HORSE_COLORS, RACE_SPEEDS } from './constants'
 
 /** Horses are numbered 1..HORSE_COUNT, matching the "Horse List (1-20)" in the brief. */
 export type HorseId = number
@@ -65,3 +65,5 @@ export interface RoundRace {
 }
 
 export type RaceStatus = 'idle' | 'ready' | 'running' | 'paused' | 'intermission' | 'finished'
+
+export type RaceSpeed = (typeof RACE_SPEEDS)[number]
