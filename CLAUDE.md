@@ -12,7 +12,10 @@ The original brief is `Insider One Case Study - Front-end Developer.pdf`.
 
 - The user speaks Turkish → reply in Turkish. Code, identifiers, comments, commits and README are in English.
 - Work **phase by phase** (docs/PLAN.md). Do not start the next phase until the user asks.
-- At the end of a phase: run `npm run verify`, tick the checkboxes in docs/PLAN.md, summarize, propose a commit.
+- At the end of a phase: run `npm run verify`, tick the checkboxes in docs/PLAN.md, summarize, open a PR.
+- **Git flow** (ADR 0004): GitHub Flow, no `development` branch. Never commit to `main`. One short-lived branch per
+  phase from up-to-date `main` (`<type>/phase-<n>-<topic>`), several small commits, then a PR using
+  `.github/pull_request_template.md`. Merge with *rebase and merge* after CI is green; delete the branch.
 - When a spec ambiguity appears, check "Ambiguities & decisions" in REQUIREMENTS.md; add new decisions there.
 
 ## Commands
@@ -59,4 +62,4 @@ All of these live as constants in `src/domain/constants.ts` — never hard-code 
 - **Animation state**: per-frame horse positions are derived from the race clock + `positionAt`, not written into Pinia every frame.
 - **Boundaries** (enforced by ESLint): `domain` imports nothing app-specific; `features` don't import each other — shared code goes to `shared/`.
 - New significant decision → write an ADR (`/adr <title>`).
-- Commits: small Conventional Commits (`feat:`, `fix:`, `test:`, `chore:`, `docs:`, `refactor:`, `ci:`), several per phase. The user owns the git remote; never push unless asked.
+- Commits: small Conventional Commits (`feat:`, `fix:`, `test:`, `chore:`, `docs:`, `refactor:`, `ci:`), several per phase. Pushing the phase branch and opening its PR is part of finishing a phase; never push to `main`, never force-push.
