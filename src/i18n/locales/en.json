@@ -81,5 +81,59 @@
     "resumed": "Race resumed.",
     "intermission": "Round finished. {lap} starts shortly.",
     "finished": "All rounds finished."
+  },
+  "colors": {
+    "red": "Red",
+    "blue": "Blue",
+    "green": "Green",
+    "yellow": "Yellow",
+    "orange": "Orange",
+    "purple": "Purple",
+    "pink": "Pink",
+    "brown": "Brown",
+    "black": "Black",
+    "white": "White",
+    "gray": "Gray",
+    "cyan": "Cyan",
+    "lime": "Lime",
+    "navy": "Navy",
+    "teal": "Teal",
+    "maroon": "Maroon",
+    "olive": "Olive",
+    "gold": "Gold",
+    "lavender": "Lavender",
+    "coral": "Coral"
+  },
+  "horses": {
+    "caption": "All {count} horses with their number, condition and colour",
+    "number": "No",
+    "name": "Name",
+    "condition": "Condition",
+    "color": "Color",
+    "lane": "Lane {lane}",
+    "inRace": "Running in lane {lane} of the current round"
+  },
+  "program": {
+    "lane": "Lane",
+    "name": "Name",
+    "caption": "{lap}: lane draw",
+    "status": {
+      "live": "Live",
+      "next": "Next",
+      "done": "Finished",
+      "upcoming": "Upcoming"
+    }
+  },
+  "results": {
+    "position": "Position",
+    "name": "Name",
+    "time": "Time",
+    "caption": "{lap}: finishing order",
+    "announce": "{lap} result: {name} wins.",
+    "medal": {
+      "1": "Gold",
+      "2": "Silver",
+      "3": "Bronze"
+    }
   }
 }

@@ -27,3 +27,11 @@ describe('locale formatting', () => {
     expect(formatDistance(2200, 'tr')).toBe('2200 m')
   })
 })
+
+describe('race time', () => {
+  it('[R5] shows race time in seconds with two decimals per locale', async () => {
+    const { formatRaceTime } = await import('@/i18n/format')
+    expect(formatRaceTime(6523, 'en')).toBe('6.52s')
+    expect(formatRaceTime(6523, 'tr')).toBe('6,52sn')
+  })
+})

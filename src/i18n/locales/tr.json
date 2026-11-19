@@ -81,5 +81,59 @@
     "resumed": "Yarış devam ediyor.",
     "intermission": "Tur bitti. {lap} birazdan başlıyor.",
     "finished": "Tüm turlar bitti."
+  },
+  "colors": {
+    "red": "Kırmızı",
+    "blue": "Mavi",
+    "green": "Yeşil",
+    "yellow": "Sarı",
+    "orange": "Turuncu",
+    "purple": "Mor",
+    "pink": "Pembe",
+    "brown": "Kahverengi",
+    "black": "Siyah",
+    "white": "Beyaz",
+    "gray": "Gri",
+    "cyan": "Camgöbeği",
+    "lime": "Limon Yeşili",
+    "navy": "Lacivert",
+    "teal": "Deniz Mavisi",
+    "maroon": "Bordo",
+    "olive": "Zeytin Yeşili",
+    "gold": "Altın",
+    "lavender": "Lavanta",
+    "coral": "Mercan"
+  },
+  "horses": {
+    "caption": "Numarası, kondisyonu ve rengiyle {count} atın tamamı",
+    "number": "No",
+    "name": "İsim",
+    "condition": "Kondisyon",
+    "color": "Renk",
+    "lane": "{lane}. kulvar",
+    "inRace": "Bu turda {lane}. kulvarda koşuyor"
+  },
+  "program": {
+    "lane": "Kulvar",
+    "name": "İsim",
+    "caption": "{lap}: kulvar dağılımı",
+    "status": {
+      "live": "Canlı",
+      "next": "Sıradaki",
+      "done": "Bitti",
+      "upcoming": "Sırada"
+    }
+  },
+  "results": {
+    "position": "Sıra",
+    "name": "İsim",
+    "time": "Süre",
+    "caption": "{lap}: bitiş sırası",
+    "announce": "{lap} sonucu: {name} kazandı.",
+    "medal": {
+      "1": "Altın",
+      "2": "Gümüş",
+      "3": "Bronz"
+    }
   }
 }

@@ -29,3 +29,14 @@ export function formatDistance(metres: number, locale: AppLocale): string {
     useGrouping: false,
   }).format(metres)
 }
+
+/** Race time in seconds with two decimals, compact for narrow tables: "6.42s" / "6,42sn". */
+export function formatRaceTime(ms: number, locale: AppLocale): string {
+  return new Intl.NumberFormat(locale, {
+    style: 'unit',
+    unit: 'second',
+    unitDisplay: 'narrow',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(ms / 1000)
+}
