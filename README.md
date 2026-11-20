@@ -18,7 +18,7 @@ The game includes the brief's full flow and optional predictions, replay, horse 
 
 Generate the program, optionally pick a winner in the strip above the track, then press Start. Start runs the whole program one round at a time. Between rounds the result stays on the track for a 6-second countdown, with **Start now** to skip it. To decide when each round starts, switch off **Next round continues automatically** in the player bar under the track; every round then waits for **Next round**.
 
-Horses run at a real racing pace: 16.5 m/s, so 1200 m takes about 73 seconds. The default playback is 2×; the player bar also offers 0.5×, 1×, 4× and 8×, and the keys `0` `1` `2` `4` `8` change speed too.
+Horses run at a real racing pace: 16.5 m/s, so 1200 m takes about 73 seconds. The default playback is 2×; the player bar also offers 0.5×, 1×, 4× and 16×, and the keys `0` `1` `2` `4` `9` change speed too (`9` is 16×).
 
 The **Follow** camera is true scale. A horse is as long on screen as a real horse is on the track, so about 20–30 m are in view. Horses left behind show their gap to the leader, and the line under the track shows the leader's distance to go. **Whole track** fits the full distance, and full screen opens the same live panel in a modal. A horse that has finished stands still. Pausing mid-race shows a "Paused" card, never a result.
 

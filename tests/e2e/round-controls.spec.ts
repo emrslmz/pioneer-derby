@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
-import { FAST, ROUND_1_AT_8X } from './clock'
+import { FAST, ROUND_1_AT_FAST } from './clock'
 
 test.beforeEach(async ({ page }) => {
   await page.clock.install({ time: new Date('2026-11-20T12:00:00Z') })
@@ -15,7 +15,7 @@ test('[R4] [X4] manual advance keeps the next prediction open until Continue', a
   await expect(page.getByTestId('auto-advance')).toBeChecked()
   await page.getByTestId('auto-advance').uncheck()
   await page.getByTestId('toggle-button').click()
-  await page.clock.runFor(ROUND_1_AT_8X + 15_000) // well past the 6 s break: it waits
+  await page.clock.runFor(ROUND_1_AT_FAST + 15_000) // well past the 6 s break: it waits
   await expect(page.getByTestId('result-round')).toHaveCount(1)
   await expect(page.getByTestId('toggle-button')).toContainText('Next round')
   await page.getByTestId('pick-option').first().click()
@@ -29,7 +29,7 @@ test('[R4] [X4] manual advance keeps the next prediction open until Continue', a
 test('[R4] auto advance can be enabled and cancelled during the break', async ({ page }) => {
   await page.getByTestId('auto-advance').uncheck()
   await page.getByTestId('toggle-button').click()
-  await page.clock.runFor(ROUND_1_AT_8X + 5_000)
+  await page.clock.runFor(ROUND_1_AT_FAST + 5_000)
   await page.getByTestId('auto-advance').check()
   await page.clock.runFor(1_000)
   await page.getByTestId('auto-advance').uncheck()
@@ -46,7 +46,7 @@ test('[R6] [X8] theater keeps the live camera and the player controls in one acc
 }, testInfo) => {
   await page.getByTestId('pick-option').first().click()
   await page.getByTestId('toggle-button').click()
-  await page.clock.runFor(4_000)
+  await page.clock.runFor(2_000) // a 1200 m round is over after ~4.9 s at 16×
   const before = await page.getByTestId('map-dot').first().getAttribute('style')
   await page.getByTestId('track-expand').click()
   const dialog = page.getByTestId('track-theater')
@@ -54,13 +54,22 @@ test('[R6] [X8] theater keeps the live camera and the player controls in one acc
   const after = await dialog.getByTestId('map-dot').first().getAttribute('style')
   const progress = (style: string) => Number(/translate3d\(([\d.]+)%/.exec(style)![1])
   expect(Math.abs(progress(after!) - progress(before!))).toBeLessThan(0.2)
-  await page.clock.runFor(1_000)
+  await page.clock.runFor(500)
   await dialog.getByTestId('player-toggle').click()
   await expect(dialog.getByTestId('track-banner')).toContainText('Paused')
   await expect(dialog.getByTestId('track-play')).toBeVisible()
   await page.screenshot({ path: testInfo.outputPath('paused-theater.png') })
   // axe schedules its own timers; let time flow again (the race itself is paused).
   await page.clock.resume()
+  // The intro cards fade in on a first load; axe must not measure them half-transparent.
+  await page.evaluate(() =>
+    Promise.allSettled(
+      document
+        .getAnimations()
+        .filter((animation) => animation.effect?.getComputedTiming().iterations !== Infinity)
+        .map((animation) => animation.finished),
+    ),
+  )
   const { violations } = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
     .analyze()

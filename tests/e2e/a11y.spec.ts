@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
-import { FAST, installClock, ROUND_1_AT_8X } from './clock'
+import { FAST, installClock, ROUND_1_AT_FAST } from './clock'
 
 async function seriousViolations(page: Page) {
   const { violations } = await new AxeBuilder({ page })
@@ -32,7 +32,7 @@ test.describe('accessibility (axe, WCAG 2.2 AA)', () => {
       await page.getByTestId('generate-button').click()
       await page.getByRole('radio', { name: FAST }).click()
       await page.getByTestId('toggle-button').click()
-      await page.clock.runFor(ROUND_1_AT_8X)
+      await page.clock.runFor(ROUND_1_AT_FAST)
       await expect(page.getByTestId('result-round')).toHaveCount(1)
       expect(await seriousViolations(page)).toEqual([])
     })

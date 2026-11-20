@@ -152,9 +152,9 @@ describe('responsive layout & header', () => {
 
     // Speed lives in the track's player bar. Turkish formatting: "0,5×"; slow motion first.
     const speeds = wrapper.findAll('[data-testid="player-speed"] [role="radio"]')
-    expect(speeds.map((s) => s.text())).toEqual(['0,5×', '1×', '2×', '4×', '8×'])
+    expect(speeds.map((s) => s.text())).toEqual(['0,5×', '1×', '2×', '4×', '16×'])
     await speeds[4]!.trigger('click')
-    expect(race.speed).toBe(8)
+    expect(race.speed).toBe(16)
     await speeds[0]!.trigger('click')
     expect(race.speed).toBe(0.5)
 

@@ -107,7 +107,7 @@ export const PODIUM_SIZE = 3
 export const INTERMISSION_MS = 6000
 
 /** Playback speeds the race clock supports: 1× is real time, 0.5× slow motion. */
-export const RACE_SPEEDS = [0.5, 1, 2, 4, 8] as const
+export const RACE_SPEEDS = [0.5, 1, 2, 4, 16] as const
 
 /** Real time is long (a 1200 m round is over a minute), so a race is watched at 2× by default. */
 export const DEFAULT_RACE_SPEED = 2

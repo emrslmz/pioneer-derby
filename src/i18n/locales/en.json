@@ -71,7 +71,7 @@
     "intro": "Shortcuts work anywhere except while typing in a field.",
     "generate": "Generate a new program",
     "toggle": "Start, pause or resume",
-    "speed": "Set race speed to 0.5×, 1×, 2× or 4×",
+    "speed": "Set race speed to 0.5×, 1×, 2×, 4× (key 4) or 16× (key 9)",
     "language": "Switch language",
     "theme": "Switch theme",
     "help": "Show this help",

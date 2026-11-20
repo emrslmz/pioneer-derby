@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
-import { FAST, installClock, ROUND_1_AT_8X, runUntil } from './clock'
+import { FAST, installClock, ROUND_1_AT_FAST, runUntil } from './clock'
 
 test.describe('broadcast layer', () => {
   test('[X13] live standings and commentary follow the race', async ({ page }) => {
@@ -23,7 +23,7 @@ test.describe('broadcast layer', () => {
     await page.getByTestId('generate-button').click()
     await page.getByRole('radio', { name: FAST }).click()
     await page.getByTestId('toggle-button').click()
-    await page.clock.runFor(ROUND_1_AT_8X)
+    await page.clock.runFor(ROUND_1_AT_FAST)
 
     const board = page.getByTestId('round-result')
     await expect(board).toBeVisible()
@@ -47,7 +47,7 @@ test.describe('broadcast layer', () => {
     await page.getByTestId('generate-button').click()
     await page.getByRole('radio', { name: FAST }).click()
     await page.getByTestId('toggle-button').click()
-    await page.clock.runFor(ROUND_1_AT_8X)
+    await page.clock.runFor(ROUND_1_AT_FAST)
     await expect(page.getByTestId('photo-finish')).toBeVisible()
     await expect(page.getByTestId('photo-finish')).toContainText('Photo finish')
   })
@@ -61,7 +61,7 @@ test.describe('broadcast layer', () => {
     await page.getByTestId('generate-button').click()
     await page.getByRole('radio', { name: FAST }).click()
     await page.getByTestId('toggle-button').click()
-    await page.clock.runFor(ROUND_1_AT_8X)
+    await page.clock.runFor(ROUND_1_AT_FAST)
     await expect(page.getByTestId('round-result')).toBeVisible()
     await page.getByTestId('toggle-button').click()
 

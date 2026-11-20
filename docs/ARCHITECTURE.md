@@ -163,7 +163,7 @@ type RaceStatus = 'idle' | 'ready' | 'running' | 'paused' | 'intermission' | 'fi
 - `positionAt(profile, elapsedMs)` is a **pure function** → the UI just asks "where is horse X at time t".
 - Finishing order = sorted finish times, computed up front ⇒ results are testable without animation.
 - Pause = freeze the clock; resume = continue from the same elapsed time. Speed multiplier scales the clock.
-- Races run at a real pace (ADR 0012): a speed factor of 1 is 16.5 m/s, so 1200 m takes about 73 s and 2200 m about 133 s of race time for an average horse. The viewer watches at 2× by default and can choose 0.5× to 8×.
+- Races run at a real pace (ADR 0012): a speed factor of 1 is 16.5 m/s, so 1200 m takes about 73 s and 2200 m about 133 s of race time for an average horse. The viewer watches at 2× by default and can choose 0.5× to 16×.
 - Progress curve: `p(u) = u + Σ a·(sin(2πfu + φ) − sin φ) / 2πf` with `u = t / finishTime`.
   Whole-number `f` makes `p(1) = 1`; `Σ a < 1` keeps `p′ > 0`, so horses surge and fade but never stop,
   and each one crosses the line exactly at its precomputed finish time.
@@ -245,7 +245,7 @@ No horizontal page scroll at 360px.
 
 See [ADR 0012](adr/0012-real-pace-true-scale-broadcast.md), which builds on [ADR 0011](adr/0011-track-camera-and-manual-rounds.md):
 
-- real racing pace (16.5 m/s, default 2×, up to 8×);
+- real racing pace (16.5 m/s, default 2×, up to 16×);
 - a true-scale follow camera over a looping turf layer;
 - finished horses standing still;
 - the pause origin in the store (`isBetweenRounds`);

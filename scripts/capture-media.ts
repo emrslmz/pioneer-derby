@@ -64,9 +64,9 @@ async function settle(page: Page) {
   await page.getByTestId('track-generate').click()
   await settle(page)
   await page.getByTestId('pick-tip-button').click()
-  await page.getByRole('radio', { name: '8×' }).click()
+  await page.getByRole('radio', { name: '16×' }).click()
   await page.getByTestId('toggle-button').click()
-  await page.clock.runFor(8_200)
+  await page.clock.runFor(4_100) // ~65 s of the 73 s round at 16×
   await page.screenshot({ path: join(out, 'desktop-dark-race.png') })
 }
 
@@ -78,15 +78,15 @@ async function settle(page: Page) {
   await page.screenshot({ path: join(out, 'mobile-tr.png') })
 }
 
-// 4. GIF: round 1 at 8× on the dark theme, 250 ms of the fixed clock per frame.
+// 4. GIF: round 1 at 16× on the dark theme, 250 ms of the fixed clock per frame.
 {
   const frames = mkdtempSync(join(tmpdir(), 'pioneer-derby-frames-'))
   const page = await open({ width: 1280, height: 800 }, { dark: true })
   await page.getByTestId('track-generate').click()
   await settle(page)
-  await page.getByRole('radio', { name: '8×' }).click()
+  await page.getByRole('radio', { name: '16×' }).click()
   await page.getByTestId('toggle-button').click()
-  for (let frame = 0; frame < 44; frame++) {
+  for (let frame = 0; frame < 22; frame++) {
     await page.clock.runFor(250)
     await page.screenshot({ path: join(frames, `f${String(frame).padStart(3, '0')}.png`) })
   }

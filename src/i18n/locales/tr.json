@@ -71,7 +71,7 @@
     "intro": "Kısayollar, bir alana yazı yazarken hariç her yerde çalışır.",
     "generate": "Yeni program oluştur",
     "toggle": "Başlat, duraklat veya devam et",
-    "speed": "Yarış hızını 0,5×, 1×, 2× veya 4× yap",
+    "speed": "Yarış hızını 0,5×, 1×, 2×, 4× (4 tuşu) veya 16× (9 tuşu) yap",
     "language": "Dili değiştir",
     "theme": "Temayı değiştir",
     "help": "Bu yardımı göster",
