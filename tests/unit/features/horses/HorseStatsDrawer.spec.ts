@@ -15,7 +15,7 @@ describe('HorseStatsDrawer', () => {
     const { wrapper } = mountFeature(HorseList, { attachTo: document.body })
     const horse = useHorsesStore().horses[0]!
     const button = wrapper.findAll('[data-testid="horse-name"]')[0]!
-    expect(button.attributes('aria-label')).toBe(`Show statistics for ${horse.name}`)
+    expect(button.text()).toContain(`(${horse.name}), show statistics`)
 
     await button.trigger('click')
     await nextTick()

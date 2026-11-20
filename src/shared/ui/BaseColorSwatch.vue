@@ -1,12 +1,23 @@
 <script setup lang="ts">
+import BaseShortName from './BaseShortName.vue'
+
 /** A colour dot plus its (translated) name. The name is real text, so colour is never the only cue. */
-defineProps<{ hex: string; label: string; hideLabel?: boolean }>()
+defineProps<{
+  hex: string
+  label: string
+  hideLabel?: boolean
+  /** Show a person's name as "Grace H." (full name on hover and for screen readers). */
+  abbreviate?: boolean
+}>()
 </script>
 
 <template>
   <span class="swatch">
     <span class="swatch__dot" :style="{ '--swatch': hex }" aria-hidden="true" />
-    <span :class="hideLabel ? 'visually-hidden' : 'swatch__label'">{{ label }}</span>
+    <span :class="hideLabel ? 'visually-hidden' : 'swatch__label'">
+      <BaseShortName v-if="abbreviate" :name="label" />
+      <template v-else>{{ label }}</template>
+    </span>
   </span>
 </template>
 

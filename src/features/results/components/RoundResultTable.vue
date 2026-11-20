@@ -51,6 +51,7 @@ const isMedal = (position: number) => position <= PODIUM_SIZE
         </span>
         <BaseColorSwatch
           v-else-if="column.key === 'name'"
+          abbreviate
           :hex="horsesStore.getHorse(row.horseId)?.color.hex ?? 'transparent'"
           :label="horsesStore.getHorse(row.horseId)?.name ?? ''"
         />

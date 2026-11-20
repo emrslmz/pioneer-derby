@@ -4,6 +4,7 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Horse, HorseId } from '@/domain/types'
 import BaseColorSwatch from '@/shared/ui/BaseColorSwatch.vue'
+import BaseShortName from '@/shared/ui/BaseShortName.vue'
 import BasePanel from '@/shared/ui/BasePanel.vue'
 import BaseTable, { type TableColumn, type TableSort } from '@/shared/ui/BaseTable.vue'
 import { useHorsesStore } from '@/stores/horses.store'
@@ -44,8 +45,8 @@ const rows = computed(() => {
 const columns = computed<TableColumn<Horse>[]>(() => [
   { key: 'number', label: t('horses.number'), align: 'end', width: '3.25rem', sortable: true },
   { key: 'name', label: t('horses.name') },
-  { key: 'condition', label: t('horses.condition'), width: '7.5rem', sortable: true },
-  { key: 'color', label: t('horses.color'), width: 'var(--color-column, 6.5rem)' },
+  { key: 'condition', label: t('horses.condition'), width: '7rem', sortable: true },
+  { key: 'color', label: t('horses.color'), width: 'var(--color-column, 7.5rem)' },
 ])
 
 function onSort(key: string) {
@@ -82,14 +83,9 @@ function onSort(key: string) {
       <template #cell="{ row, column }">
         <span v-if="column.key === 'number'" class="number">{{ row.id }}</span>
         <span v-else-if="column.key === 'name'" class="name">
-          <button
-            type="button"
-            class="name__text"
-            :aria-label="t('stats.open', { name: row.name })"
-            data-testid="horse-name"
-            @click="openStats(row)"
-          >
-            {{ row.name }}
+          <button type="button" class="name__text" data-testid="horse-name" @click="openStats(row)">
+            <BaseShortName :name="row.name" />
+            <span class="visually-hidden">{{ t('stats.openSuffix') }}</span>
           </button>
           <span
             v-if="lanes.has(row.id)"
@@ -97,7 +93,8 @@ function onSort(key: string) {
             :title="t('horses.inRace', { lane: lanes.get(row.id) })"
             data-testid="lane-badge"
           >
-            {{ t('horses.lane', { lane: lanes.get(row.id) }) }}
+            <span aria-hidden="true">{{ t('horses.laneShort', { lane: lanes.get(row.id) }) }}</span>
+            <span class="visually-hidden">{{ t('horses.lane', { lane: lanes.get(row.id) }) }}</span>
           </span>
         </span>
         <ConditionBar v-else-if="column.key === 'condition'" :value="row.condition" />
@@ -143,12 +140,14 @@ function onSort(key: string) {
 
 .name {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-1) var(--space-2);
+  gap: var(--space-2);
+  min-width: 0;
+  white-space: nowrap;
 }
 
 .name__text {
+  position: relative;
   padding: 0;
   border: 0;
   background: none;
@@ -167,6 +166,8 @@ function onSort(key: string) {
 }
 
 .name__lane {
+  position: relative;
+  flex-shrink: 0;
   padding: 0 var(--space-2);
   border-radius: var(--radius-pill);
   background: var(--color-accent-soft);

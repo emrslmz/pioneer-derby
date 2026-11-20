@@ -110,7 +110,8 @@
     "condition": "Condition",
     "color": "Color",
     "lane": "Lane {lane}",
-    "inRace": "Running in lane {lane} of the current round"
+    "inRace": "Running in lane {lane} of the current round",
+    "laneShort": "L{lane}"
   },
   "program": {
     "lane": "Lane",
@@ -137,15 +138,16 @@
   },
   "track": {
     "label": "Race track — {lap}. {count} horses, lane 1 at the top; finish line on the right.",
-    "idle": "Generate a program to line the horses up.",
-    "ready": "Ready — {lap}. Press Start.",
-    "paused": "Paused",
-    "intermission": "Next up: {lap}",
-    "finished": "Program complete",
     "start": "Start",
     "finish": "Finish",
     "lane": "Lane {lane}",
-    "marker": "{distance}"
+    "marker": "{distance}",
+    "idleTitle": "No program yet",
+    "idleHint": "Press Generate Program or G to line the horses up.",
+    "readyEyebrow": "Ready",
+    "readyHint": "Press Start or Space to run it.",
+    "pausedEyebrow": "Paused",
+    "pausedHint": "Press Resume or Space to continue."
   },
   "prediction": {
     "title": "Predict the Winner",
@@ -171,10 +173,13 @@
       "IN_FORM": "in form",
       "PREVIOUS_WINNER": "already won a round",
       "BEST_RATING": "best overall rating"
-    }
+    },
+    "makePick": "Make your pick",
+    "pickTip": "Back the tip",
+    "picked": "Your pick: {name}",
+    "pending": "Scored when the round ends."
   },
   "stats": {
-    "open": "Show statistics for {name}",
     "title": "{name}",
     "number": "No {number}",
     "condition": "Condition",
@@ -186,7 +191,8 @@
     "form": "Form",
     "formCaption": "Finishing position per round run (1 = winner).",
     "noForm": "No rounds finished yet.",
-    "formPoint": "{lap}: {ordinal}"
+    "formPoint": "{lap}: {ordinal}",
+    "openSuffix": ", show statistics"
   },
   "share": {
     "button": "Copy share link",
@@ -202,7 +208,6 @@
   "broadcast": {
     "standings": "Live standings",
     "live": "Live",
-    "result": "{lap} — result",
     "photoFinish": "Photo finish",
     "margin": "won by {time}",
     "position": "Position {position}: {name}"
@@ -214,5 +219,16 @@
     "FINAL_STRETCH": "Into the final stretch — {name} in front!",
     "PHOTO_FINISH": "It's a photo finish!",
     "WINNER": "{name} wins the {lap}!"
+  },
+  "result": {
+    "eyebrow": "{lap} · Result",
+    "next": "Next up: {lap}",
+    "finished": "Program complete",
+    "finalScore": "You scored {points} points.",
+    "pick": {
+      "winner": "Your pick won: +{points} pts",
+      "podium": "Your pick finished {ordinal}: +{points} pt",
+      "miss": "Your pick finished {ordinal}: no points"
+    }
   }
 }
