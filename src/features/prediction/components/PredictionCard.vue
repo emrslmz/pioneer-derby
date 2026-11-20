@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import type { HorseId } from '@/domain/types'
 import { useLocale } from '@/i18n/useLocale'
 import BaseBadge from '@/shared/ui/BaseBadge.vue'
+import BaseButton from '@/shared/ui/BaseButton.vue'
 import BaseIcon from '@/shared/ui/BaseIcon.vue'
 import { useHorsesStore } from '@/stores/horses.store'
 import { usePredictionStore } from '@/stores/prediction.store'
@@ -72,11 +73,18 @@ const outcomeTone = { winner: 'success', podium: 'info', miss: 'neutral' } as co
 </script>
 
 <template>
-  <section class="prediction" aria-labelledby="prediction-title" data-testid="prediction-card">
+  <section
+    class="prediction"
+    :class="{ 'prediction--open': isOpen, 'prediction--waiting': isOpen && currentPick === null }"
+    aria-labelledby="prediction-title"
+    data-testid="prediction-card"
+  >
     <header class="prediction__header">
-      <BaseIcon name="star" :size="18" class="prediction__icon" />
+      <span class="prediction__badge" aria-hidden="true"><BaseIcon name="star" :size="16" /></span>
       <h2 id="prediction-title" class="prediction__title">{{ t('prediction.title') }}</h2>
-      <span class="prediction__rules">{{ t('prediction.rules') }}</span>
+      <span v-if="isOpen && currentPick === null" class="prediction__cta">
+        {{ t('prediction.makePick') }}
+      </span>
       <span
         class="prediction__score"
         :aria-label="t('prediction.score', { points: totalPoints, correct: correctWinners })"
@@ -96,10 +104,22 @@ const outcomeTone = { winner: 'success', podium: 'info', miss: 'neutral' } as co
 
     <template v-else>
       <div v-if="isOpen" class="prediction__open">
-        <p class="prediction__question">{{ t('prediction.question', { lap }) }}</p>
-        <p v-if="recommendation" class="prediction__tip" data-testid="recommendation">
-          {{ recommendationText }}
-        </p>
+        <div class="prediction__ask">
+          <p class="prediction__question">{{ t('prediction.question', { lap }) }}</p>
+          <span class="prediction__rules">{{ t('prediction.rules') }}</span>
+        </div>
+        <div v-if="recommendation" class="prediction__tip">
+          <p data-testid="recommendation">{{ recommendationText }}</p>
+          <BaseButton
+            v-if="currentPick !== recommendation.horseId"
+            size="sm"
+            icon="star"
+            data-testid="pick-tip-button"
+            @click="pick = recommendation.horseId"
+          >
+            {{ t('prediction.pickTip') }}
+          </BaseButton>
+        </div>
         <RunnerPicker
           v-model="pick"
           :runners="runners"
@@ -108,13 +128,15 @@ const outcomeTone = { winner: 'success', podium: 'info', miss: 'neutral' } as co
           :recommended-label="t('prediction.recommended')"
         />
       </div>
-      <p v-else class="prediction__hint" data-testid="prediction-locked">
-        {{
+      <p v-else class="prediction__locked" data-testid="prediction-locked">
+        <strong>{{
           currentPick !== null
             ? t('prediction.yourPick', { name: nameOf(currentPick) })
             : t('prediction.noPick')
-        }}
-        <span class="prediction__muted">{{ t('prediction.locked') }}</span>
+        }}</strong>
+        <span class="prediction__muted">
+          {{ currentPick !== null ? t('prediction.pending') : t('prediction.locked') }}
+        </span>
       </p>
     </template>
 
@@ -128,21 +150,36 @@ const outcomeTone = { winner: 'success', podium: 'info', miss: 'neutral' } as co
 
 <style scoped lang="scss">
 .prediction {
+  position: relative;
   display: grid;
-  // Grid/flex children default to min-width: auto; without this the picker can't scroll.
-  min-width: 0;
   gap: var(--space-2);
+  // Grid/flex children default to min-width: auto; this keeps the card inside its column.
+  min-width: 0;
   padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--color-border);
+  border: 2px solid transparent;
   border-radius: var(--radius-lg);
   background:
     linear-gradient(
-      120deg,
-      color-mix(in srgb, var(--color-gold) 12%, transparent),
-      transparent 55%
-    ),
-    var(--color-surface);
+        135deg,
+        color-mix(in srgb, var(--color-gold) 18%, var(--color-surface)),
+        var(--color-surface) 60%
+      )
+      padding-box,
+    linear-gradient(120deg, var(--color-gold), var(--color-accent)) border-box;
   box-shadow: var(--shadow-panel);
+}
+
+// Draw attention while a pick is still possible and none was made.
+.prediction--waiting {
+  animation: invite 2.4s ease-in-out infinite;
+}
+
+@keyframes invite {
+  50% {
+    box-shadow:
+      var(--shadow-panel),
+      0 0 0 4px color-mix(in srgb, var(--color-gold) 35%, transparent);
+  }
 }
 
 .prediction__header {
@@ -152,19 +189,32 @@ const outcomeTone = { winner: 'success', podium: 'info', miss: 'neutral' } as co
   gap: var(--space-2) var(--space-3);
 }
 
-.prediction__icon {
-  color: var(--color-gold);
+.prediction__badge {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-gold);
+  color: #1a1a1a;
 }
 
 .prediction__title {
   font-size: var(--font-size-lg);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
 }
 
-.prediction__rules {
-  color: var(--color-text-muted);
+.prediction__cta {
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-warning-soft);
+  color: var(--color-warning-text);
+  font-family: var(--font-display);
   font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: var(--letter-spacing-caps);
+  text-transform: uppercase;
 }
 
 .prediction__score {
@@ -177,25 +227,63 @@ const outcomeTone = { winner: 'success', podium: 'info', miss: 'neutral' } as co
   font-size: var(--font-size-md);
   font-weight: 700;
   letter-spacing: 0.04em;
+  white-space: nowrap;
 }
 
 .prediction__open {
+  display: grid;
+  gap: var(--space-2);
   min-width: 0;
 }
 
-.prediction__question {
-  font-weight: 700;
+.prediction__ask {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
 }
 
-.prediction__tip,
+.prediction__question {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.prediction__rules {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.prediction__tip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-gold) 12%, transparent);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+}
+
 .prediction__hint {
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
 }
 
+.prediction__locked {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
+}
+
 .prediction__muted {
-  margin-left: var(--space-2);
-  color: var(--color-text-subtle);
+  color: var(--color-text-muted);
 }
 
 .prediction__outcome:empty {

@@ -36,8 +36,16 @@ describe('PredictionCard', () => {
       new RegExp(`^Recommended: ${name} — .+\\.$`),
     )
     expect(
-      wrapper.get(`[data-testid="pick-option"][data-horse-id="${tip.horseId}"]`).text(),
-    ).toContain('Tip')
+      wrapper
+        .get(`[data-testid="pick-option"][data-horse-id="${tip.horseId}"]`)
+        .find('[data-testid="pick-tip"]')
+        .exists(),
+    ).toBe(true)
+
+    // One click backs the recommended horse.
+    await wrapper.get('[data-testid="pick-tip-button"]').trigger('click')
+    expect(usePredictionStore().currentPick).toBe(tip.horseId)
+    expect(wrapper.find('[data-testid="pick-tip-button"]').exists()).toBe(false)
   })
 
   it('[X9] joins reasons with the locale list format', async () => {
@@ -61,6 +69,9 @@ describe('PredictionCard', () => {
     await nextTick()
     const name = useHorsesStore().getHorse(horseId)!.name
     expect(wrapper.get('[data-testid="prediction-locked"]').text()).toContain(`Your pick: ${name}`)
+    expect(wrapper.get('[data-testid="prediction-locked"]').text()).toContain(
+      'Scored when the round ends.',
+    )
   })
 
   it('[X4] shows the outcome and the running score after each round', async () => {
@@ -116,7 +127,7 @@ describe('RunnerPicker', () => {
     expect(wrapper.get('[role="radiogroup"]').attributes('aria-label')).toBe('Your pick')
     const radios = () => wrapper.findAll('[role="radio"]')
     expect(radios().map((r) => r.attributes('tabindex'))).toEqual(['0', '-1', '-1'])
-    expect(radios()[1]!.text()).toContain('Tip')
+    expect(radios()[1]!.find('[data-testid="pick-tip"]').text()).toBe('Tip')
 
     await radios()[0]!.trigger('keydown', { key: 'ArrowRight' })
     expect(wrapper.props('modelValue')).toBe(2)
