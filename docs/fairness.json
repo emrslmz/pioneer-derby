@@ -1,0 +1,89 @@
+{
+  "programs": 10000,
+  "rounds": 60000,
+  "buckets": [
+    {
+      "from": 1,
+      "to": 10,
+      "runs": 60127,
+      "winRate": 0,
+      "podiumRate": 0.01,
+      "averagePosition": 8.352
+    },
+    {
+      "from": 11,
+      "to": 20,
+      "runs": 59626,
+      "winRate": 0.001,
+      "podiumRate": 0.031,
+      "averagePosition": 7.785
+    },
+    {
+      "from": 21,
+      "to": 30,
+      "runs": 61179,
+      "winRate": 0.004,
+      "podiumRate": 0.074,
+      "averagePosition": 7.126
+    },
+    {
+      "from": 31,
+      "to": 40,
+      "runs": 59494,
+      "winRate": 0.013,
+      "podiumRate": 0.135,
+      "averagePosition": 6.485
+    },
+    {
+      "from": 41,
+      "to": 50,
+      "runs": 59458,
+      "winRate": 0.029,
+      "podiumRate": 0.22,
+      "averagePosition": 5.799
+    },
+    {
+      "from": 51,
+      "to": 60,
+      "runs": 59901,
+      "winRate": 0.058,
+      "podiumRate": 0.311,
+      "averagePosition": 5.125
+    },
+    {
+      "from": 61,
+      "to": 70,
+      "runs": 60199,
+      "winRate": 0.109,
+      "podiumRate": 0.411,
+      "averagePosition": 4.456
+    },
+    {
+      "from": 71,
+      "to": 80,
+      "runs": 60239,
+      "winRate": 0.176,
+      "podiumRate": 0.509,
+      "averagePosition": 3.841
+    },
+    {
+      "from": 81,
+      "to": 90,
+      "runs": 60155,
+      "winRate": 0.258,
+      "podiumRate": 0.604,
+      "averagePosition": 3.264
+    },
+    {
+      "from": 91,
+      "to": 100,
+      "runs": 59622,
+      "winRate": 0.352,
+      "podiumRate": 0.697,
+      "averagePosition": 2.752
+    }
+  ],
+  "spearman": -0.641,
+  "favouriteWinRate": 0.399,
+  "upsetRate": 0.192
+}
