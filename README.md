@@ -39,11 +39,11 @@ Horses move by `transform` only and nothing is written to Pinia per frame
 
 **Visual baselines** are Linux screenshots made by CI, so they match the CI renderer exactly. When a
 change alters the UI on purpose, the **Visual tests** job fails and uploads the new screenshots as the
-`visual-baselines` artifact; review them and commit them to `tests/visual/__snapshots__/`:
+`visual-baselines` artifact. Pull them, review the diff and commit:
 
 ```bash
-gh run download <run-id> -n visual-baselines -D /tmp/visual
-cp /tmp/visual/tests/visual/__snapshots__/*-linux.png tests/visual/__snapshots__/
+npm run visual:pull -- <run-id>   # refuses if any screenshot differs between CI retries (flaky)
+git diff --stat tests/visual/__snapshots__
 ```
 
 Locally, `npm run test:visual:update` writes macOS baselines (git-ignored) for quick checks.
