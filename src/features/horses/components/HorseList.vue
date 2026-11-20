@@ -45,8 +45,8 @@ const rows = computed(() => {
 const columns = computed<TableColumn<Horse>[]>(() => [
   { key: 'number', label: t('horses.number'), align: 'end', width: '2.75rem', sortable: true },
   { key: 'name', label: t('horses.name') },
-  { key: 'condition', label: t('horses.condition'), width: '5.5rem', sortable: true },
-  { key: 'color', label: t('horses.color'), width: '6rem' },
+  { key: 'condition', label: t('horses.condition'), width: '4.75rem', sortable: true },
+  { key: 'color', label: t('horses.color'), width: '5.5rem' },
 ])
 
 function onSort(key: string) {
@@ -147,7 +147,7 @@ function onSort(key: string) {
 .name__lane {
   position: relative;
   flex-shrink: 0;
-  padding: 0 var(--space-2);
+  padding: 0 5px;
   border-radius: var(--radius-pill);
   background: var(--color-accent-soft);
   color: var(--color-accent-text);
