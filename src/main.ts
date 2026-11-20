@@ -27,27 +27,42 @@ app.mount('#app')
 
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-// First paint: the splash fades out, the cards have arrived, and only then the tour (if due)
-// starts, so its highlight is measured on a settled page.
-void dismissSplash({ reducedMotion })
-  .then(() => document.fonts.ready)
-  .then(whenSettled)
-  .then(() => {
-    endIntro()
-    if (!shouldAutoStartTour()) return
-    return startTour({
-      t: i18n.global.t as (key: string, named?: Record<string, unknown>) => string,
-      reducedMotion,
-      source: 'first_visit',
-      resumeAt: readTourResumeStep(),
-      // The first thing a new visitor is asked: which language (like the header switch does).
-      language: {
-        current: i18n.global.locale.value,
-        choose: (next: AppLocale) => {
-          const previous = i18n.global.locale.value
-          applyLocale(i18n, next)
-          if (next !== previous) analytics.track('language_changed', { from: previous, to: next })
-        },
+/** Starts the first-visit tour, or resumes it after a reload (a no-op for a returning visitor). */
+function launchTour() {
+  if (!shouldAutoStartTour()) return
+  return startTour({
+    t: i18n.global.t as (key: string, named?: Record<string, unknown>) => string,
+    reducedMotion,
+    source: 'first_visit',
+    resumeAt: readTourResumeStep(),
+    // The first thing a new visitor is asked: which language (like the header switch does).
+    language: {
+      current: i18n.global.locale.value,
+      choose: (next: AppLocale) => {
+        const previous = i18n.global.locale.value
+        applyLocale(i18n, next)
+        if (next !== previous) analytics.track('language_changed', { from: previous, to: next })
       },
-    })
+    },
   })
+}
+
+if (shouldAutoStartTour() && readTourResumeStep() === null) {
+  // A brand-new visitor: the language question is the first thing, so nothing is staged before it.
+  // The splash starts fading at once, the cards are already in place, and the question opens as
+  // soon as the fonts are in.
+  endIntro()
+  void dismissSplash({ reducedMotion, minMs: 0 })
+  void document.fonts.ready.then(launchTour)
+} else {
+  // Returning visitors and a tour resumed after a reload: the splash fades out, the cards have
+  // arrived, and only then does the tour (if due) start, so its highlight is measured on a settled
+  // page.
+  void dismissSplash({ reducedMotion })
+    .then(() => document.fonts.ready)
+    .then(whenSettled)
+    .then(() => {
+      endIntro()
+      return launchTour()
+    })
+}

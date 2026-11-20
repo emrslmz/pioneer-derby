@@ -203,7 +203,7 @@ describe('first-visit tour', () => {
       onPopoverRender: (popover: { description: HTMLElement }) => void
       onDestroyStarted: () => void
     }
-    expect(chooser.steps[0]!.popover.title).toBe('Choose your language · Dilini seç')
+    expect(chooser.steps[0]!.popover.title).toBe('Merhaba · Hello')
     const description = document.createElement('div')
     chooser.onPopoverRender({ description })
     const button = (id: string) =>

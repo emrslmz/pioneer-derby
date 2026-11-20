@@ -12,12 +12,15 @@ export interface SplashOptions {
   /** ms since the page started loading (`performance.now()`). */
   now?: () => number
   reducedMotion: boolean
+  /** How long the splash stays at least; 0 on a first visit, where a question is waiting. */
+  minMs?: number
 }
 
 /** Fades the splash out (after a minimum time on screen) and removes it. */
 export function dismissSplash({
   now = () => performance.now(),
   reducedMotion,
+  minMs = SPLASH_MIN_MS,
 }: SplashOptions): Promise<void> {
   const splash = document.getElementById('splash')
   if (!splash) return Promise.resolve()
@@ -34,7 +37,7 @@ export function dismissSplash({
           resolve()
         }, SPLASH_FADE_MS)
       },
-      Math.max(0, SPLASH_MIN_MS - now()),
+      Math.max(0, minMs - now()),
     )
   })
 }

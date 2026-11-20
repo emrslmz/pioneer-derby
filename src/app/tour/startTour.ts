@@ -67,6 +67,9 @@ function askLanguage(
       onHighlighted: cleanDummyElementSoon,
       onPopoverRender: (popover) => {
         cleanDummyElementSoon()
+        const subtitle = document.createElement('p')
+        subtitle.className = 'pd-tour__subtitle'
+        subtitle.textContent = LANGUAGE_PROMPT.subtitle
         const row = document.createElement('div')
         row.className = 'pd-tour__languages'
         const next = document.createElement('button')
@@ -103,7 +106,7 @@ function askLanguage(
           chooser.destroy()
           settle(selected)
         })
-        popover.description.replaceChildren(row, next)
+        popover.description.replaceChildren(subtitle, row, next)
         // driver.js hides an empty description; this one holds the buttons.
         popover.description.style.display = 'block'
         buttons.find(({ locale }) => locale === selected)?.button.focus()

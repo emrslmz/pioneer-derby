@@ -23,7 +23,7 @@ test.describe('first-visit tour', () => {
     page,
   }) => {
     await page.goto('/?seed=42')
-    await expect(title(page)).toHaveText('Choose your language · Dilini seç')
+    await expect(title(page)).toHaveText('Merhaba · Hello')
     await expect(page.getByTestId('tour-language-en')).toHaveAttribute('aria-pressed', 'true')
     await expect(page.getByTestId('tour-language-continue')).toHaveText('Continue')
 
@@ -31,7 +31,7 @@ test.describe('first-visit tour', () => {
     await page.getByTestId('tour-language-tr').click()
     await expect(page.locator('html')).toHaveAttribute('lang', 'tr')
     await expect(page.getByTestId('tour-language-continue')).toHaveText('Devam')
-    await expect(title(page)).toHaveText('Choose your language · Dilini seç')
+    await expect(title(page)).toHaveText('Merhaba · Hello')
 
     await page.getByTestId('tour-language-continue').click()
     await expect(title(page)).toHaveText("Pioneer Derby'ye hoş geldin")
@@ -85,7 +85,7 @@ test.describe('first-visit tour', () => {
 
   test('[X4] closing the language question skips the tour', async ({ page }) => {
     await page.goto('/?seed=42')
-    await expect(title(page)).toHaveText('Choose your language · Dilini seç')
+    await expect(title(page)).toHaveText('Merhaba · Hello')
     await page.keyboard.press('Escape')
     await expect(popover(page)).toHaveCount(0)
     await page.reload()
@@ -163,9 +163,24 @@ test.describe('first-visit tour', () => {
     await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', /favicon\.svg$/)
   })
 
-  test('[X10] the first load shows a splash that fades away, then the cards arrive', async ({
+  test('[X9] a first visit asks the language at once: no wait for the splash or the intro', async ({
     page,
   }) => {
+    await page.goto('/?seed=42', { waitUntil: 'commit' })
+    // Within a second, while the splash is still fading, and the cards are not staged behind it.
+    await expect(title(page)).toHaveText('Merhaba · Hello', { timeout: 1500 })
+    await expect(page.locator('html')).not.toHaveAttribute('data-intro', '')
+    await expect(page.locator('.driver-popover')).toHaveClass(/pd-tour--language/)
+    // A greeting and both languages, named in themselves.
+    await expect(page.locator('.pd-tour__subtitle')).toHaveText('Dilini seç · Choose your language')
+    await expect(page.getByTestId('tour-language-en')).toHaveText('English')
+    await expect(page.getByTestId('tour-language-tr')).toHaveText('Türkçe')
+  })
+
+  test('[X10] a returning visitor sees the splash fade away, then the cards arrive', async ({
+    page,
+  }) => {
+    await page.addInitScript(() => localStorage.setItem('pioneer-derby:tour', '1'))
     await page.goto('/?seed=42', { waitUntil: 'commit' })
     await expect(page.locator('#splash')).toBeAttached()
     await expect(page.locator('#splash')).toHaveCount(0, { timeout: 4000 })

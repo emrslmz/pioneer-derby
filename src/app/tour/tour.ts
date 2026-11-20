@@ -25,7 +25,8 @@ export const TOUR_STEPS: readonly TourStep[] = [
  * that is deliberately not in the locale files: both languages, each named in itself.
  */
 export const LANGUAGE_PROMPT = {
-  title: 'Choose your language · Dilini seç',
+  title: 'Merhaba · Hello',
+  subtitle: 'Dilini seç · Choose your language',
   choices: [
     { locale: 'en', label: 'English', continue: 'Continue' },
     { locale: 'tr', label: 'Türkçe', continue: 'Devam' },
