@@ -97,7 +97,10 @@
   --color-bronze: #cd7f32;
 
   // Typography
-  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  // Self-hosted Inter: the same metrics on every OS (Linux would otherwise fall back to a wide font).
+  --font-sans:
+    'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
   --font-display: 'Barlow Condensed', var(--font-sans);
   --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   --font-size-xs: clamp(0.6875rem, 0.66rem + 0.1vw, 0.75rem);
