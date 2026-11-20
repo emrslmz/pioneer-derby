@@ -48,14 +48,15 @@ test.describe('frozen race moments', () => {
   })
 
   test('[B3] [R6] mid-race: horses spread across the track', async ({ page }) => {
-    await page.clock.runFor(3_500)
+    // At the default 2× a 1200 m round takes ~40 s; 20 s in, the field has strung out.
+    await page.clock.runFor(20_000)
     await expect(page).toHaveScreenshot('desktop-dark-en-mid-race.png')
   })
 
   test('[B3] [X13] between rounds: result board and winner lane', async ({ page }) => {
     await expect(page.getByTestId('round-result')).toHaveCount(0)
-    // Seed 42's first round lasts ~14.8 s; manual advance keeps its result visible.
-    await page.clock.runFor(16_000)
+    // Seed 42's slowest horse needs 78.9 s of race time, ~39.5 s at 2×; the 6 s break follows.
+    await page.clock.runFor(41_000)
     await expect(page.getByTestId('round-result')).toBeVisible()
     await expect(page).toHaveScreenshot('desktop-dark-en-podium.png')
   })
