@@ -72,7 +72,7 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 - [x] Turlar arası kısa ara, alt etiket "2nd Lap 1400m"
 - **Çıktı:** ✅ MVP tamam — PDF'teki tüm zorunlu maddeler karşılanıyor.
 
-## Faz 6 — Ürün katmanı (Insider'a özel) · X4, X5, X11, X12
+## Faz 6 — Ürün katmanı (öne çıkan özellikler) · X4, X5, X11, X12
 
 - [x] **Kazananı tahmin et**: her turdan önce tahmin, puan sistemi, toplam skor · X4
 - [x] **Önerilen at**: kondisyon + önceki turlardaki forma göre öneri ve kısa gerekçe · X4

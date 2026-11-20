@@ -5,7 +5,7 @@
 ![Lighthouse](https://img.shields.io/badge/Lighthouse-96%20%C2%B7%20100%20%C2%B7%20100%20%C2%B7%20100-0cce6b?logo=lighthouse&logoColor=white)
 ![Tests](https://img.shields.io/badge/tests-330%20unit%20%C2%B7%2062%20E2E%20%C2%B7%20visual%20%C2%B7%20axe-15743b)
 
-An interactive horse racing game built with **Vue 3, TypeScript and Pinia** for the Insider One Front-end Developer case study.
+An interactive horse racing game built with **Vue 3, TypeScript and Pinia** for a front-end developer case study.
 Twenty horses — named after computing pioneers — race across six rounds from 1200 m to 2200 m.
 
 **Try it: [pioneerderby.netlify.app](https://pioneerderby.netlify.app)** (a first visit starts with a short guided tour).

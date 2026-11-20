@@ -30,7 +30,7 @@ playwright/.cache/
 .claude/settings.local.json
 
 # case brief (company document, not for the public repo)
-Insider One Case Study*.pdf
+*Case Study*.pdf
 
 # visual baselines: only the CI (Linux) ones are committed
 tests/visual/__snapshots__/*-darwin.png
@@ -39,3 +39,6 @@ tests/visual/__snapshots__/*-win32.png
 # Lighthouse CI output
 .lighthouseci/
 lighthouse-report/
+
+# Temporary copy made while rendering the technical document
+docs/technical-document/.rendered.html

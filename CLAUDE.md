@@ -1,7 +1,7 @@
-# Pioneer Derby — Insider One Front-end Case
+# Pioneer Derby — Front-end Case Study
 
-Interactive horse racing game built for the Insider One Front-end Developer assessment.
-The original brief is `Insider One Case Study - Front-end Developer.pdf`.
+Interactive horse racing game built for a Front-end Developer assessment.
+The original brief is the case study PDF (kept out of the repository).
 
 - Requirements & traceability IDs: @docs/REQUIREMENTS.md
 - Architecture, theme, folder structure: @docs/ARCHITECTURE.md
