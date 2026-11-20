@@ -16,7 +16,7 @@ import RoundTable from './RoundTable.vue'
 const { t } = useI18n()
 const { rounds } = storeToRefs(useScheduleStore())
 const race = useRaceStore()
-const { currentRoundIndex, status, completedResults, canGenerate } = storeToRefs(race)
+const { currentRoundIndex, status, completedResults, canGenerate, seed } = storeToRefs(race)
 const emit = defineEmits<{ change: [] }>()
 const reducedMotion = useReducedMotion()
 const list = ref<HTMLElement | null>(null)
@@ -51,7 +51,7 @@ watch(currentRoundIndex, async () => {
     <div v-if="rounds.length > 0" ref="list">
       <RoundTable
         v-for="round in rounds"
-        :key="round.index"
+        :key="`${seed}-${round.index}`"
         :round="round"
         :state="roundState(round.index, currentRoundIndex, status, completedResults.length)"
       />

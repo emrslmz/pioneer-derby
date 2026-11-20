@@ -42,6 +42,7 @@ const tones = { done: 'success', live: 'live', next: 'accent', upcoming: 'neutra
     class="round"
     :class="`round--${state}`"
     :data-state="state"
+    :style="{ '--i': round.index }"
     :aria-current="state === 'live' || state === 'next' ? 'step' : undefined"
     data-testid="program-round"
   >
@@ -74,6 +75,28 @@ const tones = { done: 'success', live: 'live', next: 'accent', upcoming: 'neutra
 .round {
   border-bottom: 1px solid var(--color-border);
   scroll-margin-top: var(--space-2);
+  // A fresh program deals its rounds in one after another. `backwards` only holds the start
+  // frame during the delay, so the settled block is never touched; reduced motion skips it.
+  animation: round-in 460ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  animation-delay: calc(var(--i, 0) * 80ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .round {
+    // The global rule only shortens animations; the staggered delay would still hide the blocks.
+    animation: none;
+  }
+}
+
+@keyframes round-in {
+  from {
+    opacity: 0;
+    transform: translate3d(18px, 0, 0) scale(0.98);
+  }
+
+  60% {
+    opacity: 1;
+  }
 }
 
 .round__header {

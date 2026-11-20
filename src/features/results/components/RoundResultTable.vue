@@ -64,7 +64,7 @@ const isMedal = (position: number) => position <= PODIUM_SIZE
 <style scoped lang="scss">
 .result {
   border-bottom: 1px solid var(--color-border);
-  animation: enter var(--duration-base) var(--easing-standard);
+  animation: result-in 560ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .result__header {
@@ -119,10 +119,16 @@ const isMedal = (position: number) => position <= PODIUM_SIZE
   font-variant-numeric: tabular-nums;
 }
 
-@keyframes enter {
+// A finished round slides in and its background fades from a soft gold, like a score update.
+@keyframes result-in {
   from {
+    background: color-mix(in srgb, var(--color-gold) 22%, transparent);
     opacity: 0;
-    transform: translateY(-6px);
+    transform: translate3d(18px, 0, 0);
+  }
+
+  50% {
+    opacity: 1;
   }
 }
 </style>
