@@ -18,10 +18,11 @@
     "test:unit": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test --project=e2e",
-    "test:visual": "playwright test --project=visual --pass-with-no-tests",
+    "test:visual": "playwright test --project=visual",
     "simulate": "tsx scripts/simulate.ts",
     "report:traceability": "tsx scripts/traceability.ts",
-    "verify": "run-s lint:check format:check type-check \"test:unit --run\""
+    "verify": "run-s lint:check format:check type-check \"test:unit --run\"",
+    "test:visual:update": "playwright test --project=visual --update-snapshots"
   },
   "dependencies": {
     "@fontsource/barlow-condensed": "^5.3.0",
@@ -66,5 +67,5 @@
   "engines": {
     "node": "^22.18.0 || >=24.12.0"
   },
-  "description": "Pioneer Derby — horse racing game for the Insider One front-end case"
+  "description": "Pioneer Derby \u2014 horse racing game for the Insider One front-end case"
 }
