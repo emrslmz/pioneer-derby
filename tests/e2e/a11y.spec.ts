@@ -43,9 +43,7 @@ test.describe('accessibility (axe, WCAG 2.2 AA)', () => {
     await page.getByTestId('generate-button').click()
     const names = await page
       .getByTestId('pick-option')
-      .evaluateAll((options) =>
-        options.map((o) => getComputedStyle(o.querySelector('.short-name__visible')!).visibility),
-      )
+      .evaluateAll((options) => options.map((o) => getComputedStyle(o).visibility))
     expect(names).toEqual(Array(10).fill('visible'))
   })
 

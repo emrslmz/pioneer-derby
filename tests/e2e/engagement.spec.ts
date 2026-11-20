@@ -19,6 +19,7 @@ test.describe('engagement layer', () => {
     await expect(tip).toHaveAttribute('aria-checked', 'true')
 
     await page.getByRole('radio', { name: '4×' }).click()
+    await page.getByTestId('auto-advance').check()
     await page.getByTestId('toggle-button').click()
     await expect(page.getByTestId('prediction-locked')).toContainText('Your pick:')
     await expect(page.getByTestId('prediction-outcome')).toContainText('1st Lap – 1200 m:', {
@@ -44,7 +45,7 @@ test.describe('engagement layer', () => {
     await page.getByTestId('toggle-button').click()
     await page.clock.runFor(3_000)
     const running = await height()
-    await page.clock.runFor(5_000) // into the intermission, with an outcome
+    await page.clock.runFor(13_000) // into the intermission, with an outcome
     await expect(page.getByTestId('round-result')).toBeVisible()
     const intermission = await height()
 
@@ -91,6 +92,7 @@ test.describe('engagement layer', () => {
     await page.goto('/?seed=5')
     await page.getByTestId('generate-button').click()
     await page.getByRole('radio', { name: '4×' }).click()
+    await page.getByTestId('auto-advance').check()
     await page.getByTestId('toggle-button').click()
     const results = page.getByTestId('result-round')
     await expect(results).toHaveCount(6, { timeout: 60_000 })

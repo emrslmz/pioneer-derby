@@ -23,6 +23,7 @@ test.describe('full game flow', () => {
     await page.goto('/?seed=42')
     await page.getByTestId('generate-button').click()
     await page.getByRole('radio', { name: '4×' }).click()
+    await page.getByTestId('auto-advance').check()
     await page.getByTestId('toggle-button').click()
 
     const results = page.getByTestId('result-round')

@@ -74,7 +74,8 @@ async function onKeydown(event: KeyboardEvent, index: number) {
     color var(--duration-fast);
 
   &[aria-checked='true'] {
-    background: var(--color-accent);
+    // The stronger coral keeps white small text above WCAG AA (4.67:1 vs 3.6:1).
+    background: var(--color-accent-strong);
     color: var(--color-accent-contrast);
   }
 
