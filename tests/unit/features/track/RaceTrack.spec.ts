@@ -74,6 +74,15 @@ describe('RaceTrack', () => {
     expect(wrapper.find('.finish').exists()).toBe(true)
     expect(wrapper.findAll('[data-testid="runner"]')).toHaveLength(0)
     expect(wrapper.get('[data-testid="track-overlay"]').text()).toContain('No program yet')
+    expect(wrapper.findAll('.lane__stall')).toHaveLength(10)
+  })
+
+  it('[R3] the empty track offers a Generate Program button', async () => {
+    const { wrapper, race } = setup()
+    await wrapper.get('[data-testid="track-generate"]').trigger('click')
+    expect(race.status).toBe('ready')
+    await nextTick()
+    expect(wrapper.find('[data-testid="track-generate"]').exists()).toBe(false)
   })
 
   it('[R6] lines up the 10 horses of the current round in lane order, in their own colours', async () => {

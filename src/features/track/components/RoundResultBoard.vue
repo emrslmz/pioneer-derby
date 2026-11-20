@@ -49,7 +49,13 @@ const pick = computed(() => {
 </script>
 
 <template>
-  <section class="board" :aria-label="t('result.eyebrow', { lap })" data-testid="round-result">
+  <!-- Focusable: on small tracks the board scrolls, so keyboard users must be able to reach it. -->
+  <section
+    class="board"
+    tabindex="0"
+    :aria-label="t('result.eyebrow', { lap })"
+    data-testid="round-result"
+  >
     <header class="board__header">
       <p class="board__eyebrow">{{ t('result.eyebrow', { lap }) }}</p>
       <span v-if="photoFinish" class="board__photo" data-testid="photo-finish">

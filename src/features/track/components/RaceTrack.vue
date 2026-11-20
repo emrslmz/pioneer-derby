@@ -7,6 +7,7 @@ import { roundRaceForSeed } from '@/domain/game'
 import type { RoundRace, SpeedProfile } from '@/domain/types'
 import { useLocale } from '@/i18n/useLocale'
 import { useReducedMotion } from '@/shared/composables/useMediaQuery'
+import BaseButton from '@/shared/ui/BaseButton.vue'
 import BasePanel from '@/shared/ui/BasePanel.vue'
 import { useHorsesStore } from '@/stores/horses.store'
 import { useRaceStore } from '@/stores/race.store'
@@ -151,50 +152,56 @@ useRaceLoop({
     data-testid="track-panel"
   >
     <figure class="stage">
-      <div
-        class="track"
-        :class="{ 'track--running': galloping }"
-        role="img"
-        :aria-label="t('track.label', { lap: lap || t('round.none'), count: HORSES_PER_ROUND })"
-        :style="{ '--race-speed': speed }"
-        data-testid="race-track"
-      >
-        <div class="track__markers" aria-hidden="true">
-          <span
-            v-for="marker in markers"
-            :key="marker.label"
-            class="track__marker"
-            :style="{ '--at': marker.at }"
-          >
-            <span class="track__marker-label">{{ marker.label }}</span>
-          </span>
-        </div>
-
-        <TrackLane
-          v-for="{ lane, profile, horse } in lanes"
-          :key="lane"
-          :lane="lane"
-          :lane-label="t('track.lane', { lane })"
-          :winner="!!horse && horse.id === winnerId"
+      <!-- The track is one labelled image; overlays sit beside it (not inside role="img"), so
+           their text and buttons stay reachable for assistive technology. -->
+      <div class="track-wrap">
+        <div
+          class="track"
+          :class="{ 'track--running': galloping }"
+          role="img"
+          :aria-label="t('track.label', { lap: lap || t('round.none'), count: HORSES_PER_ROUND })"
+          :style="{ '--race-speed': speed }"
+          data-testid="race-track"
         >
-          <div
-            v-if="profile && horse"
-            :ref="(element) => setCarrier(profile.lane, element)"
-            class="carrier"
-            :class="{ 'carrier--live': galloping }"
-            data-testid="runner"
-            :data-horse-id="horse.id"
-          >
-            <HorseRunner
-              :color="horse.color.hex"
-              :number="horse.id"
-              :galloping="galloping && !reducedMotion"
-            />
+          <span class="track__rail track__rail--top" aria-hidden="true" />
+          <span class="track__rail track__rail--bottom" aria-hidden="true" />
+          <div class="track__markers" aria-hidden="true">
+            <span
+              v-for="marker in markers"
+              :key="marker.label"
+              class="track__marker"
+              :style="{ '--at': marker.at }"
+            >
+              <span class="track__pole" />
+              <span class="track__marker-label">{{ marker.label }}</span>
+            </span>
           </div>
-        </TrackLane>
 
-        <FinishLine :label="t('track.finish')" />
+          <TrackLane
+            v-for="{ lane, profile, horse } in lanes"
+            :key="lane"
+            :lane="lane"
+            :lane-label="t('track.lane', { lane })"
+            :winner="!!horse && horse.id === winnerId"
+          >
+            <div
+              v-if="profile && horse"
+              :ref="(element) => setCarrier(profile.lane, element)"
+              class="carrier"
+              :class="{ 'carrier--live': galloping }"
+              data-testid="runner"
+              :data-horse-id="horse.id"
+            >
+              <HorseRunner
+                :color="horse.color.hex"
+                :number="horse.id"
+                :galloping="galloping && !reducedMotion"
+              />
+            </div>
+          </TrackLane>
 
+          <FinishLine :label="t('track.finish')" />
+        </div>
         <div v-if="flash" class="track__flash" aria-hidden="true" data-testid="photo-flash" />
 
         <div v-if="showingFinished && displayRace" class="track__overlay track__overlay--result">
@@ -213,6 +220,16 @@ useRaceLoop({
             <p v-if="overlay.eyebrow" class="track__eyebrow">{{ overlay.eyebrow }}</p>
             <p class="track__title">{{ overlay.title }}</p>
             <p class="track__hint">{{ overlay.hint }}</p>
+            <BaseButton
+              v-if="status === 'idle'"
+              variant="primary"
+              icon="generate"
+              class="track__cta"
+              data-testid="track-generate"
+              @click="race.generateProgram()"
+            >
+              {{ t('onboarding.cta') }}
+            </BaseButton>
           </div>
         </div>
       </div>
@@ -236,6 +253,14 @@ useRaceLoop({
   height: 100%;
 }
 
+.track-wrap {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
 .track {
   position: relative;
   display: grid;
@@ -243,20 +268,20 @@ useRaceLoop({
   grid-template-rows: repeat(10, minmax(32px, 1fr));
   min-height: 340px;
   overflow: hidden;
-  // Turf: mowing stripes, a soft vignette for depth, and white rails top and bottom.
-  border-block: 3px solid #f2f2f2;
+  // Turf: fine grass grain (SVG noise) over broad mowing stripes, a vignette for depth,
+  // and rails top and bottom.
+  border-block: 0;
   background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1 0.35' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.02  0 0 0 0 0.12  0 0 0 0 0.03  0 0 0 0.55 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
     linear-gradient(
       180deg,
       var(--color-turf-shade),
-      transparent 18%,
-      transparent 82%,
+      transparent 16%,
+      transparent 84%,
       var(--color-turf-shade)
     ),
-    repeating-linear-gradient(90deg, var(--color-turf-1) 0 56px, var(--color-turf-2) 56px 112px);
-  box-shadow:
-    inset 0 2px 0 rgb(0 0 0 / 0.25),
-    inset 0 -2px 0 rgb(0 0 0 / 0.25);
+    repeating-linear-gradient(90deg, var(--color-turf-1) 0 64px, var(--color-turf-2) 64px 128px);
+  padding-block: 10px;
   // Leave room on the right for the finish line.
   padding-right: 10px;
 }
@@ -294,13 +319,47 @@ useRaceLoop({
   top: 0;
   bottom: 0;
   left: calc(var(--at) * 100%);
-  border-left: 1px dashed rgb(255 255 255 / 0.22);
+  border-left: 1px dashed rgb(255 255 255 / 0.16);
+}
+
+// Furlong-style pole on the outer rail.
+.track__pole {
+  position: absolute;
+  top: 0;
+  left: -3px;
+  width: 6px;
+  height: 18px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(180deg, #e53935 0 4px, #fff 4px 8px);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+}
+
+// White running rails with posts, top and bottom.
+.track__rail {
+  position: absolute;
+  inset-inline: 0;
+  z-index: 1;
+  height: 10px;
+  background:
+    linear-gradient(#f4f4f4, #f4f4f4) 0 2px / 100% 3px no-repeat,
+    repeating-linear-gradient(90deg, #d9dde3 0 3px, transparent 3px 36px) 0 0 / 100% 10px;
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.35));
+  pointer-events: none;
+}
+
+.track__rail--top {
+  top: 0;
+}
+
+.track__rail--bottom {
+  bottom: 0;
+  transform: scaleY(-1);
 }
 
 .track__marker-label {
   position: absolute;
-  top: 2px;
-  left: 4px;
+  top: 12px;
+  left: 6px;
   padding: 0 4px;
   border-radius: var(--radius-sm);
   background: rgb(0 0 0 / 0.35);
@@ -340,6 +399,13 @@ useRaceLoop({
   text-align: center;
   backdrop-filter: blur(6px);
   box-shadow: 0 12px 32px rgb(0 0 0 / 0.35);
+}
+
+.track__cta {
+  justify-self: center;
+  margin-top: var(--space-2);
+  // The overlay ignores the pointer so horses stay hoverable; the button must not.
+  pointer-events: auto;
 }
 
 .track__eyebrow {
