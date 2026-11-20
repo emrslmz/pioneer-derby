@@ -80,7 +80,7 @@ const activeTab = computed({
 
 .layout--desktop {
   display: grid;
-  grid-template-columns: minmax(320px, 1.05fr) minmax(0, 1.9fr) minmax(500px, 1.75fr);
+  grid-template-columns: minmax(340px, 1.1fr) minmax(0, 1.9fr) minmax(500px, 1.7fr);
   gap: var(--layout-gap);
   height: calc(100dvh - var(--header-height));
 }

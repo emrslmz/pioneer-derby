@@ -58,3 +58,28 @@ describe('BaseTooltip', () => {
     expect(tooltip()).toBeNull()
   })
 })
+
+describe('BaseTooltip (when truncated)', () => {
+  function truncatedSetup(scrollWidth: number) {
+    const wrapper = mount(BaseTooltip, {
+      props: { text: 'Camgöbeği', whenTruncated: true },
+      slots: { default: () => h('span', { 'data-truncate': '' }, 'Camgöbeği') },
+      attachTo: document.body,
+    })
+    const label = wrapper.get('[data-truncate]').element as HTMLElement
+    Object.defineProperty(label, 'scrollWidth', { value: scrollWidth })
+    Object.defineProperty(label, 'clientWidth', { value: 60 })
+    return wrapper
+  }
+
+  it('[X8] shows only when the label is cut off with "…"', async () => {
+    const fits = truncatedSetup(60)
+    await fits.get('.tooltip-trigger').trigger('pointerenter')
+    expect(tooltip()).toBeNull()
+    fits.unmount()
+
+    const cut = truncatedSetup(90)
+    await cut.get('.tooltip-trigger').trigger('pointerenter')
+    expect(tooltip()?.textContent?.trim()).toBe('Camgöbeği')
+  })
+})
