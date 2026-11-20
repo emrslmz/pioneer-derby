@@ -33,6 +33,12 @@ describe('first-load splash', () => {
     expect(document.getElementById('splash')?.classList.contains('splash--hide')).toBe(true)
   })
 
+  it('[X9] a first visit does not wait: with a minimum of 0 the splash starts fading at once', async () => {
+    void dismissSplash({ now: () => 120, reducedMotion: false, minMs: 0 })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(document.getElementById('splash')?.classList.contains('splash--hide')).toBe(true)
+  })
+
   it('[X8] reduced motion removes it immediately, with no delay', async () => {
     await dismissSplash({ now: () => 0, reducedMotion: true })
     expect(document.getElementById('splash')).toBeNull()

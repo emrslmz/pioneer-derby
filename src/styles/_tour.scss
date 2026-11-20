@@ -145,3 +145,43 @@
   text-transform: uppercase;
   cursor: pointer;
 }
+
+// The first question is a welcome: wider, with a big greeting and large language buttons.
+.driver-popover.driver-popover.pd-tour--language {
+  max-width: min(520px, calc(100vw - 2 * var(--space-4)));
+  padding: var(--space-8) var(--space-8) var(--space-6);
+
+  .driver-popover-title {
+    font-size: 2.75rem;
+    line-height: 1;
+    text-align: center;
+    text-transform: none;
+  }
+
+  .driver-popover-description {
+    margin-top: var(--space-3);
+  }
+
+  .pd-tour__subtitle {
+    margin-bottom: var(--space-4);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-md);
+    text-align: center;
+  }
+
+  .pd-tour__languages {
+    margin-top: 0;
+    gap: var(--space-3);
+
+    button {
+      min-height: 72px;
+      font-size: 1.6rem;
+    }
+  }
+
+  .pd-tour__continue {
+    min-height: 52px;
+    margin-top: var(--space-4);
+    font-size: var(--font-size-lg);
+  }
+}

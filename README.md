@@ -3,7 +3,7 @@
 [![CI](https://github.com/emrslmz/pioneer-derby/actions/workflows/ci.yml/badge.svg)](https://github.com/emrslmz/pioneer-derby/actions/workflows/ci.yml)
 [![Live demo](https://img.shields.io/badge/live%20demo-pioneerderby.netlify.app-00c7b7?logo=netlify&logoColor=white)](https://pioneerderby.netlify.app)
 ![Lighthouse](https://img.shields.io/badge/Lighthouse-96%20%C2%B7%20100%20%C2%B7%20100%20%C2%B7%20100-0cce6b?logo=lighthouse&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-330%20unit%20%C2%B7%2062%20E2E%20%C2%B7%20visual%20%C2%B7%20axe-15743b)
+![Tests](https://img.shields.io/badge/tests-333%20unit%20%C2%B7%2063%20E2E%20%C2%B7%20visual%20%C2%B7%20axe-15743b)
 
 An interactive horse racing game built with **Vue 3, TypeScript and Pinia** for a front-end developer case study.
 Twenty horses — named after computing pioneers — race across six rounds from 1200 m to 2200 m.
@@ -97,7 +97,7 @@ Every pull request has to pass these checks in CI before it is merged (a require
 | Lint and formatting | oxlint, ESLint boundaries, Prettier | 0 errors, architecture boundaries enforced          | clean                             |
 | Types               | vue-tsc, strict                     | 0 errors                                            | clean                             |
 | Unit and property   | Vitest, fast-check                  | domain 95 %, stores 90 % coverage                   | domain 100 %, stores 99 %         |
-| End to end          | Playwright                          | all flows green (fake clock, seeded)                | 62 tests                          |
+| End to end          | Playwright                          | all flows green (fake clock, seeded)                | 63 tests                          |
 | Visual              | Playwright screenshots              | Linux baselines, light and dark, EN and TR          | 14 screens                        |
 | Accessibility       | axe (WCAG 2.2 AA)                   | 0 serious or critical violations                    | 0, including the tour and dialogs |
 | Performance         | Lighthouse CI, 3 runs, median       | 90 performance, 95 accessibility and best practices | 95 to 96 · 100 · 100 · 100 (SEO)  |
