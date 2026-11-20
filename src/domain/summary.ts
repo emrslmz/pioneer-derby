@@ -20,12 +20,13 @@ export interface ProgramSummary {
   readonly roundWinners: readonly RoundWinner[]
 }
 
+/** Average finishing position; only horses that have raced are ranked, so `form` is not empty. */
+const average = (horse: HorseStats) =>
+  horse.form.reduce((sum, position) => sum + position, 0) / horse.form.length
+
 function compare(a: HorseStats, b: HorseStats): number {
   return (
-    b.wins - a.wins ||
-    b.podiums - a.podiums ||
-    (a.averagePosition ?? Infinity) - (b.averagePosition ?? Infinity) ||
-    a.horseId - b.horseId
+    b.wins - a.wins || b.podiums - a.podiums || average(a) - average(b) || a.horseId - b.horseId
   )
 }
 

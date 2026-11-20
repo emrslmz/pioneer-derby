@@ -43,6 +43,37 @@ describe('program summary', () => {
     expect(summary.standings.map((horse) => horse.horseId).slice(0, 3)).toEqual([2, 1, 3])
   })
 
+  it('[X13] equal horses are ordered by number, a better average position breaks a podium tie', () => {
+    const placings = (order: number[]) =>
+      order.map((horseId, index) => ({ position: index + 1, horseId, timeMs: 1000 + index }))
+    // Horses 1 and 2 are identical: one win, one second place.
+    const identical: RoundResult[] = [
+      { roundIndex: 0, distance: 1200, placings: placings([1, 2]) },
+      { roundIndex: 1, distance: 1400, placings: placings([2, 1]) },
+    ]
+    expect(summarizeProgram([1, 2], identical).standings.map((horse) => horse.horseId)).toEqual([
+      1, 2,
+    ])
+
+    // Horses 3 and 4 both have no win and two podiums, but 4 finished better on average.
+    const averages: RoundResult[] = [
+      { roundIndex: 0, distance: 1200, placings: placings([5, 3, 4]) },
+      { roundIndex: 1, distance: 1400, placings: placings([5, 4, 3]) },
+    ]
+    const ranked = summarizeProgram([3, 4, 5], averages).standings.map((horse) => horse.horseId)
+    expect(ranked[0]).toBe(5) // two wins
+    expect(ranked.slice(1)).toEqual([3, 4]) // 3 and 4 are level on everything: lowest number first
+  })
+
+  it('[X13] a round without a winner (no placings) is left out of the winners list', () => {
+    const results: RoundResult[] = [
+      { roundIndex: 0, distance: 1200, placings: [] },
+      { roundIndex: 1, distance: 1400, placings: [{ position: 1, horseId: 7, timeMs: 5000 }] },
+    ]
+    const summary = summarizeProgram([7], results)
+    expect(summary.roundWinners.map((winner) => winner.roundIndex)).toEqual([1])
+  })
+
   it('[X13] before any round is finished there is no champion', () => {
     const summary = summarizeProgram([1, 2, 3], [])
     expect(summary.champion).toBeNull()
