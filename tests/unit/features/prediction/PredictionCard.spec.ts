@@ -120,6 +120,7 @@ describe('PredictionCard', () => {
     const { wrapper, race } = setup()
     race.generateProgram()
     race.start()
+    race.setAutoAdvance(true)
     vi.runAllTimers()
     await nextTick()
     expect(wrapper.get('[data-testid="prediction-final"]').text()).toBe(

@@ -2,12 +2,13 @@
 import { nextTick, ref } from 'vue'
 import type { Horse, HorseId } from '@/domain/types'
 import BaseIcon from '@/shared/ui/BaseIcon.vue'
-import BaseShortName from '@/shared/ui/BaseShortName.vue'
+import BaseTooltip from '@/shared/ui/BaseTooltip.vue'
 import { nextIndex } from '@/shared/ui/tabs'
 
 /**
- * Radio group of the round's runners in lane order, laid out as a grid so all ten are visible at
- * once. Arrow keys move the pick, like native radios.
+ * The round's runners as compact coat-coloured number chips in lane order — all ten fit on one
+ * row. The full name is in the accessible name ("20 Margaret Hamilton") and in a tooltip.
+ * A radio group: arrow keys move the pick, like native radios.
  */
 const props = defineProps<{
   runners: readonly Horse[]
@@ -15,7 +16,7 @@ const props = defineProps<{
   recommendedId: HorseId | null
   recommendedLabel: string
   disabled?: boolean
-  /** Always render this many slots, so the grid keeps its size before a line-up exists. */
+  /** Always render this many slots, so the row keeps its size before a line-up exists. */
   slots?: number
 }>()
 
@@ -38,36 +39,33 @@ async function onKeydown(event: KeyboardEvent, index: number) {
 
 <template>
   <div class="picker" role="radiogroup" :aria-label="label" :aria-disabled="disabled || undefined">
-    <button
+    <BaseTooltip
       v-for="(runner, index) in runners"
       :key="runner.id"
-      ref="buttons"
-      type="button"
-      role="radio"
-      class="picker__runner"
-      :class="{ 'picker__runner--tip': runner.id === recommendedId }"
-      :aria-checked="model === runner.id"
-      :tabindex="focusIndex(index) ? 0 : -1"
-      :disabled="disabled"
-      :style="{ '--coat': runner.color.hex }"
-      data-testid="pick-option"
-      :data-horse-id="runner.id"
-      @click="model = runner.id"
-      @keydown="onKeydown($event, index)"
+      :text="runner.id === recommendedId ? `${runner.name} · ${recommendedLabel}` : runner.name"
     >
-      <span class="picker__number" aria-hidden="true">{{ runner.id }}</span>
-      <BaseShortName class="picker__name" :name="runner.name" />
-      <span
-        v-if="runner.id === recommendedId"
-        class="picker__tip"
-        :title="recommendedLabel"
-        data-testid="pick-tip"
+      <button
+        ref="buttons"
+        type="button"
+        role="radio"
+        class="picker__runner"
+        :class="{ 'picker__runner--tip': runner.id === recommendedId }"
+        :aria-checked="model === runner.id"
+        :tabindex="focusIndex(index) ? 0 : -1"
+        :disabled="disabled"
+        :style="{ '--coat': runner.color.hex }"
+        data-testid="pick-option"
+        :data-horse-id="runner.id"
+        @click="model = runner.id"
+        @keydown="onKeydown($event, index)"
       >
-        <BaseIcon name="star" :size="12" />
-        <span class="visually-hidden">{{ recommendedLabel }}</span>
-      </span>
-      <BaseIcon v-if="model === runner.id" name="check" :size="14" class="picker__check" />
-    </button>
+        {{ runner.id }}<span class="visually-hidden"> {{ runner.name }}</span>
+        <span v-if="runner.id === recommendedId" class="picker__tip" data-testid="pick-tip">
+          <BaseIcon name="star" :size="9" />
+          <span class="visually-hidden">{{ recommendedLabel }}</span>
+        </span>
+      </button>
+    </BaseTooltip>
     <span
       v-for="slot in Math.max(0, (slots ?? 0) - runners.length)"
       :key="`slot-${slot}`"
@@ -79,103 +77,71 @@ async function onKeydown(event: KeyboardEvent, index: number) {
 
 <style scoped lang="scss">
 .picker {
-  display: grid;
-  // Five per row on a laptop: all ten runners in two compact rows.
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: var(--space-1);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
 }
 
 .picker__runner {
   position: relative;
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-width: 0;
-  min-height: 34px;
-  padding: 3px var(--space-2) 3px 3px;
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  color: var(--color-text);
-  font: inherit;
-  font-size: var(--font-size-sm);
-  text-align: start;
-  cursor: pointer;
-  transition:
-    border-color var(--duration-fast),
-    background-color var(--duration-fast),
-    transform var(--duration-fast);
-
-  &:hover:not(:disabled) {
-    border-color: var(--coat);
-    transform: translateY(-1px);
-  }
-
-  &[aria-checked='true'] {
-    border-color: var(--color-accent);
-    background: var(--color-accent-soft);
-    box-shadow: 0 0 0 1px var(--color-accent) inset;
-  }
-
-  &:disabled {
-    cursor: default;
-    opacity: 0.55;
-  }
-}
-
-.picker__runner--placeholder {
-  border-style: dashed;
-  background: transparent;
-  cursor: default;
-}
-
-.picker__runner--tip {
-  border-color: var(--color-gold);
-}
-
-.picker__number {
   display: grid;
-  flex-shrink: 0;
   place-items: center;
-  width: 24px;
-  height: 24px;
+  width: 38px;
+  height: 38px;
+  padding: 0;
   border: 2px solid rgb(0 0 0 / 0.35);
   border-radius: 50%;
   background: var(--coat);
   color: #fff;
   font-family: var(--font-display);
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-md);
   font-weight: 700;
   text-shadow:
     0 0 2px #000,
     0 0 2px #000;
+  cursor: pointer;
+  transition:
+    transform var(--duration-fast),
+    box-shadow var(--duration-fast);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+
+  &[aria-checked='true'] {
+    box-shadow:
+      0 0 0 3px var(--color-surface),
+      0 0 0 6px var(--color-accent);
+    transform: scale(1.06);
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+
+  &:disabled:not([aria-checked='true']) {
+    opacity: 0.45;
+  }
 }
 
-.picker__name {
-  overflow: hidden;
-  font-weight: 600;
-  text-overflow: ellipsis;
+.picker__runner--placeholder {
+  border: 2px dashed var(--color-border-strong);
+  background: transparent;
+  cursor: default;
 }
 
 .picker__tip {
+  position: absolute;
+  top: -6px;
+  right: -6px;
   display: grid;
-  flex-shrink: 0;
   place-items: center;
-  width: 20px;
-  height: 20px;
-  margin-left: auto;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--color-surface);
   border-radius: 50%;
   background: var(--color-gold);
   color: #1a1a1a;
-}
-
-.picker__check {
-  flex-shrink: 0;
-  margin-left: auto;
-  color: var(--color-accent-text);
-}
-
-.picker__tip + .picker__check {
-  margin-left: 0;
+  text-shadow: none;
 }
 </style>

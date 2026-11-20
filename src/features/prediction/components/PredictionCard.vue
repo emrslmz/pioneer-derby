@@ -128,8 +128,9 @@ const canBackTip = computed(
 
 <template>
   <!--
-    Every row exists in every state and only its content changes, so the card keeps the same height
-    from Generate to the last round and the track below never jumps.
+    A compact strip with three fixed rows (title · runners · one info line), the same height in
+    every state. Row two holds two layers in one grid cell: the "how to play" steps before a
+    program exists, the runner chips afterwards.
   -->
   <section
     class="prediction"
@@ -138,15 +139,9 @@ const canBackTip = computed(
     data-testid="prediction-card"
   >
     <header class="prediction__header">
-      <span class="prediction__badge" aria-hidden="true"><BaseIcon name="star" :size="16" /></span>
+      <span class="prediction__badge" aria-hidden="true"><BaseIcon name="star" :size="14" /></span>
       <h2 id="prediction-title" class="prediction__title">{{ t('prediction.title') }}</h2>
-      <span
-        class="prediction__cta"
-        :class="{ 'is-hidden': !(isOpen && currentPick === null) }"
-        :aria-hidden="!(isOpen && currentPick === null)"
-      >
-        {{ t('prediction.makePick') }}
-      </span>
+      <p class="prediction__question">{{ headline }}</p>
       <span
         class="prediction__score"
         :aria-label="t('prediction.score', { points: totalPoints, correct: correctWinners })"
@@ -156,10 +151,6 @@ const canBackTip = computed(
       </span>
     </header>
 
-    <!--
-      Two layers share one grid cell: the "how to play" guide before a program exists, the game
-      afterwards. The card is as tall as the taller layer in every state, so nothing jumps.
-    -->
     <div class="prediction__stage">
       <div
         class="prediction__layer prediction__guide"
@@ -167,20 +158,15 @@ const canBackTip = computed(
         :inert="mode !== 'idle' || undefined"
         data-testid="onboarding"
       >
-        <p class="guide__title">{{ t('onboarding.title') }}</p>
+        <p class="visually-hidden">{{ t('onboarding.title') }}</p>
         <ol class="guide__steps">
           <li v-for="(step, index) in guideSteps" :key="step.key" class="guide__step">
             <span class="guide__number" aria-hidden="true">{{ index + 1 }}</span>
-            <span class="guide__text">
-              <strong>{{ t(`onboarding.steps.${step.key}.title`) }}</strong>
-              <span>{{ t(`onboarding.steps.${step.key}.text`) }}</span>
-            </span>
-            <kbd v-if="step.kbd" aria-hidden="true">{{ step.kbd }}</kbd>
+            <strong>{{ t(`onboarding.steps.${step.key}.title`) }}</strong>
           </li>
         </ol>
         <BaseButton
           variant="primary"
-          size="lg"
           icon="generate"
           shortcut="G"
           class="guide__cta"
@@ -196,40 +182,6 @@ const canBackTip = computed(
         :class="{ 'is-hidden': mode === 'idle' }"
         :inert="mode === 'idle' || undefined"
       >
-        <div class="prediction__ask">
-          <p class="prediction__question">{{ headline }}</p>
-          <span class="prediction__rules">{{ t('prediction.rules') }}</span>
-        </div>
-
-        <div class="prediction__tip" :class="`prediction__tip--${mode}`">
-          <p :data-testid="tipTestId">
-            <template v-if="mode === 'locked'">
-              <strong>{{
-                currentPick !== null
-                  ? t('prediction.yourPick', { name: nameOf(currentPick) })
-                  : t('prediction.noPick')
-              }}</strong>
-              <span class="prediction__muted">
-                {{ currentPick !== null ? t('prediction.pending') : t('prediction.locked') }}
-              </span>
-            </template>
-            <template v-else>{{ tipText }}</template>
-          </p>
-          <BaseButton
-            size="sm"
-            icon="star"
-            class="prediction__tip-button"
-            :class="{ 'is-hidden': !canBackTip }"
-            :disabled="!canBackTip"
-            :aria-hidden="!canBackTip"
-            :tabindex="canBackTip ? undefined : -1"
-            data-testid="pick-tip-button"
-            @click="recommendation && (pick = recommendation.horseId)"
-          >
-            {{ t('prediction.pickTip') }}
-          </BaseButton>
-        </div>
-
         <RunnerPicker
           v-model="pick"
           :runners="runners"
@@ -239,32 +191,59 @@ const canBackTip = computed(
           :recommended-id="isOpen ? (recommendation?.horseId ?? null) : null"
           :recommended-label="t('prediction.recommended')"
         />
-
-        <p class="prediction__outcome" aria-live="polite" data-testid="prediction-outcome">
-          <BaseBadge v-if="lastOutcome" :tone="outcomeTone[lastOutcome.outcome]">
-            {{ lastOutcome.text }}
-          </BaseBadge>
-        </p>
+        <BaseButton
+          size="sm"
+          icon="star"
+          class="prediction__tip-button"
+          :class="{ 'is-hidden': !canBackTip }"
+          :disabled="!canBackTip"
+          :aria-hidden="!canBackTip"
+          :tabindex="canBackTip ? undefined : -1"
+          data-testid="pick-tip-button"
+          @click="recommendation && (pick = recommendation.horseId)"
+        >
+          {{ t('prediction.pickTip') }}
+        </BaseButton>
       </div>
+    </div>
+
+    <div class="prediction__info">
+      <p class="prediction__outcome" aria-live="polite" data-testid="prediction-outcome">
+        <BaseBadge v-if="lastOutcome" :tone="outcomeTone[lastOutcome.outcome]">
+          {{ lastOutcome.text }}
+        </BaseBadge>
+      </p>
+      <p class="prediction__text" :data-testid="tipTestId">
+        <template v-if="mode === 'locked'">
+          <strong>{{
+            currentPick !== null
+              ? t('prediction.yourPick', { name: nameOf(currentPick) })
+              : t('prediction.noPick')
+          }}</strong>
+          <span class="prediction__muted">
+            {{ currentPick !== null ? t('prediction.pending') : t('prediction.locked') }}
+          </span>
+        </template>
+        <template v-else-if="mode === 'idle'">{{ t('prediction.rules') }}</template>
+        <template v-else>{{ tipText }}</template>
+      </p>
     </div>
   </section>
 </template>
 
 <style scoped lang="scss">
 .prediction {
-  position: relative;
   display: grid;
   gap: var(--space-2);
-  // Grid/flex children default to min-width: auto; this keeps the card inside its column.
   min-width: 0;
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-2) var(--space-4) var(--space-2);
   border: 2px solid transparent;
   border-radius: var(--radius-lg);
   background:
     linear-gradient(
         135deg,
-        color-mix(in srgb, var(--color-gold) 18%, var(--color-surface)),
-        var(--color-surface) 60%
+        color-mix(in srgb, var(--color-gold) 16%, var(--color-surface)),
+        var(--color-surface) 55%
       )
       padding-box,
     linear-gradient(120deg, var(--color-gold), var(--color-accent)) border-box;
@@ -286,47 +265,54 @@ const canBackTip = computed(
 
 .prediction__header {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2) var(--space-3);
+  gap: var(--space-2);
+  min-width: 0;
 }
 
 .prediction__badge {
   display: grid;
+  flex-shrink: 0;
   place-items: center;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--color-gold);
   color: #1a1a1a;
 }
 
 .prediction__title {
-  font-size: var(--font-size-lg);
+  flex-shrink: 0;
+  font-size: var(--font-size-md);
   letter-spacing: 0.03em;
   text-transform: uppercase;
 }
 
-.prediction__cta {
-  padding: 2px var(--space-2);
-  border-radius: var(--radius-pill);
-  background: var(--color-warning-soft);
-  color: var(--color-warning-text);
+.prediction__question {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-text-muted);
   font-family: var(--font-display);
-  font-size: var(--font-size-xs);
-  font-weight: 700;
-  letter-spacing: var(--letter-spacing-caps);
-  text-transform: uppercase;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &::before {
+    margin-right: var(--space-2);
+    content: '·';
+  }
 }
 
 .prediction__score {
+  flex-shrink: 0;
   margin-left: auto;
-  padding: var(--space-1) var(--space-3);
+  padding: 2px var(--space-3);
   border-radius: var(--radius-pill);
   background: var(--gradient-accent);
   color: var(--color-accent-contrast);
   font-family: var(--font-display);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-sm);
   font-weight: 700;
   letter-spacing: 0.04em;
   white-space: nowrap;
@@ -338,67 +324,52 @@ const canBackTip = computed(
 
 // Both layers occupy the same cell; the hidden one still reserves its height.
 .prediction__layer {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   grid-area: 1 / 1;
-  gap: var(--space-2);
-  align-content: start;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
   min-width: 0;
 }
 
-.guide__title {
-  font-family: var(--font-display);
-  font-size: var(--font-size-lg);
-  font-weight: 700;
-}
-
 .guide__steps {
-  display: grid;
-  gap: var(--space-1);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
   margin: 0;
   padding: 0;
+  font-size: var(--font-size-sm);
   list-style: none;
 }
 
 .guide__step {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: var(--space-3);
+  display: flex;
   align-items: center;
-  padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  font-size: var(--font-size-sm);
+  gap: var(--space-1);
+
+  & + &::before {
+    margin-right: var(--space-2);
+    color: var(--color-text-subtle);
+    content: '→';
+  }
 }
 
 .guide__number {
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: var(--gradient-accent);
   color: var(--color-accent-contrast);
   font-family: var(--font-display);
+  font-size: var(--font-size-xs);
   font-weight: 700;
 }
 
-.guide__text {
-  display: -webkit-box;
-  min-width: 0;
-  overflow: hidden;
-  line-height: 1.35;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-
-  span {
-    margin-left: var(--space-2);
-    color: var(--color-text-muted);
-  }
-}
-
 .guide__cta {
-  justify-self: start;
+  margin-left: auto;
   animation: cta-pulse 2s ease-in-out infinite;
 }
 
@@ -410,65 +381,42 @@ const canBackTip = computed(
   }
 }
 
-.prediction__ask {
+.prediction__tip-button {
+  margin-left: auto;
+}
+
+.prediction__info {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-1) var(--space-3);
-}
-
-.prediction__question {
-  overflow: hidden;
-  font-family: var(--font-display);
-  font-size: var(--font-size-lg);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-weight: 700;
-  line-height: 1.1;
-}
-
-.prediction__rules {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
-}
-
-.prediction__tip {
-  display: flex;
-  min-height: 2.5rem;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2) var(--space-3);
-  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3);
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--color-gold) 12%, transparent);
-  color: var(--color-text);
+  gap: var(--space-2);
+  height: 1.75rem;
+  min-width: 0;
+  overflow: hidden;
   font-size: var(--font-size-sm);
 }
 
-.prediction__tip p {
-  // Always exactly two lines tall: every state's text fits, so the height never changes.
-  display: -webkit-box;
-  flex: 1;
+.prediction__outcome {
+  flex-shrink: 0;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.prediction__text {
   min-width: 0;
-  min-height: calc(2 * 1.4em);
   overflow: hidden;
-  line-height: 1.4;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  color: var(--color-text-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  strong {
+    color: var(--color-text);
+  }
 }
 
 .prediction__muted {
   margin-left: var(--space-2);
-  color: var(--color-text-muted);
-}
-
-.prediction__outcome {
-  // A fixed slot, empty or not, so the card never changes height.
-  display: flex;
-  align-items: center;
-  height: 1.75rem;
-  overflow: hidden;
 }
 
 .is-hidden {
