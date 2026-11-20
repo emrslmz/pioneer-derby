@@ -5,7 +5,7 @@
 
 ## Context
 
-Insider One builds products on top of behavioural events. The game should show how user actions would be
+Products are built on top of behavioural events. The game should show how user actions would be
 measured in a real product, without coupling features to a vendor SDK or scattering `console.log` (X5).
 
 ## Decision

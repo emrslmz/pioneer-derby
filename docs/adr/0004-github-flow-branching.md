@@ -5,7 +5,7 @@
 
 ## Context
 
-The project is built by one developer, phase by phase (docs/PLAN.md), and will be reviewed by Insider One.
+The project is built by one developer, phase by phase (docs/PLAN.md), and will be reviewed by hiring engineers.
 Reviewers read the git history and pull requests, so every change should be small, explained and green in CI.
 The question was whether a long-lived `development` branch (Git Flow) is worth it.
 

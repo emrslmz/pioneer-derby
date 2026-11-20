@@ -76,5 +76,5 @@
   "engines": {
     "node": "^22.18.0 || >=24.12.0"
   },
-  "description": "Pioneer Derby \u2014 horse racing game for the Insider One front-end case"
+  "description": "Pioneer Derby \u2014 horse racing game, a front-end case study"
 }

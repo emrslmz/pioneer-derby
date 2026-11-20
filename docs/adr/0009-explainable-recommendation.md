@@ -5,8 +5,8 @@
 
 ## Context
 
-The "Predict the winner" game (X4) suggests a horse before each round. Insider One builds personalisation
-products, where a suggestion users can't understand is a suggestion users don't trust. The suggestion must
+The "Predict the winner" game (X4) suggests a horse before each round. In personalisation
+products, a suggestion users can't understand is a suggestion users don't trust. The suggestion must
 also be fair (no knowledge of the coming result), testable, and language-independent.
 
 ## Decision

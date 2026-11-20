@@ -1,6 +1,6 @@
-# Requirements — Insider One Horse Racing Case
+# Requirements — Horse Racing Case
 
-Source: `Insider One Case Study - Front-end Developer.pdf` (2 pages + example screenshot).
+Source: the case study PDF (2 pages + example screenshot; it is not part of this repository).
 Every requirement has an ID. Code, tests and PRs reference these IDs.
 
 ## Functional requirements

@@ -7,7 +7,7 @@ A night-time stadium race broadcast where the 20 horses are named after **comput
 
 What makes it distinct while staying faithful to the spec layout:
 
-- **Broadcast look**: dark "night track" theme with Insider One coral accent (`#F4482B` → orange gradient),
+- **Broadcast look**: dark "night track" theme with a coral accent (`#F4482B` → orange gradient),
   light theme also supported (system preference + toggle).
 - **Pioneer cards**: each horse has a name, number, unique color swatch + color name, condition bar.
 - **Live leaderboard** during the race (current positions update in real time).
@@ -15,7 +15,7 @@ What makes it distinct while staying faithful to the spec layout:
 - **Commentary ticker**: short generated lines ("Grace Hopper takes the lead at 800m!").
 - **Speed control** (1× / 2× / 4×) and a **seed** (`?seed=1234`) so a race can be replayed/shared.
 - **Predict the winner** + **recommended horse**: an engagement/personalization layer that mirrors
-  what Insider One builds (points only, no betting).
+  what personalisation products build (points only, no betting).
 - **Typed analytics events** behind a pluggable adapter, visible in a debug panel (`?debug=1`).
 - **Horse statistics**: rounds run, average position, form.
 - **Turkish + English** UI.

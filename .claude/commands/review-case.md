@@ -1,5 +1,5 @@
 ---
-description: Review the project the way an Insider One reviewer would
+description: Review the project the way a hiring reviewer would
 ---
 
 Use the `case-reviewer` agent to review the whole project against @docs/REQUIREMENTS.md and @CLAUDE.md.
