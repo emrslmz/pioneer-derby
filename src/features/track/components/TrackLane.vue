@@ -13,6 +13,8 @@ defineSlots<{ default(): unknown }>()
   <div class="lane" :class="{ 'lane--winner': winner }" data-testid="track-lane">
     <span class="lane__number" :aria-label="laneLabel">{{ lane }}</span>
     <div class="lane__run">
+      <!-- Starting stall: the horse begins inside it and runs out of the front gate. -->
+      <span class="lane__stall" aria-hidden="true" />
       <slot />
     </div>
   </div>
@@ -23,7 +25,7 @@ defineSlots<{ default(): unknown }>()
   display: grid;
   grid-template-columns: 2rem 1fr;
   min-height: 32px;
-  border-bottom: 1px dashed rgb(255 255 255 / 0.45);
+  border-bottom: 1px dashed rgb(255 255 255 / 0.28);
 
   &:last-child {
     border-bottom: 0;
@@ -63,5 +65,22 @@ defineSlots<{ default(): unknown }>()
   position: relative;
   overflow: hidden;
   container-type: size;
+}
+
+.lane__stall {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  // As wide as the runner (see RaceTrack .carrier) plus the front gate.
+  width: calc(94cqh * 72 / 46 + 6px);
+  border-right: 4px solid #d6dbe3;
+  background:
+    linear-gradient(90deg, rgb(255 255 255 / 0.08) 1px, transparent 1px) 0 0 / 8px 100%,
+    linear-gradient(180deg, rgb(10 14 22 / 0.55), rgb(30 36 48 / 0.35));
+  box-shadow:
+    inset 0 2px 0 #9aa3b2,
+    inset 0 -2px 0 #9aa3b2,
+    2px 0 4px rgb(0 0 0 / 0.35);
 }
 </style>
