@@ -1,5 +1,175 @@
 /**
- * Traceability report (X3): maps requirement IDs found in test titles to docs/TRACEABILITY.md.
- * Implemented in Phase 7 (docs/PLAN.md).
+ * Requirement ↔ test traceability (X3): `npm run report:traceability [-- --check]`
+ *
+ * Reads every requirement ID from docs/REQUIREMENTS.md, finds the tests whose titles start with that
+ * ID (`it('[C5] …')`), and writes docs/TRACEABILITY.md. With `--check` it exits non-zero when a
+ * requirement has neither a test nor recorded evidence — CI runs this, so coverage of the brief can't
+ * silently regress.
  */
-console.log('report:traceability: not implemented yet — lands in Phase 7 (X3).')
+import { readdirSync, readFileSync, statSync } from 'node:fs'
+import { join, relative, resolve } from 'node:path'
+import process from 'node:process'
+import { writeFormatted } from './write-formatted'
+
+const root = resolve(import.meta.dirname, '..')
+const check = process.argv.includes('--check')
+
+interface Requirement {
+  id: string
+  text: string
+  section: string
+}
+
+type Kind = 'unit' | 'e2e' | 'visual'
+interface TestRef {
+  title: string
+  file: string
+  kind: Kind
+}
+
+// ── Requirements ────────────────────────────────────────────────────────────
+function readRequirements(): Requirement[] {
+  const markdown = readFileSync(join(root, 'docs/REQUIREMENTS.md'), 'utf8')
+  const requirements: Requirement[] = []
+  let section = ''
+  for (const line of markdown.split('\n')) {
+    const heading = /^## (.+)$/.exec(line)
+    if (heading) section = heading[1]!.trim()
+    const row = /^\|\s*([RCTBX]\d+)\s*\|\s*([^|]+?)\s*\|/.exec(line)
+    if (row) requirements.push({ id: row[1]!, text: row[2]!.replace(/\*\*/g, ''), section })
+  }
+  return requirements
+}
+
+// ── Tests ───────────────────────────────────────────────────────────────────
+function walk(dir: string): string[] {
+  return readdirSync(dir).flatMap((name) => {
+    const path = join(dir, name)
+    return statSync(path).isDirectory() ? walk(path) : path.endsWith('.spec.ts') ? [path] : []
+  })
+}
+
+function readTests(): Map<string, TestRef[]> {
+  const byId = new Map<string, TestRef[]>()
+  for (const kind of ['unit', 'e2e', 'visual'] as const) {
+    let files: string[] = []
+    try {
+      files = walk(join(root, 'tests', kind))
+    } catch {
+      continue
+    }
+    for (const file of files) {
+      const source = readFileSync(file, 'utf8')
+      const titles = source.matchAll(/\b(?:it|test)\(\s*(['"`])((?:\[[A-Z]\d+\]\s*)+)(.*?)\1/g)
+      for (const [, , ids = '', rest = ''] of titles) {
+        const title = `${ids}${rest}`.trim()
+        for (const [, id] of ids.matchAll(/\[([A-Z]\d+)\]/g)) {
+          const list = byId.get(id!) ?? []
+          list.push({ title, file: relative(root, file), kind })
+          byId.set(id!, list)
+        }
+      }
+    }
+  }
+  return byId
+}
+
+// ── Evidence that is not a test title ───────────────────────────────────────
+function countFiles(dir: string, pattern: RegExp): number {
+  try {
+    return readdirSync(join(root, dir)).filter((name) => pattern.test(name)).length
+  } catch {
+    return 0
+  }
+}
+
+function evidence(id: string, tests: Map<string, TestRef[]>): string | null {
+  const total = (kind: Kind) => [...tests.values()].flat().filter((t) => t.kind === kind).length
+  switch (id) {
+    case 'R7':
+      return 'Architecture boundaries + strict TS enforced in CI (`eslint.config.ts`, `vue-tsc`)'
+    case 'B1':
+      return total('unit') > 0 ? `${total('unit')} tagged unit test cases (Vitest)` : null
+    case 'B2':
+      return total('e2e') > 0 ? `${total('e2e')} tagged E2E test cases (Playwright)` : null
+    case 'B3':
+      return total('visual') > 0
+        ? `${total('visual')} tagged visual test cases (Playwright screenshots)`
+        : null
+    case 'X3':
+      return 'This report, checked in CI (`npm run report:traceability -- --check`)'
+    case 'X6':
+      return 'GitHub Actions: `.github/workflows/ci.yml` — one status check per quality gate'
+    case 'X14':
+      return `${countFiles('docs/adr', /^\d{4}-(?!template).+\.md$/)} ADRs in \`docs/adr/\``
+    case 'X15':
+      return 'Conventional Commits, one PR per phase (`git log`)'
+    default:
+      return null
+  }
+}
+
+// ── Report ──────────────────────────────────────────────────────────────────
+const requirements = readRequirements()
+const tests = readTests()
+
+const rows = requirements.map((req) => {
+  const refs = tests.get(req.id) ?? []
+  const count = (kind: Kind) => refs.filter((r) => r.kind === kind).length
+  const extra = evidence(req.id, tests)
+  const covered = refs.length > 0 || extra !== null
+  return {
+    req,
+    refs,
+    unit: count('unit'),
+    e2e: count('e2e'),
+    visual: count('visual'),
+    extra,
+    covered,
+  }
+})
+
+const missing = rows.filter((row) => !row.covered)
+const unknownIds = [...tests.keys()].filter((id) => !requirements.some((r) => r.id === id))
+const totalTests = new Set([...tests.values()].flat().map((t) => `${t.file}:${t.title}`)).size
+
+const escape = (text: string) => text.replace(/\|/g, '\\|')
+const lines = [
+  '# Requirement traceability',
+  '',
+  '> Generated by `npm run report:traceability` from test titles — do not edit by hand.',
+  '> Every requirement ID from [REQUIREMENTS.md](./REQUIREMENTS.md) maps to the tests that prove it.',
+  '',
+  `**${rows.length - missing.length} / ${rows.length} requirements covered** · ${totalTests} tagged test cases`,
+  '',
+  '| ID | Requirement | Unit | E2E | Visual | Status |',
+  '| --- | --- | --- | --- | --- | --- |',
+  ...rows.map(
+    ({ req, unit, e2e, visual, extra, covered }) =>
+      `| ${req.id} | ${escape(req.text)} | ${unit || '–'} | ${e2e || '–'} | ${visual || '–'} | ${
+        covered ? (extra && unit + e2e + visual === 0 ? '✅ evidence' : '✅') : '❌'
+      } |`,
+  ),
+  '',
+  '## Details',
+  '',
+  ...rows.flatMap(({ req, refs, extra }) => [
+    `<details><summary><b>${req.id}</b> — ${escape(req.text)} (${refs.length})</summary>`,
+    '',
+    ...(extra ? [`- _Evidence:_ ${extra}`] : []),
+    ...refs.map((ref) => `- \`${ref.kind}\` ${escape(ref.title)} — [${ref.file}](../${ref.file})`),
+    '',
+    '</details>',
+    '',
+  ]),
+]
+await writeFormatted(join(root, 'docs/TRACEABILITY.md'), lines.join('\n'))
+
+console.log(
+  `Traceability: ${rows.length - missing.length}/${rows.length} requirements covered, ${totalTests} tagged tests.`,
+)
+if (unknownIds.length) console.warn(`Unknown IDs in test titles: ${unknownIds.join(', ')}`)
+if (check && (missing.length > 0 || unknownIds.length > 0)) {
+  console.error(`Not covered: ${missing.map((m) => m.req.id).join(', ') || '—'}`)
+  process.exit(1)
+}
