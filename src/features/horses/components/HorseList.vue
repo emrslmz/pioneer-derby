@@ -45,7 +45,7 @@ const rows = computed(() => {
 const columns = computed<TableColumn<Horse>[]>(() => [
   { key: 'number', label: t('horses.number'), align: 'end', width: '3.25rem', sortable: true },
   { key: 'name', label: t('horses.name') },
-  { key: 'condition', label: t('horses.condition'), width: '7rem', sortable: true },
+  { key: 'condition', label: t('horses.condition'), width: '6rem', sortable: true },
   { key: 'color', label: t('horses.color'), width: 'var(--color-column, 7.5rem)' },
 ])
 

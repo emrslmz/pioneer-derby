@@ -16,11 +16,12 @@ describe('shortName', () => {
 
   it('[X8] BaseShortName shows the short form, with the full name on hover and for screen readers', () => {
     const wrapper = mount(BaseShortName, { props: { name: 'Margaret Hamilton' } })
-    expect(wrapper.attributes('title')).toBe('Margaret Hamilton')
     expect(wrapper.get('.short-name__visible').text()).toBe('Margaret H.')
     // Accessible name starts with the visible text (WCAG 2.5.3), then the full name.
     expect(wrapper.text()).toBe('Margaret H. (Margaret Hamilton)')
-    expect(mount(BaseShortName, { props: { name: 'Plato' } }).text()).toBe('Plato')
+    const plain = mount(BaseShortName, { props: { name: 'Plato' } })
+    expect(plain.text()).toBe('Plato')
+    expect(plain.find('.tooltip-trigger').exists()).toBe(false)
   })
 })
 

@@ -30,11 +30,13 @@ describe('HorseList', () => {
     expect(first.find('.swatch__label').text()).toMatch(/^[A-Z][a-z]+$/)
   })
 
-  it('[R2] abbreviates surnames visually but keeps the full name for hover and screen readers', () => {
-    const { wrapper } = mountFeature(HorseList)
+  it('[R2] abbreviates surnames visually but keeps the full name for hover and screen readers', async () => {
+    const { wrapper } = mountFeature(HorseList, { attachTo: document.body })
     const horse = useHorsesStore().horses[0]!
     const name = wrapper.findAll('[data-testid="short-name"]')[0]!
-    expect(name.attributes('title')).toBe(horse.name)
+    await wrapper.findAll('.tooltip-trigger')[0]!.trigger('pointerenter')
+    expect(document.querySelector('[data-testid="tooltip"]')?.textContent?.trim()).toBe(horse.name)
+    wrapper.unmount()
     expect(name.get('.short-name__visible').text()).toMatch(/^\S+ [A-ZÇĞİÖŞÜ]\.$/)
     expect(name.get('.visually-hidden').text()).toBe(`(${horse.name})`)
   })
