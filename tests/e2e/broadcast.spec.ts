@@ -20,18 +20,17 @@ test.describe('broadcast layer', () => {
     await page.getByRole('radio', { name: '4×' }).click()
     await page.getByTestId('toggle-button').click()
 
-    const podium = page.getByTestId('podium')
-    await expect(podium).toBeVisible({ timeout: 10_000 })
-    await expect(podium).toContainText('1st Lap – 1200 m — result')
-    await expect(podium).toContainText('Next up: 2nd Lap – 1400 m')
+    const board = page.getByTestId('round-result')
+    await expect(board).toBeVisible({ timeout: 10_000 })
+    await expect(board).toContainText('1st Lap – 1200 m · Result')
+    await expect(board.getByTestId('result-podium-row')).toHaveCount(3)
+    await expect(board.getByTestId('result-next')).toHaveText('Next up: 2nd Lap – 1400 m')
     await expect(page.locator('.lane--winner')).toHaveCount(1)
     // The commentary names the same winner as the results table.
-    const winner = await page
-      .getByTestId('result-round')
+    const winner = await board
+      .getByTestId('result-podium-row')
       .first()
-      .locator('tbody tr')
-      .first()
-      .locator('.swatch__label')
+      .locator('.board__name')
       .textContent()
     await expect(page.getByTestId('commentary-line')).toHaveText(
       `${winner} wins the 1st Lap – 1200 m!`,
@@ -56,7 +55,7 @@ test.describe('broadcast layer', () => {
     await page.getByTestId('generate-button').click()
     await page.getByRole('radio', { name: '4×' }).click()
     await page.getByTestId('toggle-button').click()
-    await expect(page.getByTestId('podium')).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByTestId('round-result')).toBeVisible({ timeout: 10_000 })
     await page.getByTestId('toggle-button').click()
 
     const { violations } = await new AxeBuilder({ page })

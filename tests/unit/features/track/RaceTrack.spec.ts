@@ -73,7 +73,7 @@ describe('RaceTrack', () => {
     ])
     expect(wrapper.find('.finish').exists()).toBe(true)
     expect(wrapper.findAll('[data-testid="runner"]')).toHaveLength(0)
-    expect(wrapper.get('[data-testid="track-overlay"]').text()).toContain('Generate a program')
+    expect(wrapper.get('[data-testid="track-overlay"]').text()).toContain('No program yet')
   })
 
   it('[R6] lines up the 10 horses of the current round in lane order, in their own colours', async () => {
@@ -89,9 +89,10 @@ describe('RaceTrack', () => {
     expect(runners[0]!.get('svg').attributes('style')).toContain(firstHorse.color.hex)
     expect(runners[0]!.text()).toContain(String(firstHorse.id))
     expect(wrapper.get('[data-testid="track-caption"]').text()).toBe('1st Lap – 1200 m')
-    expect(wrapper.get('[data-testid="track-overlay"]').text()).toBe(
-      'Ready — 1st Lap – 1200 m. Press Start.',
-    )
+    const overlay = wrapper.get('[data-testid="track-overlay"]')
+    expect(overlay.get('.track__eyebrow').text()).toBe('Ready')
+    expect(overlay.get('.track__title').text()).toBe('1st Lap – 1200 m')
+    expect(overlay.get('.track__hint').text()).toBe('Press Start or Space to run it.')
   })
 
   it('[R6] horses visibly move forward while the round runs, using transform only', async () => {
@@ -126,7 +127,7 @@ describe('RaceTrack', () => {
     const frozen = painted(wrapper)
     await frames(5000)
     expect(painted(wrapper)).toEqual(frozen)
-    expect(wrapper.get('[data-testid="track-overlay"]').text()).toBe('Paused')
+    expect(wrapper.get('[data-testid="track-overlay"] .track__eyebrow').text()).toBe('Paused')
   })
 
   it('[X13] between rounds the finished round stays on screen with its podium', async () => {
@@ -147,9 +148,12 @@ describe('RaceTrack', () => {
     expect(wrapper.get('.lane--winner [data-testid="runner"]').attributes('data-horse-id')).toBe(
       String(winner),
     )
-    const podium = wrapper.get('[data-testid="podium"]')
-    expect(podium.text()).toContain('1st Lap – 1200 m — result')
-    expect(podium.text()).toContain('Next up: 2nd Lap – 1400 m')
+    const board = wrapper.get('[data-testid="round-result"]')
+    expect(board.text()).toContain('1st Lap – 1200 m · Result')
+    const rows = board.findAll('[data-testid="result-podium-row"]')
+    expect(rows).toHaveLength(3)
+    expect(rows[0]!.text()).toContain(useHorsesStore().getHorse(winner)!.name)
+    expect(board.get('[data-testid="result-next"]').text()).toBe('Next up: 2nd Lap – 1400 m')
     expect(wrapper.get('[data-testid="track-caption"]').text()).toBe('1st Lap – 1200 m')
 
     // The next round brings the next line-up, back at the start.
@@ -157,8 +161,21 @@ describe('RaceTrack', () => {
     await nextTick()
     await nextTick()
     expect(race.status).toBe('running')
-    expect(wrapper.find('[data-testid="podium"]').exists()).toBe(false)
+    expect(wrapper.find('[data-testid="round-result"]').exists()).toBe(false)
     expect(wrapper.get('[data-testid="track-caption"]').text()).toBe('2nd Lap – 1400 m')
+  })
+
+  it('[X4] the result board shows how your prediction did', async () => {
+    const { wrapper, race } = setup()
+    race.generateProgram()
+    const { usePredictionStore } = await import('@/stores/prediction.store')
+    const winner = race.currentRace!.result.placings[0]!.horseId
+    usePredictionStore().pick(winner)
+    race.start()
+    await frames(Math.ceil(race.currentRace!.durationMs) + 1)
+    await nextTick()
+    await nextTick()
+    expect(wrapper.get('[data-testid="result-pick"]').text()).toBe('Your pick won: +3 pts')
   })
 
   it('[X13] shows live standings and commentary while racing', async () => {
