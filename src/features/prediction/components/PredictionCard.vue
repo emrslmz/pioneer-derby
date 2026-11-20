@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { HORSES_PER_ROUND } from '@/domain/constants'
 import type { HorseId } from '@/domain/types'
 import { useLocale } from '@/i18n/useLocale'
 import BaseBadge from '@/shared/ui/BaseBadge.vue'
@@ -70,19 +71,73 @@ const lastOutcome = computed(() => {
 })
 
 const outcomeTone = { winner: 'success', podium: 'info', miss: 'neutral' } as const
+
+type Mode = 'idle' | 'open' | 'locked' | 'finished'
+const mode = computed<Mode>(() => {
+  if (status.value === 'idle') return 'idle'
+  if (status.value === 'finished') return 'finished'
+  return isOpen.value ? 'open' : 'locked'
+})
+
+const headline = computed(() => {
+  switch (mode.value) {
+    case 'idle':
+      return t('prediction.idleTitle')
+    case 'open':
+      return t('prediction.question', { lap: lap.value })
+    case 'locked':
+      return t('prediction.lockedTitle', { lap: lap.value })
+    default:
+      return t('prediction.finishedTitle')
+  }
+})
+
+const tipText = computed(() => {
+  if (mode.value === 'idle') return t('prediction.idle')
+  if (mode.value === 'finished')
+    return t('prediction.final', {
+      points: totalPoints.value,
+      correct: correctWinners.value,
+      rounds: roundCount.value,
+    })
+  return recommendationText.value
+})
+
+const tipTestId = computed(
+  () =>
+    ({
+      idle: 'prediction-idle',
+      open: 'recommendation',
+      locked: 'prediction-locked',
+      finished: 'prediction-final',
+    })[mode.value],
+)
+
+const canBackTip = computed(
+  () =>
+    isOpen.value && !!recommendation.value && currentPick.value !== recommendation.value.horseId,
+)
 </script>
 
 <template>
+  <!--
+    Every row exists in every state and only its content changes, so the card keeps the same height
+    from Generate to the last round and the track below never jumps.
+  -->
   <section
     class="prediction"
-    :class="{ 'prediction--open': isOpen, 'prediction--waiting': isOpen && currentPick === null }"
+    :class="{ 'prediction--waiting': isOpen && currentPick === null }"
     aria-labelledby="prediction-title"
     data-testid="prediction-card"
   >
     <header class="prediction__header">
       <span class="prediction__badge" aria-hidden="true"><BaseIcon name="star" :size="16" /></span>
       <h2 id="prediction-title" class="prediction__title">{{ t('prediction.title') }}</h2>
-      <span v-if="isOpen && currentPick === null" class="prediction__cta">
+      <span
+        class="prediction__cta"
+        :class="{ 'is-hidden': !(isOpen && currentPick === null) }"
+        :aria-hidden="!(isOpen && currentPick === null)"
+      >
         {{ t('prediction.makePick') }}
       </span>
       <span
@@ -94,51 +149,49 @@ const outcomeTone = { winner: 'success', podium: 'info', miss: 'neutral' } as co
       </span>
     </header>
 
-    <p v-if="status === 'idle'" class="prediction__hint">{{ t('prediction.idle') }}</p>
+    <div class="prediction__ask">
+      <p class="prediction__question">{{ headline }}</p>
+      <span class="prediction__rules">{{ t('prediction.rules') }}</span>
+    </div>
 
-    <p v-else-if="status === 'finished'" class="prediction__hint" data-testid="prediction-final">
-      {{
-        t('prediction.final', { points: totalPoints, correct: correctWinners, rounds: roundCount })
-      }}
-    </p>
-
-    <template v-else>
-      <div v-if="isOpen" class="prediction__open">
-        <div class="prediction__ask">
-          <p class="prediction__question">{{ t('prediction.question', { lap }) }}</p>
-          <span class="prediction__rules">{{ t('prediction.rules') }}</span>
-        </div>
-        <div v-if="recommendation" class="prediction__tip">
-          <p data-testid="recommendation">{{ recommendationText }}</p>
-          <BaseButton
-            v-if="currentPick !== recommendation.horseId"
-            size="sm"
-            icon="star"
-            data-testid="pick-tip-button"
-            @click="pick = recommendation.horseId"
-          >
-            {{ t('prediction.pickTip') }}
-          </BaseButton>
-        </div>
-        <RunnerPicker
-          v-model="pick"
-          :runners="runners"
-          :label="t('prediction.pickLabel', { lap })"
-          :recommended-id="recommendation?.horseId ?? null"
-          :recommended-label="t('prediction.recommended')"
-        />
-      </div>
-      <p v-else class="prediction__locked" data-testid="prediction-locked">
-        <strong>{{
-          currentPick !== null
-            ? t('prediction.yourPick', { name: nameOf(currentPick) })
-            : t('prediction.noPick')
-        }}</strong>
-        <span class="prediction__muted">
-          {{ currentPick !== null ? t('prediction.pending') : t('prediction.locked') }}
-        </span>
+    <div class="prediction__tip" :class="`prediction__tip--${mode}`">
+      <p :data-testid="tipTestId">
+        <template v-if="mode === 'locked'">
+          <strong>{{
+            currentPick !== null
+              ? t('prediction.yourPick', { name: nameOf(currentPick) })
+              : t('prediction.noPick')
+          }}</strong>
+          <span class="prediction__muted">
+            {{ currentPick !== null ? t('prediction.pending') : t('prediction.locked') }}
+          </span>
+        </template>
+        <template v-else>{{ tipText }}</template>
       </p>
-    </template>
+      <BaseButton
+        size="sm"
+        icon="star"
+        class="prediction__tip-button"
+        :class="{ 'is-hidden': !canBackTip }"
+        :disabled="!canBackTip"
+        :aria-hidden="!canBackTip"
+        :tabindex="canBackTip ? undefined : -1"
+        data-testid="pick-tip-button"
+        @click="recommendation && (pick = recommendation.horseId)"
+      >
+        {{ t('prediction.pickTip') }}
+      </BaseButton>
+    </div>
+
+    <RunnerPicker
+      v-model="pick"
+      :runners="runners"
+      :slots="HORSES_PER_ROUND"
+      :disabled="!isOpen"
+      :label="t('prediction.pickLabel', { lap })"
+      :recommended-id="isOpen ? (recommendation?.horseId ?? null) : null"
+      :recommended-label="t('prediction.recommended')"
+    />
 
     <p class="prediction__outcome" aria-live="polite" data-testid="prediction-outcome">
       <BaseBadge v-if="lastOutcome" :tone="outcomeTone[lastOutcome.outcome]">
@@ -230,12 +283,6 @@ const outcomeTone = { winner: 'success', podium: 'info', miss: 'neutral' } as co
   white-space: nowrap;
 }
 
-.prediction__open {
-  display: grid;
-  gap: var(--space-2);
-  min-width: 0;
-}
-
 .prediction__ask {
   display: flex;
   flex-wrap: wrap;
@@ -245,8 +292,11 @@ const outcomeTone = { winner: 'success', podium: 'info', miss: 'neutral' } as co
 }
 
 .prediction__question {
+  overflow: hidden;
   font-family: var(--font-display);
   font-size: var(--font-size-lg);
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-weight: 700;
   line-height: 1.1;
 }
@@ -258,7 +308,7 @@ const outcomeTone = { winner: 'success', podium: 'info', miss: 'neutral' } as co
 
 .prediction__tip {
   display: flex;
-  flex-wrap: wrap;
+  min-height: 2.5rem;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2) var(--space-3);
@@ -269,24 +319,32 @@ const outcomeTone = { winner: 'success', podium: 'info', miss: 'neutral' } as co
   font-size: var(--font-size-sm);
 }
 
-.prediction__hint {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-}
-
-.prediction__locked {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-1) var(--space-3);
-  font-size: var(--font-size-sm);
+.prediction__tip p {
+  // Always exactly two lines tall: every state's text fits, so the height never changes.
+  display: -webkit-box;
+  flex: 1;
+  min-width: 0;
+  min-height: calc(2 * 1.4em);
+  overflow: hidden;
+  line-height: 1.4;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .prediction__muted {
+  margin-left: var(--space-2);
   color: var(--color-text-muted);
 }
 
-.prediction__outcome:empty {
-  display: none;
+.prediction__outcome {
+  // A fixed slot, empty or not, so the card never changes height.
+  display: flex;
+  align-items: center;
+  height: 1.75rem;
+  overflow: hidden;
+}
+
+.is-hidden {
+  visibility: hidden;
 }
 </style>

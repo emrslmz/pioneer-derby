@@ -27,6 +27,44 @@ test.describe('engagement layer', () => {
     await expect(page.getByTestId('prediction-score')).toHaveText(/^\d+ pts$/)
   })
 
+  test('[X4] the prediction card keeps the same height in every state (no layout shift)', async ({
+    page,
+  }) => {
+    await page.clock.install({ time: new Date('2026-11-20T12:00:00Z') })
+    await page.goto('/?seed=42')
+    await page.clock.pauseAt(new Date('2026-11-20T12:00:05Z'))
+    const card = page.getByTestId('prediction-card')
+    const height = async () => (await card.boundingBox())!.height
+
+    const idle = await height()
+    await page.getByTestId('generate-button').click()
+    const ready = await height()
+    await page.getByTestId('pick-tip-button').click()
+    const picked = await height()
+    await page.getByTestId('toggle-button').click()
+    await page.clock.runFor(3_000)
+    const running = await height()
+    await page.clock.runFor(5_000) // into the intermission, with an outcome
+    await expect(page.getByTestId('round-result')).toBeVisible()
+    const intermission = await height()
+
+    expect([ready, picked, running, intermission]).toEqual([idle, idle, idle, idle])
+  })
+
+  test('[R2] hovering a shortened horse name shows the full name in a tooltip', async ({
+    page,
+  }) => {
+    await page.goto('/?seed=42')
+    const name = page.getByTestId('horse-name').first()
+    await name.hover()
+    // The bubble is aria-hidden (the full name is already in the accessible name), so find it by test id.
+    const tooltip = page.getByTestId('tooltip')
+    await expect(tooltip).toBeVisible()
+    await expect(tooltip).toHaveText(/^\S+ .+$/)
+    await page.keyboard.press('Escape')
+    await expect(tooltip).toBeHidden()
+  })
+
   test('[X12] horse statistics open from the list and close with Escape', async ({ page }) => {
     await page.goto('/?seed=42')
     await page.getByTestId('horse-name').first().click()

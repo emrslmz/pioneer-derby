@@ -177,7 +177,10 @@
     "makePick": "Tahminini yap",
     "pickTip": "Öneriyi seç",
     "picked": "Tahminin: {name}",
-    "pending": "Tur bitince puanlanır."
+    "pending": "Tur bitince puanlanır.",
+    "idleTitle": "Her turun kazananını tahmin et",
+    "lockedTitle": "{lap} koşuluyor",
+    "finishedTitle": "Program tamamlandı"
   },
   "stats": {
     "title": "{name}",

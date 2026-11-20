@@ -15,6 +15,8 @@ const props = defineProps<{
   recommendedId: HorseId | null
   recommendedLabel: string
   disabled?: boolean
+  /** Always render this many slots, so the grid keeps its size before a line-up exists. */
+  slots?: number
 }>()
 
 const model = defineModel<HorseId | null>({ required: true })
@@ -66,6 +68,12 @@ async function onKeydown(event: KeyboardEvent, index: number) {
       </span>
       <BaseIcon v-if="model === runner.id" name="check" :size="14" class="picker__check" />
     </button>
+    <span
+      v-for="slot in Math.max(0, (slots ?? 0) - runners.length)"
+      :key="`slot-${slot}`"
+      class="picker__runner picker__runner--placeholder"
+      aria-hidden="true"
+    />
   </div>
 </template>
 
@@ -113,6 +121,12 @@ async function onKeydown(event: KeyboardEvent, index: number) {
     cursor: default;
     opacity: 0.55;
   }
+}
+
+.picker__runner--placeholder {
+  border-style: dashed;
+  background: transparent;
+  cursor: default;
 }
 
 .picker__runner--tip {
