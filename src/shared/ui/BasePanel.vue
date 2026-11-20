@@ -107,6 +107,9 @@ const headingId = useId()
 }
 
 .panel__body {
+  // Positioned, so visually-hidden (absolute) descendants such as table captions stay inside the
+  // panel and are clipped, instead of stretching the page.
+  position: relative;
   flex: 1;
   min-height: 0;
 }
