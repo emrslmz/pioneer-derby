@@ -20,6 +20,10 @@
   --color-track: #123a26;
   --color-track-lane: #16452d;
   --color-track-line: rgb(255 255 255 / 0.28);
+  // Turf with mowing stripes (two greens) and a shading overlay for depth.
+  --color-turf-1: #1f6a3a;
+  --color-turf-2: #24763f;
+  --color-turf-shade: rgb(0 0 0 / 0.22);
   --color-finish: #ff3b3b;
   --shadow-panel: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px rgb(0 0 0 / 0.45);
   --shadow-raised: 0 8px 24px rgb(0 0 0 / 0.4);
