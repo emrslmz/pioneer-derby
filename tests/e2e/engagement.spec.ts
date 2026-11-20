@@ -102,6 +102,10 @@ test.describe('engagement layer', () => {
     await expect(results).toHaveCount(6)
     const first = await results.locator('.swatch__label').allTextContents()
 
+    // The summary opens by itself after the last round; close it to reach the header button.
+    await expect(page.getByTestId('program-summary')).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(page.getByTestId('program-summary')).toBeHidden()
     await expect(page.getByTestId('toggle-button')).toContainText('Replay')
     await page.getByTestId('toggle-button').click()
     await expect(results).toHaveCount(0)

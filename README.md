@@ -3,7 +3,7 @@
 [![CI](https://github.com/emrslmz/pioneer-derby/actions/workflows/ci.yml/badge.svg)](https://github.com/emrslmz/pioneer-derby/actions/workflows/ci.yml)
 [![Live demo](https://img.shields.io/badge/live%20demo-pioneerderby.netlify.app-00c7b7?logo=netlify&logoColor=white)](https://pioneerderby.netlify.app)
 ![Lighthouse](https://img.shields.io/badge/Lighthouse-96%20%C2%B7%20100%20%C2%B7%20100%20%C2%B7%20100-0cce6b?logo=lighthouse&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-315%20unit%20%C2%B7%2058%20E2E%20%C2%B7%20visual%20%C2%B7%20axe-15743b)
+![Tests](https://img.shields.io/badge/tests-330%20unit%20%C2%B7%2062%20E2E%20%C2%B7%20visual%20%C2%B7%20axe-15743b)
 
 An interactive horse racing game built with **Vue 3, TypeScript and Pinia** for the Insider One Front-end Developer case study.
 Twenty horses — named after computing pioneers — race across six rounds from 1200 m to 2200 m.
@@ -21,6 +21,8 @@ Generate the program, optionally pick a winner in the strip above the track, the
 Horses run at a real racing pace: 16.5 m/s, so 1200 m takes about 73 seconds. The default playback is 2×; the player bar also offers 0.5×, 1×, 4× and 16×, and the keys `0` `1` `2` `4` `9` change speed too (`9` is 16×).
 
 The **Follow** camera is true scale. A horse is as long on screen as a real horse is on the track, so about 20–30 m are in view. Horses left behind show their gap to the leader, and the line under the track shows the leader's distance to go. **Whole track** fits the full distance, and full screen opens the same live panel in a modal. A horse that has finished stands still. Pausing mid-race shows a "Paused" card, never a result.
+
+When the sixth round is over, a **program summary** opens: the champion, how your predictions did, a chart of wins and podiums, and the winner of each round, with Replay. It can be opened again from the Results panel.
 
 A first visit starts with a short guided tour (driver.js) that asks your language first. It resumes after a reload and can be taken again from the help dialog (`?`) or with `?tour=1`. The app opens in the light theme; the toggle in the header changes it. On wide screens the horse list folds into a rail of horses, and the Results panel shows each horse as it crosses the line.
 
@@ -95,7 +97,7 @@ Every pull request has to pass these checks in CI before it is merged (a require
 | Lint and formatting | oxlint, ESLint boundaries, Prettier | 0 errors, architecture boundaries enforced          | clean                             |
 | Types               | vue-tsc, strict                     | 0 errors                                            | clean                             |
 | Unit and property   | Vitest, fast-check                  | domain 95 %, stores 90 % coverage                   | domain 100 %, stores 99 %         |
-| End to end          | Playwright                          | all flows green (fake clock, seeded)                | 58 tests                          |
+| End to end          | Playwright                          | all flows green (fake clock, seeded)                | 62 tests                          |
 | Visual              | Playwright screenshots              | Linux baselines, light and dark, EN and TR          | 14 screens                        |
 | Accessibility       | axe (WCAG 2.2 AA)                   | 0 serious or critical violations                    | 0, including the tour and dialogs |
 | Performance         | Lighthouse CI, 3 runs, median       | 90 performance, 95 accessibility and best practices | 95 to 96 · 100 · 100 · 100 (SEO)  |

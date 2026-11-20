@@ -14,8 +14,10 @@ withDefaults(
     placement?: 'center' | 'end'
     /** `alertdialog` for a question the user must answer (confirmations). */
     role?: 'dialog' | 'alertdialog'
+    /** `lg` for dialogs with a table or a chart. */
+    size?: 'md' | 'lg'
   }>(),
-  { placement: 'center', role: 'dialog' },
+  { placement: 'center', role: 'dialog', size: 'md' },
 )
 
 const open = defineModel<boolean>('open', { required: true })
@@ -51,7 +53,7 @@ function onBackdropClick(event: MouseEvent) {
   <dialog
     ref="dialog"
     class="dialog"
-    :class="`dialog--${placement}`"
+    :class="[`dialog--${placement}`, `dialog--${size}`]"
     :role="role"
     :aria-labelledby="titleId"
     @cancel="open = false"
@@ -91,6 +93,10 @@ function onBackdropClick(event: MouseEvent) {
     background: rgb(4 7 16 / 0.6);
     backdrop-filter: blur(4px);
   }
+}
+
+.dialog--lg.dialog--center {
+  width: min(760px, calc(100vw - 2 * var(--space-4)));
 }
 
 .dialog--end {

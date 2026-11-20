@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { nextTick, ref, watchEffect } from 'vue'
+import { nextTick, onScopeDispose, ref, watch, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import HorseList from '@/features/horses/components/HorseList.vue'
 import ProgramPanel from '@/features/program/components/ProgramPanel.vue'
 import { useRaceControls } from '@/features/race/composables/useRaceControls'
 import ResultsPanel from '@/features/results/components/ResultsPanel.vue'
+import ProgramSummaryDialog from '@/features/summary/components/ProgramSummaryDialog.vue'
 import PredictionCard from '@/features/prediction/components/PredictionCard.vue'
 import RaceTrack from '@/features/track/components/RaceTrack.vue'
 import AnalyticsDebugPanel from '@/shared/analytics/AnalyticsDebugPanel.vue'
@@ -33,6 +34,27 @@ const race = useRaceStore()
 const schedule = useScheduleStore()
 const shortcutsOpen = ref(false)
 const changeProgramOpen = ref(false)
+
+// The summary opens by itself a moment after the last round, so the final result is seen first.
+const SUMMARY_DELAY_MS = 1600
+const summaryOpen = ref(false)
+const summarySource = ref<'auto' | 'manual'>('auto')
+let summaryTimer: ReturnType<typeof setTimeout> | null = null
+function openSummary(source: 'auto' | 'manual') {
+  summarySource.value = source
+  summaryOpen.value = true
+}
+watch(
+  () => race.status,
+  (status) => {
+    if (summaryTimer !== null) clearTimeout(summaryTimer)
+    summaryTimer = null
+    if (status === 'finished')
+      summaryTimer = setTimeout(() => openSummary('auto'), SUMMARY_DELAY_MS)
+    else summaryOpen.value = false
+  },
+)
+onScopeDispose(() => summaryTimer !== null && clearTimeout(summaryTimer))
 const reducedMotion = useReducedMotion()
 
 /** "Take the tour again" in the help dialog: close it first, so the page underneath is usable. */
@@ -93,7 +115,7 @@ useKeyboardShortcuts({
       </template>
 
       <template #results>
-        <ResultsPanel />
+        <ResultsPanel @summary="openSummary('manual')" />
       </template>
     </ResponsiveLayout>
   </main>
@@ -101,6 +123,11 @@ useKeyboardShortcuts({
   <AppFooter />
 
   <KeyboardShortcutsDialog v-model:open="shortcutsOpen" @start-tour="restartTour" />
+  <ProgramSummaryDialog
+    v-model:open="summaryOpen"
+    :source="summarySource"
+    @replay="race.replay()"
+  />
   <ChangeProgramDialog v-model:open="changeProgramOpen" @confirm="race.generateProgram()" />
   <StatusAnnouncer />
   <AnalyticsDebugPanel v-if="debug" />
