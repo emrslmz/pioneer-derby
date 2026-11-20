@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { nextTick, ref } from 'vue'
 import type { Horse, HorseId } from '@/domain/types'
+import HorseRunner from '@/shared/components/HorseRunner.vue'
 import BaseIcon from '@/shared/ui/BaseIcon.vue'
 import BaseTooltip from '@/shared/ui/BaseTooltip.vue'
 import { nextIndex } from '@/shared/ui/tabs'
 
 /**
- * The round's runners as compact coat-coloured number chips in lane order — all ten fit on one
- * row. The full name is in the accessible name ("20 Margaret Hamilton") and in a tooltip.
+ * The round's runners as small horses in their own colour, the number on the saddle cloth, in lane
+ * order — all ten fit on one row. The full name is in the accessible name ("20 Margaret Hamilton") and in a tooltip.
  * A radio group: arrow keys move the pick, like native radios.
  */
 const props = defineProps<{
@@ -59,7 +60,8 @@ async function onKeydown(event: KeyboardEvent, index: number) {
         @click="model = runner.id"
         @keydown="onKeydown($event, index)"
       >
-        {{ runner.id }}<span class="visually-hidden"> {{ runner.name }}</span>
+        <HorseRunner :color="runner.color.hex" :number="runner.id" :galloping="false" />
+        <span class="visually-hidden">{{ runner.id }} {{ runner.name }}</span>
         <span v-if="runner.id === recommendedId" class="picker__tip" data-testid="pick-tip">
           <BaseIcon name="star" :size="9" />
           <span class="visually-hidden">{{ recommendedLabel }}</span>
@@ -78,7 +80,7 @@ async function onKeydown(event: KeyboardEvent, index: number) {
 <style scoped lang="scss">
 .picker {
   display: flex;
-  // Ten chips fit one row from ~340 px; narrower, they wrap instead of overflowing.
+  // Ten horses fit one row from ~500 px; narrower, they wrap instead of overflowing.
   flex-wrap: wrap;
   gap: 4px;
   min-width: 0;
@@ -88,34 +90,33 @@ async function onKeydown(event: KeyboardEvent, index: number) {
   position: relative;
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
+  width: 46px;
+  height: 36px;
   flex-shrink: 0;
-  padding: 0;
-  border: 2px solid rgb(0 0 0 / 0.35);
-  border-radius: 50%;
-  background: var(--coat);
-  color: #fff;
-  font-family: var(--font-display);
-  font-size: var(--font-size-sm);
-  font-weight: 700;
-  text-shadow:
-    0 0 2px #000,
-    0 0 2px #000;
+  padding: 2px 3px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--coat) 14%, var(--color-surface));
   cursor: pointer;
   transition:
     transform var(--duration-fast),
     box-shadow var(--duration-fast);
+
+  :deep(.runner) {
+    width: 100%;
+    height: 100%;
+  }
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
   }
 
   &[aria-checked='true'] {
+    border-color: var(--color-accent);
     box-shadow:
-      0 0 0 3px var(--color-surface),
-      0 0 0 6px var(--color-accent);
-    transform: scale(1.06);
+      0 0 0 2px var(--color-surface),
+      0 0 0 4px var(--color-accent);
+    transform: scale(1.05);
   }
 
   &:disabled {
