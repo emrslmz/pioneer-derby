@@ -69,6 +69,46 @@ jobs:
       - run: npm ci
       - run: npm run build-only
 
+  evidence:
+    name: Evidence reports
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Every requirement has a test (X3)
+        run: npm run report:traceability -- --check
+      - name: Fairness simulation is reproducible (X1)
+        run: npm run simulate
+      - name: Generated docs are up to date
+        run: git diff --exit-code -- docs/TRACEABILITY.md docs/fairness.json docs/fairness-light.svg docs/fairness-dark.svg README.md
+
+  visual:
+    name: Visual tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:visual
+      # On a missing or changed baseline, Playwright writes the Linux screenshots here. Review them,
+      # then commit them (README → Testing → Visual baselines).
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: visual-baselines
+          path: |
+            tests/visual/__snapshots__/*-linux.png
+            test-results/
+          retention-days: 7
+
   e2e:
     name: E2E tests
     runs-on: ubuntu-latest
