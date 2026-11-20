@@ -47,7 +47,7 @@ const { t } = useI18n()
   padding: 2px var(--space-2);
   border-radius: var(--radius-sm);
   background: var(--color-text-subtle);
-  color: #fff;
+  color: var(--track-white);
   font-family: var(--font-display);
   font-size: var(--font-size-xs);
   font-weight: 700;
@@ -56,7 +56,7 @@ const { t } = useI18n()
 }
 
 .ticker__tag--live {
-  background: #c8102e;
+  background: var(--track-live);
 }
 
 .ticker__line {

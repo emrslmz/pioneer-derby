@@ -320,7 +320,7 @@
       (seed) her zaman aynı yarışı üretiyor, bu yüzden yarışlar paylaşılabiliyor ve testler kararlı.
     </p>
     <div class="stats">
-      <div class="stat"><b>308</b><span>unit ve property testi</span></div>
+      <div class="stat"><b>315</b><span>unit ve property testi</span></div>
       <div class="stat"><b>58</b><span>uçtan uca (E2E) test</span></div>
       <div class="stat"><b>33 / 33</b><span>gereksinim testle bağlı</span></div>
       <div class="stat"><b>0</b><span>ciddi erişilebilirlik ihlali (axe)</span></div>
@@ -804,13 +804,62 @@
         var, politika her değişiklikte değişen özet (hash) gerektirir. Sonraki adım olarak not
         edildi (ADR 0014).
       </li>
+    </ul>
+
+    <h2>10. Geliştirme süreci</h2>
+    <p>
+      Projeyi, Anthropic'in komut satırı kodlama asistanı <b>Claude Code</b> ile birlikte, eşli
+      programlama biçiminde geliştirdim. Bunu açıkça belirtmek istiyorum; çünkü süreç repoda da
+      görünüyor: commit'lerde <code>Co-Authored-By</code> satırı, çalışma kurallarını anlatan
+      <code>CLAUDE.md</code> ve <code>.claude/</code> klasörü duruyor.
+    </p>
+    <table>
+      <tr>
+        <th style="width: 50%">Ben</th>
+        <th>Claude Code</th>
+      </tr>
+      <tr>
+        <td>
+          Case'i yorumladım, kapsamı ve önceliği belirledim; belirsiz noktalar için karar verdim
+          (bölüm 9).
+        </td>
+        <td>Kararları kodlayıp testlerini yazdı, alternatifleri ve riskleri sundu.</td>
+      </tr>
+      <tr>
+        <td>
+          Her ekranı kendim açıp denedim; tasarım, davranış ve metin geri bildirimlerini verdim (hız
+          seçenekleri, katlanan at listesi, tanıtım turu, sonuçların akışı gibi).
+        </td>
+        <td>Geri bildirimleri uyguladı, ekran görüntüsü alıp sonucu kendisi de kontrol etti.</td>
+      </tr>
+      <tr>
+        <td>
+          Mimari kararları onayladım, her pull request'i ve her fazın çıktısını gözden geçirdim;
+          birleştirme kararını ben verdim.
+        </td>
+        <td>Kararları ADR olarak kaydetti; her PR'ı şablonuyla açtı.</td>
+      </tr>
+    </table>
+    <p>Kalitenin kişiye değil sürece bağlı olması için şu güvenceleri kurdum:</p>
+    <ul>
       <li>
-        <code>RaceTrack.vue</code> en büyük bileşendir; kamera, boyama ve oynatıcı çubuğu ayrı
-        bileşenlere bölünebilir.
+        Her değişiklik bir pull request'ten ve sekiz zorunlu CI kontrolünden geçer;
+        <code>main</code>'e doğrudan yazılmaz.
+      </li>
+      <li>Her gereksinimin bir kimliği ve en az bir testi vardır; bağ CI'da denetlenir.</li>
+      <li>
+        Teslimden önce, kodu yazan oturumdan bağımsız ayrı bir inceleme ajanı projeyi brief'e ve
+        mimari kurallara karşı denetledi. Ucuz bulgular düzeltildi; bir kısmı (örneğin sonuçların
+        canlı akışı) bilinçli olarak kararlaştırıldı ve belgelendi.
+      </li>
+      <li>
+        En büyük bileşen (<code>RaceTrack.vue</code>, 1.246 satır) davranışı değiştirmeden bölündü:
+        14 görsel test iki sürüm arasında piksel farkı vermedi ve yeni parçalar için birim testleri
+        eklendi.
       </li>
     </ul>
 
-    <h2>10. Çalıştırma</h2>
+    <h2>11. Çalıştırma</h2>
     <pre>
 nvm use          # Node 24 (.nvmrc)
 npm ci

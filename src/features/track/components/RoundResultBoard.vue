@@ -206,7 +206,7 @@ const pick = computed(() => {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  color: #1a1a1a;
+  color: var(--track-ink);
   font-family: var(--font-display);
   font-weight: 700;
 }
