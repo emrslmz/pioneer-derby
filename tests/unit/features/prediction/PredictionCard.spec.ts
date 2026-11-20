@@ -17,9 +17,10 @@ function setup(locale: 'en' | 'tr' = 'en') {
 }
 
 describe('PredictionCard', () => {
-  it('[X4] invites you to generate a program first', () => {
+  it('[X4] invites you to generate a program first, keeping ten placeholder slots', () => {
     const { wrapper } = setup()
     expect(wrapper.text()).toContain('Generate a program to start predicting.')
+    expect(wrapper.findAll('.picker__runner--placeholder')).toHaveLength(10)
     expect(wrapper.get('[data-testid="prediction-score"]').text()).toBe('0 pts')
   })
 
@@ -45,7 +46,10 @@ describe('PredictionCard', () => {
     // One click backs the recommended horse.
     await wrapper.get('[data-testid="pick-tip-button"]').trigger('click')
     expect(usePredictionStore().currentPick).toBe(tip.horseId)
-    expect(wrapper.find('[data-testid="pick-tip-button"]').exists()).toBe(false)
+    // Hidden but kept in place, so the card does not change height.
+    const tipButton = wrapper.get('[data-testid="pick-tip-button"]')
+    expect(tipButton.classes()).toContain('is-hidden')
+    expect(tipButton.attributes('disabled')).toBeDefined()
   })
 
   it('[X9] joins reasons with the locale list format', async () => {
@@ -67,6 +71,11 @@ describe('PredictionCard', () => {
 
     race.start()
     await nextTick()
+    // While the round runs, the same grid stays in place: locked, with the pick still marked.
+    const radios = wrapper.findAll('[data-testid="pick-option"]')
+    expect(radios).toHaveLength(10)
+    expect(radios.every((r) => r.attributes('disabled') !== undefined)).toBe(true)
+    expect(wrapper.get('[aria-checked="true"]').attributes('data-horse-id')).toBe(String(horseId))
     const name = useHorsesStore().getHorse(horseId)!.name
     expect(wrapper.get('[data-testid="prediction-locked"]').text()).toContain(`Your pick: ${name}`)
     expect(wrapper.get('[data-testid="prediction-locked"]').text()).toContain(

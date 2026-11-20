@@ -177,7 +177,10 @@
     "makePick": "Make your pick",
     "pickTip": "Back the tip",
     "picked": "Your pick: {name}",
-    "pending": "Scored when the round ends."
+    "pending": "Scored when the round ends.",
+    "idleTitle": "Pick a winner every round",
+    "lockedTitle": "{lap} is under way",
+    "finishedTitle": "Program complete"
   },
   "stats": {
     "title": "{name}",
