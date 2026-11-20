@@ -13,7 +13,12 @@ import { usePredictionStore } from '@/stores/prediction.store'
  * as clear rows, the photo-finish margin, how the viewer's prediction did, and a countdown to the
  * next round. Opaque, so it reads on any track size and theme.
  */
-const props = defineProps<{ result: RoundResult; photoFinish: boolean; finished: boolean }>()
+const props = defineProps<{
+  result: RoundResult
+  photoFinish: boolean
+  finished: boolean
+  autoAdvance: boolean
+}>()
 
 const { t } = useI18n()
 const { lapLabel, raceTime, ordinal } = useLocale()
@@ -97,6 +102,7 @@ const pick = computed(() => {
       <template v-else>
         <slot name="next" />
         <span
+          v-if="autoAdvance"
           class="board__countdown"
           :style="{ '--intermission': `${INTERMISSION_MS}ms` }"
           aria-hidden="true"
@@ -110,15 +116,14 @@ const pick = computed(() => {
 .board {
   display: grid;
   gap: var(--space-3);
-  width: min(420px, 100%);
+  width: 100%;
   max-height: 100%;
-  padding: var(--space-4);
+  padding: var(--space-3);
   overflow: auto;
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-lg);
   background: var(--color-surface);
   color: var(--color-text);
-  box-shadow: 0 16px 40px rgb(0 0 0 / 0.45);
   animation: enter var(--duration-base) var(--easing-standard);
 }
 
@@ -266,7 +271,9 @@ const pick = computed(() => {
 }
 
 .board__footer {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-2);
   color: var(--color-text-muted);
   font-family: var(--font-display);
@@ -276,6 +283,7 @@ const pick = computed(() => {
 
 // Time left until the next round starts on its own.
 .board__countdown {
+  flex-basis: 100%;
   height: 4px;
   border-radius: var(--radius-pill);
   background: var(--color-accent);

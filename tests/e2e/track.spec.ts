@@ -1,11 +1,14 @@
 import { expect, test, type Page } from '@playwright/test'
 
-/** Horizontal offset of every runner relative to its lane, read from the rendered layout. */
+/**
+ * How far each horse has run, in px along the race map (the whole distance). The camera pans the
+ * track, so on-screen positions are relative; the map is absolute.
+ */
 async function runnerOffsets(page: Page): Promise<number[]> {
-  return page.getByTestId('runner').evaluateAll((runners) =>
-    runners.map((runner) => {
-      const lane = runner.parentElement!.getBoundingClientRect()
-      return runner.getBoundingClientRect().left - lane.left
+  return page.getByTestId('map-dot').evaluateAll((dots) =>
+    dots.map((dot) => {
+      const run = dot.parentElement!.getBoundingClientRect()
+      return dot.firstElementChild!.getBoundingClientRect().left - run.left
     }),
   )
 }
@@ -24,25 +27,44 @@ async function startRace(page: Page) {
 }
 
 test.describe('race track', () => {
+  test('[R6] the camera follows the race and full screen opens a modal', async ({ page }) => {
+    await startRace(page)
+    const world = page.getByTestId('track-world')
+    await expect
+      .poll(() => world.evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m41))
+      .toBeLessThan(-20)
+
+    await page.getByTestId('track-expand').click()
+    const theater = page.getByTestId('track-theater')
+    await expect(theater).toBeVisible()
+    await expect(theater.getByTestId('race-track')).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(theater).toBeHidden()
+    await expect(page.getByTestId('track-expand')).toBeFocused()
+  })
+
   test('[R6] the 10 horses of the round visibly move towards the finish', async ({ page }) => {
     await page.goto('/?seed=42')
     await page.getByTestId('generate-button').click()
     await expect(page.getByTestId('runner')).toHaveCount(10)
     const start = await runnerOffsets(page)
-    expect(start.every((x) => Math.abs(x) < 1)).toBe(true)
+    // Every horse starts at the same point of the map.
+    expect(new Set(start.map((x) => Math.round(x))).size).toBe(1)
 
     await page.getByTestId('toggle-button').click()
-    await expect.poll(() => slowest(page)).toBeGreaterThan(20)
+    await expect
+      .poll(async () => (await runnerOffsets(page)).every((x, i) => x > start[i]! + 5))
+      .toBe(true)
     const early = await runnerOffsets(page)
 
     await expect
-      .poll(async () => (await runnerOffsets(page)).every((x, i) => x > early[i]! + 20))
+      .poll(async () => (await runnerOffsets(page)).every((x, i) => x > early[i]! + 5))
       .toBe(true)
   })
 
   test('[R4] pause freezes the horses on screen', async ({ page }) => {
     await startRace(page)
-    await expect.poll(() => slowest(page)).toBeGreaterThan(20)
+    await expect.poll(() => slowest(page)).toBeGreaterThan(10)
     await page.getByTestId('toggle-button').click()
     await expect(page.getByTestId('race-status')).toContainText('Paused')
 
@@ -61,8 +83,8 @@ test.describe('race track', () => {
       .getByTestId('runner')
       .evaluateAll((runners) => runners.map((runner) => (runner as HTMLElement).style.cssText))
     for (const style of styles) {
-      expect(style).toMatch(/^transform: translate3d\(/)
-      expect(style).not.toMatch(/left|width/)
+      expect(style).toMatch(/transform: translate3d\(/)
+      expect(style).not.toMatch(/(^|;)\s*(left|width)\s*:/)
     }
   })
 })

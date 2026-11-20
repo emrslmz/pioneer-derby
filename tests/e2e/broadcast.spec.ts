@@ -25,16 +25,14 @@ test.describe('broadcast layer', () => {
     await expect(board).toContainText('1st Lap – 1200 m · Result')
     await expect(board.getByTestId('result-podium-row')).toHaveCount(3)
     await expect(board.getByTestId('result-next')).toHaveText('Next up: 2nd Lap – 1400 m')
-    await expect(page.locator('.lane--winner')).toHaveCount(1)
-    // The commentary names the same winner as the results table.
+    await expect(page.locator('.track__number--winner')).toHaveCount(1)
+    // The board names the same winner as the results table.
     const winner = await board
       .getByTestId('result-podium-row')
       .first()
       .locator('.board__name')
       .textContent()
-    await expect(page.getByTestId('commentary-line')).toHaveText(
-      `${winner} wins the 1st Lap – 1200 m!`,
-    )
+    await expect(page.getByTestId('result-round').first()).toContainText(winner!)
   })
 
   test('[X13] a photo finish is called and stamped', async ({ page }) => {

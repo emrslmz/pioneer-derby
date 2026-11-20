@@ -54,8 +54,8 @@ test.describe('frozen race moments', () => {
 
   test('[B3] [X13] between rounds: result board and winner lane', async ({ page }) => {
     await expect(page.getByTestId('round-result')).toHaveCount(0)
-    // Seed 42's first round lasts ~7.4 s; 8 s lands inside the 2.5 s intermission.
-    await page.clock.runFor(8_000)
+    // Seed 42's first round lasts ~14.8 s; manual advance keeps its result visible.
+    await page.clock.runFor(16_000)
     await expect(page.getByTestId('round-result')).toBeVisible()
     await expect(page).toHaveScreenshot('desktop-dark-en-podium.png')
   })

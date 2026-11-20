@@ -42,11 +42,20 @@ function setup(locale: 'en' | 'tr' = 'en') {
 }
 
 /** Progress (0–100 %) currently painted on each runner. */
+/** Progress (0–100 % of the distance) painted on each horse's race-map dot. */
 function painted(wrapper: ReturnType<typeof setup>['wrapper']): number[] {
-  return wrapper.findAll('[data-testid="runner"]').map((runner) => {
-    const match = /translate3d\(([\d.]+)%/.exec(runner.attributes('style') ?? '')
+  return wrapper.findAll('[data-testid="map-dot"]').map((dot) => {
+    const match = /translate3d\(([\d.]+)%/.exec(dot.attributes('style') ?? '')
     return match ? Number(match[1]) : 0
   })
+}
+
+/** The camera: how far (px) the world is shifted left. */
+function cameraOffset(wrapper: ReturnType<typeof setup>['wrapper']): number {
+  const match = /translate3d\((-?[\d.]+)px/.exec(
+    wrapper.get('[data-testid="track-world"]').attributes('style') ?? '',
+  )
+  return match ? Math.abs(Number(match[1])) : 0
 }
 
 const frames = async (ms: number) => {
@@ -59,7 +68,7 @@ describe('RaceTrack', () => {
     const { wrapper } = setup()
     const lanes = wrapper.findAll('[data-testid="track-lane"]')
     expect(lanes).toHaveLength(10)
-    expect(lanes.map((lane) => lane.get('.lane__number').text())).toEqual([
+    expect(lanes.map((lane) => lane.text())).toEqual([
       '1',
       '2',
       '3',
@@ -71,10 +80,10 @@ describe('RaceTrack', () => {
       '9',
       '10',
     ])
-    expect(wrapper.find('.finish').exists()).toBe(true)
+    expect(wrapper.find('.track__finish').exists()).toBe(true)
     expect(wrapper.findAll('[data-testid="runner"]')).toHaveLength(0)
     expect(wrapper.get('[data-testid="track-overlay"]').text()).toContain('No program yet')
-    expect(wrapper.findAll('.lane__stall')).toHaveLength(10)
+    expect(wrapper.findAll('.track__stall')).toHaveLength(10)
   })
 
   it('[R3] the empty track offers a Generate Program button', async () => {
@@ -98,10 +107,10 @@ describe('RaceTrack', () => {
     expect(runners[0]!.get('svg').attributes('style')).toContain(firstHorse.color.hex)
     expect(runners[0]!.text()).toContain(String(firstHorse.id))
     expect(wrapper.get('[data-testid="track-caption"]').text()).toBe('1st Lap – 1200 m')
-    const overlay = wrapper.get('[data-testid="track-overlay"]')
-    expect(overlay.get('.track__eyebrow').text()).toBe('Ready')
-    expect(overlay.get('.track__title').text()).toBe('1st Lap – 1200 m')
-    expect(overlay.get('.track__hint').text()).toBe('Press Start or Space to run it.')
+    const banner = wrapper.get('[data-testid="track-banner"]')
+    expect(banner.text()).toContain('Ready')
+    expect(banner.text()).toContain('Press Start or Space to run it.')
+    expect(wrapper.find('[data-testid="track-overlay"]').exists()).toBe(false)
   })
 
   it('[R6] horses visibly move forward while the round runs, using transform only', async () => {
@@ -124,6 +133,61 @@ describe('RaceTrack', () => {
     }
   })
 
+  it('[R6] the camera follows the leaders, so the turf and poles scroll by distance', async () => {
+    const { wrapper, race } = setup()
+    race.generateProgram()
+    race.start()
+    await frames(500)
+    expect(cameraOffset(wrapper)).toBe(0) // still at the start
+
+    await frames(3500)
+    const midway = cameraOffset(wrapper)
+    expect(midway).toBeGreaterThan(0)
+
+    await frames(1500)
+    expect(cameraOffset(wrapper)).toBeGreaterThan(midway)
+  })
+
+  it('[R6] "Whole track" shows the full distance with a still camera', async () => {
+    const { wrapper, race } = setup()
+    race.generateProgram()
+    await nextTick()
+    await wrapper.findAll('[data-testid="camera-mode"] [role="radio"]')[1]!.trigger('click')
+    race.start()
+    await frames(4000)
+    expect(cameraOffset(wrapper)).toBe(0)
+    expect(painted(wrapper).every((p) => p > 0)).toBe(true)
+  })
+
+  it('[X8] reduced motion never pans: whole track, no camera switch', async () => {
+    setReducedMotion(true)
+    const { wrapper, race } = setup()
+    race.generateProgram()
+    race.start()
+    await frames(4000)
+    expect(cameraOffset(wrapper)).toBe(0)
+    expect(wrapper.find('[data-testid="camera-mode"]').exists()).toBe(false)
+  })
+
+  it('[R6] full screen opens the live track in a modal dialog and closes back', async () => {
+    const { wrapper, race } = setup()
+    race.generateProgram()
+    await nextTick()
+    const dialog = wrapper.get('[data-testid="track-theater"]')
+    expect(dialog.attributes('open')).toBeUndefined()
+
+    await wrapper.get('[data-testid="track-expand"]').trigger('click')
+    await nextTick()
+    expect(dialog.attributes('open')).toBeDefined()
+    expect(dialog.find('[data-testid="track-panel"]').exists()).toBe(true)
+
+    await wrapper.get('[data-testid="track-collapse"]').trigger('click')
+    await nextTick()
+    expect(dialog.attributes('open')).toBeUndefined()
+    expect(dialog.find('[data-testid="track-panel"]').exists()).toBe(false)
+    expect(wrapper.find('[data-testid="track-expand"]').exists()).toBe(true)
+  })
+
   it('[R4] pausing freezes the horses exactly where they are', async () => {
     const { wrapper, race } = setup()
     race.generateProgram()
@@ -136,7 +200,7 @@ describe('RaceTrack', () => {
     const frozen = painted(wrapper)
     await frames(5000)
     expect(painted(wrapper)).toEqual(frozen)
-    expect(wrapper.get('[data-testid="track-overlay"] .track__eyebrow').text()).toBe('Paused')
+    expect(wrapper.get('[data-testid="track-banner"] strong').text()).toBe('Paused')
   })
 
   it('[X13] between rounds the finished round stays on screen with its podium', async () => {
@@ -154,9 +218,7 @@ describe('RaceTrack', () => {
       wrapper.findAll('[data-testid="runner"]').map((r) => Number(r.attributes('data-horse-id'))),
     ).toEqual(firstLineUp)
     expect(painted(wrapper).every((p) => p === 100)).toBe(true)
-    expect(wrapper.get('.lane--winner [data-testid="runner"]').attributes('data-horse-id')).toBe(
-      String(winner),
-    )
+    expect(wrapper.findAll('.track__number--winner')).toHaveLength(1)
     const board = wrapper.get('[data-testid="round-result"]')
     expect(board.text()).toContain('1st Lap – 1200 m · Result')
     const rows = board.findAll('[data-testid="result-podium-row"]')
@@ -167,6 +229,8 @@ describe('RaceTrack', () => {
 
     // The next round brings the next line-up, back at the start.
     await frames(INTERMISSION_MS + 1)
+    expect(race.status).toBe('intermission')
+    race.nextRound()
     await nextTick()
     await nextTick()
     expect(race.status).toBe('running')

@@ -59,8 +59,9 @@ useKeyboardShortcuts({
 
       <template #track>
         <div class="race-stage">
-          <PredictionCard />
-          <RaceTrack />
+          <RaceTrack>
+            <template #prediction><PredictionCard /></template>
+          </RaceTrack>
         </div>
       </template>
 
@@ -107,16 +108,6 @@ useKeyboardShortcuts({
   display: flex;
   flex-direction: column;
   min-width: 0;
-
-  // Phones: the track comes first so the race is visible without scrolling; the prediction card
-  // follows right below it. From tablet up the card sits above the track.
-  > :first-child {
-    order: 2;
-
-    @include bp.from(tablet) {
-      order: 0;
-    }
-  }
 
   gap: var(--layout-gap);
   min-height: 0;
