@@ -240,23 +240,34 @@ useRaceLoop({
   position: relative;
   display: grid;
   flex: 1;
-  grid-template-rows: repeat(10, minmax(28px, 1fr));
-  min-height: 320px;
+  grid-template-rows: repeat(10, minmax(32px, 1fr));
+  min-height: 340px;
   overflow: hidden;
+  // Turf: mowing stripes, a soft vignette for depth, and white rails top and bottom.
+  border-block: 3px solid #f2f2f2;
   background:
-    repeating-linear-gradient(90deg, transparent 0 46px, rgb(255 255 255 / 0.025) 46px 92px),
-    linear-gradient(180deg, var(--color-track-lane), var(--color-track));
+    linear-gradient(
+      180deg,
+      var(--color-turf-shade),
+      transparent 18%,
+      transparent 82%,
+      var(--color-turf-shade)
+    ),
+    repeating-linear-gradient(90deg, var(--color-turf-1) 0 56px, var(--color-turf-2) 56px 112px);
+  box-shadow:
+    inset 0 2px 0 rgb(0 0 0 / 0.25),
+    inset 0 -2px 0 rgb(0 0 0 / 0.25);
   // Leave room on the right for the finish line.
   padding-right: 10px;
 }
 
 .carrier {
-  --runner-height: 78cqh;
-  --runner-width: calc(var(--runner-height) * 72 / 44);
+  --runner-height: 94cqh;
+  --runner-width: calc(var(--runner-height) * 72 / 46);
 
   position: absolute;
-  top: 11cqh;
-  bottom: 11cqh;
+  top: 3cqh;
+  bottom: 3cqh;
   left: 0;
   // Run length: the horse's nose reaches the finish at 100%.
   width: calc(100% - var(--runner-width));
@@ -283,14 +294,17 @@ useRaceLoop({
   top: 0;
   bottom: 0;
   left: calc(var(--at) * 100%);
-  border-left: 1px solid rgb(255 255 255 / 0.18);
+  border-left: 1px dashed rgb(255 255 255 / 0.22);
 }
 
 .track__marker-label {
   position: absolute;
   top: 2px;
   left: 4px;
-  color: rgb(255 255 255 / 0.75);
+  padding: 0 4px;
+  border-radius: var(--radius-sm);
+  background: rgb(0 0 0 / 0.35);
+  color: #fff;
   font-family: var(--font-display);
   font-size: var(--font-size-xs);
   font-weight: 600;

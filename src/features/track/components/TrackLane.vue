@@ -22,8 +22,8 @@ defineSlots<{ default(): unknown }>()
 .lane {
   display: grid;
   grid-template-columns: 2rem 1fr;
-  min-height: 28px;
-  border-bottom: 2px dashed var(--color-track-line);
+  min-height: 32px;
+  border-bottom: 1px dashed rgb(255 255 255 / 0.45);
 
   &:last-child {
     border-bottom: 0;
@@ -50,8 +50,9 @@ defineSlots<{ default(): unknown }>()
 .lane__number {
   display: grid;
   place-items: center;
-  border-right: 2px solid rgb(255 255 255 / 0.5);
-  background: rgb(0 0 0 / 0.28);
+  // The white start line runs along the edge of the lane numbers.
+  border-right: 3px solid #f2f2f2;
+  background: #0f3a22;
   color: #fff;
   font-family: var(--font-display);
   font-size: var(--font-size-md);
