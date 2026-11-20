@@ -5,10 +5,29 @@
 An interactive horse racing game built with **Vue 3, TypeScript and Pinia** for the Insider One Front-end Developer case study.
 Twenty horses — named after computing pioneers — race across six rounds from 1200 m to 2200 m.
 
-> The MVP is complete: every requirement of the brief works and is tested. Extra product, evidence and
-> delivery layers follow phase by phase; see the [implementation plan](docs/PLAN.md).
+The game includes the brief's full flow and optional predictions, replay, horse statistics and a live broadcast camera. See the [implementation plan](docs/PLAN.md) for delivery status.
 
-## Highlights (planned)
+## Playing
+
+Generate the program, optionally choose a winner, then press Start. Rounds wait for **Next round** by default, leaving unlimited time for the next prediction. **Auto advance** beside the speed selector starts the next round after a 2.5-second break; it is off on a fresh visit. Playback speeds are 0.5×, 1×, 2× and 4×. Base rounds take about 12–18 seconds for an average horse (24–36 seconds at 0.5×; slower horses take longer).
+
+The camera follows a 300 m window along a track scaled in metres. Switch to Whole track for an overview, or open the live panel in a modal theater; predictions and controls remain usable there. Reduced motion keeps the camera still. Pause displays a banner above the course.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  UI[Vue feature components] --> Stores[Pinia setup stores]
+  Stores --> Domain[Pure TypeScript domain]
+  Domain --> Seed[Seeded race profiles and results]
+  Seed --> Clock[Checkpoint race clock]
+  Clock --> Paint[requestAnimationFrame: DOM transforms]
+  UI --> Shared[Shared UI, i18n, typed analytics]
+```
+
+The store owns state transitions and one timer per round. The domain computes seeded outcomes before animation; the track derives positions from the clock without per-frame Pinia writes. [Architecture](docs/ARCHITECTURE.md) and [ADRs](docs/adr/README.md) explain the tradeoffs.
+
+## Highlights
 
 - Deterministic, seeded race engine — every race can be replayed and shared
 - Fully responsive (mobile, tablet, desktop), light & dark themes
