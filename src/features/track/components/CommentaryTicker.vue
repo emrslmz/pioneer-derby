@@ -12,7 +12,7 @@ const { t } = useI18n()
 
 <template>
   <div class="ticker" data-testid="commentary">
-    <span class="ticker__tag" :class="{ 'ticker__tag--live': live }">{{
+    <span v-if="text" class="ticker__tag" :class="{ 'ticker__tag--live': live }">{{
       t('broadcast.live')
     }}</span>
     <Transition name="ticker" mode="out-in">
@@ -78,5 +78,17 @@ const { t } = useI18n()
 .ticker-leave-to {
   opacity: 0;
   transform: translateY(-60%);
+}
+
+// Short screens: the ticker leaves the picture to the track, but stays a live region.
+@media (min-width: 1280px) and (max-height: 760px) {
+  .ticker {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 }
 </style>

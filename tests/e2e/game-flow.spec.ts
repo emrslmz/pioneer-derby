@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { FAST, installClock, PROGRAM_AT_8X, ROUND_1_AT_8X } from './clock'
 
 /** The brief end to end: Generate → 6×10 program → Start → results one round at a time. */
 test.describe('full game flow', () => {
@@ -20,10 +21,10 @@ test.describe('full game flow', () => {
   test('[R4] [R5] rounds run one at a time and results appear only after each round', async ({
     page,
   }) => {
+    await installClock(page)
     await page.goto('/?seed=42')
     await page.getByTestId('generate-button').click()
-    await page.getByRole('radio', { name: '4×' }).click()
-    await page.getByTestId('auto-advance').check()
+    await page.getByRole('radio', { name: FAST }).click()
     await page.getByTestId('toggle-button').click()
 
     const results = page.getByTestId('result-round')
@@ -31,13 +32,15 @@ test.describe('full game flow', () => {
     await expect(page.getByTestId('program-round').first()).toHaveAttribute('data-state', 'live')
 
     // Round 1 finishes → exactly one result block, round 2 becomes current.
-    await expect(results).toHaveCount(1, { timeout: 10_000 })
+    await page.clock.runFor(ROUND_1_AT_8X)
+    await expect(results).toHaveCount(1)
     await expect(results.first().locator('h3')).toHaveText('1st Lap – 1200 m')
     await expect(results.first().locator('tbody tr')).toHaveCount(10)
     await expect(page.getByTestId('program-round').first()).toHaveAttribute('data-state', 'done')
 
     // The rest of the program, still strictly in order.
-    await expect(results).toHaveCount(6, { timeout: 60_000 })
+    await page.clock.runFor(PROGRAM_AT_8X)
+    await expect(results).toHaveCount(6)
     await expect(results.locator('h3')).toHaveText([
       '1st Lap – 1200 m',
       '2nd Lap – 1400 m',
@@ -52,12 +55,14 @@ test.describe('full game flow', () => {
 
   test('[X11] the same seed produces the same winners', async ({ page, browser }) => {
     const winners = async (target: typeof page) => {
+      await installClock(target)
       await target.goto('/?seed=2024')
       await target.getByTestId('generate-button').click()
-      await target.getByRole('radio', { name: '4×' }).click()
+      await target.getByRole('radio', { name: FAST }).click()
       await target.getByTestId('toggle-button').click()
+      await target.clock.runFor(ROUND_1_AT_8X)
       const first = target.getByTestId('result-round').first()
-      await expect(first).toBeVisible({ timeout: 10_000 })
+      await expect(first).toBeVisible()
       return first.locator('tbody tr').first().locator('.swatch__label').textContent()
     }
 

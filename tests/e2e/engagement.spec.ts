@@ -1,10 +1,12 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
+import { FAST, installClock, PROGRAM_AT_8X, ROUND_1_AT_8X } from './clock'
 
 test.describe('engagement layer', () => {
   test.setTimeout(90_000)
 
   test('[X4] pick the winner, see the tip, and score points', async ({ page }) => {
+    await installClock(page)
     await page.goto('/?seed=42')
     await page.getByTestId('generate-button').click()
 
@@ -18,13 +20,11 @@ test.describe('engagement layer', () => {
     await tip.click()
     await expect(tip).toHaveAttribute('aria-checked', 'true')
 
-    await page.getByRole('radio', { name: '4×' }).click()
-    await page.getByTestId('auto-advance').check()
+    await page.getByRole('radio', { name: FAST }).click()
     await page.getByTestId('toggle-button').click()
     await expect(page.getByTestId('prediction-locked')).toContainText('Your pick:')
-    await expect(page.getByTestId('prediction-outcome')).toContainText('1st Lap – 1200 m:', {
-      timeout: 10_000,
-    })
+    await page.clock.runFor(ROUND_1_AT_8X)
+    await expect(page.getByTestId('prediction-outcome')).toContainText('1st Lap – 1200 m:')
     await expect(page.getByTestId('prediction-score')).toHaveText(/^\d+ pts$/)
   })
 
@@ -42,10 +42,11 @@ test.describe('engagement layer', () => {
     const ready = await height()
     await page.getByTestId('pick-tip-button').click()
     const picked = await height()
+    await page.getByRole('radio', { name: FAST }).click()
     await page.getByTestId('toggle-button').click()
     await page.clock.runFor(3_000)
     const running = await height()
-    await page.clock.runFor(13_000) // into the intermission, with an outcome
+    await page.clock.runFor(ROUND_1_AT_8X - 3_000) // into the break, with an outcome
     await expect(page.getByTestId('round-result')).toBeVisible()
     const intermission = await height()
 
@@ -89,20 +90,22 @@ test.describe('engagement layer', () => {
   })
 
   test('[X11] Replay reruns the finished program with identical results', async ({ page }) => {
+    await installClock(page)
     await page.goto('/?seed=5')
     await page.getByTestId('generate-button').click()
-    await page.getByRole('radio', { name: '4×' }).click()
-    await page.getByTestId('auto-advance').check()
+    await page.getByRole('radio', { name: FAST }).click()
     await page.getByTestId('toggle-button').click()
     const results = page.getByTestId('result-round')
-    await expect(results).toHaveCount(6, { timeout: 60_000 })
+    await page.clock.runFor(PROGRAM_AT_8X)
+    await expect(results).toHaveCount(6)
     const first = await results.locator('.swatch__label').allTextContents()
 
     await expect(page.getByTestId('toggle-button')).toContainText('Replay')
     await page.getByTestId('toggle-button').click()
     await expect(results).toHaveCount(0)
     await page.getByTestId('toggle-button').click()
-    await expect(results).toHaveCount(6, { timeout: 60_000 })
+    await page.clock.runFor(PROGRAM_AT_8X)
+    await expect(results).toHaveCount(6)
     await expect(results.locator('.swatch__label')).toHaveText(first)
   })
 

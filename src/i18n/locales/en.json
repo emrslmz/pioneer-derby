@@ -14,8 +14,9 @@
     "close": "Close",
     "replay": "Replay",
     "nextRound": "Next round",
-    "autoAdvance": "Auto advance",
-    "autoAdvanceHint": "Start the next round automatically after a short break."
+    "autoAdvance": "Auto next",
+    "autoAdvanceHint": "On: the next round starts after a 6-second break. Off: press Next round.",
+    "startNow": "Start now"
   },
   "status": {
     "label": "Race status",
@@ -160,8 +161,9 @@
     "expand": "Watch full screen",
     "collapse": "Close full screen",
     "theater": "Race track, full screen",
-    "mapStart": "Start",
-    "mapFinish": "Finish"
+    "mapFinish": "Finish",
+    "toGo": "{distance} to go",
+    "controls": "Race controls"
   },
   "prediction": {
     "title": "Predict the Winner",

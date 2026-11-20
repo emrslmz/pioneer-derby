@@ -14,8 +14,9 @@
     "close": "Kapat",
     "replay": "Tekrar İzle",
     "nextRound": "Sonraki tur",
-    "autoAdvance": "Otomatik ilerlet",
-    "autoAdvanceHint": "Tur bitince kısa bir aradan sonra sıradaki turu başlat."
+    "autoAdvance": "Oto geçiş",
+    "autoAdvanceHint": "Açık: sıradaki tur 6 saniyelik aradan sonra başlar. Kapalı: Sonraki tur'a basın.",
+    "startNow": "Şimdi başlat"
   },
   "status": {
     "label": "Yarış durumu",
@@ -160,8 +161,9 @@
     "expand": "Tam ekran izle",
     "collapse": "Tam ekrandan çık",
     "theater": "Yarış pisti, tam ekran",
-    "mapStart": "Start",
-    "mapFinish": "Bitiş"
+    "mapFinish": "Bitiş",
+    "toGo": "Kalan {distance}",
+    "controls": "Yarış kontrolleri"
   },
   "prediction": {
     "title": "Kazananı Tahmin Et",

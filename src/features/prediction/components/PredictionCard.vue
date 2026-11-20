@@ -73,12 +73,6 @@ const lastOutcome = computed(() => {
 
 const outcomeTone = { winner: 'success', podium: 'info', miss: 'neutral' } as const
 
-const guideSteps = [
-  { key: 'generate', kbd: 'G' },
-  { key: 'predict', kbd: '' },
-  { key: 'start', kbd: 'Space' },
-] as const
-
 type Mode = 'idle' | 'open' | 'locked' | 'finished'
 const mode = computed<Mode>(() => {
   if (status.value === 'idle') return 'idle'
@@ -158,23 +152,8 @@ const canBackTip = computed(
         :inert="mode !== 'idle' || undefined"
         data-testid="onboarding"
       >
-        <p class="visually-hidden">{{ t('onboarding.title') }}</p>
-        <ol class="guide__steps">
-          <li v-for="(step, index) in guideSteps" :key="step.key" class="guide__step">
-            <span class="guide__number" aria-hidden="true">{{ index + 1 }}</span>
-            <strong>{{ t(`onboarding.steps.${step.key}.title`) }}</strong>
-          </li>
-        </ol>
-        <BaseButton
-          variant="primary"
-          icon="generate"
-          shortcut="G"
-          class="guide__cta"
-          data-testid="onboarding-generate"
-          @click="race.generateProgram()"
-        >
-          {{ t('onboarding.cta') }}
-        </BaseButton>
+        <!-- The guided tour explains the steps; here one line is enough. -->
+        <p class="guide__text">{{ t('prediction.idle') }}</p>
       </div>
 
       <div
@@ -191,19 +170,6 @@ const canBackTip = computed(
           :recommended-id="isOpen ? (recommendation?.horseId ?? null) : null"
           :recommended-label="t('prediction.recommended')"
         />
-        <BaseButton
-          size="sm"
-          icon="star"
-          class="prediction__tip-button"
-          :class="{ 'is-hidden': !canBackTip }"
-          :disabled="!canBackTip"
-          :aria-hidden="!canBackTip"
-          :tabindex="canBackTip ? undefined : -1"
-          data-testid="pick-tip-button"
-          @click="recommendation && (pick = recommendation.horseId)"
-        >
-          {{ t('prediction.pickTip') }}
-        </BaseButton>
       </div>
     </div>
 
@@ -227,6 +193,19 @@ const canBackTip = computed(
         <template v-else-if="mode === 'idle'">{{ t('prediction.rules') }}</template>
         <template v-else>{{ tipText }}</template>
       </p>
+      <BaseButton
+        size="sm"
+        icon="star"
+        class="prediction__tip-button"
+        :class="{ 'is-hidden': !canBackTip }"
+        :disabled="!canBackTip"
+        :aria-hidden="!canBackTip"
+        :tabindex="canBackTip ? undefined : -1"
+        data-testid="pick-tip-button"
+        @click="recommendation && (pick = recommendation.horseId)"
+      >
+        {{ t('prediction.pickTip') }}
+      </BaseButton>
     </div>
   </section>
 </template>
@@ -325,71 +304,30 @@ const canBackTip = computed(
 // Both layers occupy the same cell; the hidden one still reserves its height.
 .prediction__layer {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  min-height: 44px;
   grid-area: 1 / 1;
   align-items: center;
   gap: var(--space-2) var(--space-3);
   min-width: 0;
 }
 
-.guide__steps {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-1) var(--space-3);
-  margin: 0;
-  padding: 0;
+.guide__text {
+  color: var(--color-text-muted);
   font-size: var(--font-size-sm);
-  list-style: none;
-}
-
-.guide__step {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-
-  & + &::before {
-    margin-right: var(--space-2);
-    color: var(--color-text-subtle);
-    content: '→';
-  }
-}
-
-.guide__number {
-  display: grid;
-  place-items: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--gradient-accent);
-  color: var(--color-accent-contrast);
-  font-family: var(--font-display);
-  font-size: var(--font-size-xs);
-  font-weight: 700;
-}
-
-.guide__cta {
-  margin-left: auto;
-  animation: cta-pulse 2s ease-in-out infinite;
-}
-
-@keyframes cta-pulse {
-  50% {
-    box-shadow:
-      0 6px 20px rgb(244 72 43 / 0.35),
-      0 0 0 6px rgb(244 72 43 / 0.18);
-  }
 }
 
 .prediction__tip-button {
+  flex-shrink: 0;
   margin-left: auto;
+  min-height: 26px;
 }
 
 .prediction__info {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  height: 1.75rem;
+  height: 1.9rem;
   min-width: 0;
   overflow: hidden;
   font-size: var(--font-size-sm);
