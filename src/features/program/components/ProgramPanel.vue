@@ -41,11 +41,13 @@ watch(currentRoundIndex, async () => {
         size="sm"
         icon="generate"
         :disabled="!canGenerate"
-        :title="canGenerate ? undefined : t('changeProgram.locked')"
+        :aria-label="t('changeProgram.button')"
+        :title="canGenerate ? t('changeProgram.button') : t('changeProgram.locked')"
         data-testid="change-program-button"
         @click="emit('change')"
       >
-        {{ t('changeProgram.button') }}
+        <!-- Short: the panel header is narrow. The full name is the accessible name (WCAG 2.5.3). -->
+        {{ t('changeProgram.short') }}
       </BaseButton>
     </template>
     <div v-if="rounds.length > 0" ref="list">
