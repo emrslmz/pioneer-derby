@@ -132,6 +132,35 @@
   --z-tabbar: 20;
   --z-dialog: 50;
 
+  // The race track looks the same in every theme: night turf, white rails, a chequered line.
+  --track-bg: #0f3a22;
+  --track-white: #fff;
+  --track-ink: #1a1a1a;
+  --track-chalk: #f2f2f2;
+  --track-rail: #f4f4f4;
+  --track-rail-post: #d9dde3;
+  --track-pole: #e53935;
+  --track-checker: #111;
+  --track-stall-frame: #d6dbe3;
+  --track-stall-edge: #9aa3b2;
+  --track-stall-top: rgb(10 14 22 / 0.55);
+  --track-stall-bottom: rgb(30 36 48 / 0.35);
+  --track-lane-line: color-mix(in srgb, var(--track-white) 28%, transparent);
+  --track-tick: color-mix(in srgb, var(--track-white) 14%, transparent);
+  --track-tick-pole: color-mix(in srgb, var(--track-white) 24%, transparent);
+  --track-number-line: color-mix(in srgb, var(--track-white) 12%, transparent);
+  --track-card-line: color-mix(in srgb, var(--track-white) 20%, transparent);
+  --track-card-text: color-mix(in srgb, var(--track-white) 80%, transparent);
+  --track-label-bg: rgb(0 0 0 / 0.4);
+  --track-gap-bg: rgb(0 0 0 / 0.55);
+  --track-card-bg: rgb(6 10 22 / 0.8);
+  --track-veil-bg: rgb(8 20 14 / 0.86);
+  --track-shadow: rgb(0 0 0 / 0.35);
+  --track-winner: rgb(245 197 24 / 0.32);
+  --track-finish-glow: rgb(255 59 59 / 0.45);
+  --track-live: #c8102e;
+  --track-backdrop: rgb(4 7 16 / 0.82);
+
   // Motion
   --duration-fast: 150ms;
   --duration-base: 250ms;

@@ -3,7 +3,7 @@
 [![CI](https://github.com/emrslmz/pioneer-derby/actions/workflows/ci.yml/badge.svg)](https://github.com/emrslmz/pioneer-derby/actions/workflows/ci.yml)
 [![Live demo](https://img.shields.io/badge/live%20demo-pioneerderby.netlify.app-00c7b7?logo=netlify&logoColor=white)](https://pioneerderby.netlify.app)
 ![Lighthouse](https://img.shields.io/badge/Lighthouse-96%20%C2%B7%20100%20%C2%B7%20100%20%C2%B7%20100-0cce6b?logo=lighthouse&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-308%20unit%20%C2%B7%2058%20E2E%20%C2%B7%20visual%20%C2%B7%20axe-15743b)
+![Tests](https://img.shields.io/badge/tests-315%20unit%20%C2%B7%2058%20E2E%20%C2%B7%20visual%20%C2%B7%20axe-15743b)
 
 An interactive horse racing game built with **Vue 3, TypeScript and Pinia** for the Insider One Front-end Developer case study.
 Twenty horses — named after computing pioneers — race across six rounds from 1200 m to 2200 m.

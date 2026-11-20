@@ -85,8 +85,10 @@ src/
 │  └─ settings.store.ts     # locale, theme, speed (persisted)
 ├─ features/
 │  ├─ horses/components/    # HorseList, HorseRow, ConditionBar, ColorSwatch, HorseStatsDrawer
-│  ├─ track/components/     # RaceTrack, TrackLane, HorseRunner, FinishLine, LiveLeaderboard, CommentaryTicker
-│  ├─ track/composables/    # useRaceLoop (rAF → progressAt → transform, ADR 0008), useBroadcast
+│  ├─ track/components/     # RaceTrack (wires the pieces), TrackWorld, TrackTurf, TrackMarkers, RaceMap,
+│  │                        #   PlayerBar, TrackOverlays, RoundResultBoard, LiveLeaderboard, CommentaryTicker
+│  ├─ track/composables/    # useRaceLoop (rAF → progressAt, ADR 0008), useTrackPainter (per-frame DOM writes),
+│  │                        #   useTrackGeometry, useDisplayedRound, useTheater, useBroadcast, useCommentary, useTrackCard
 │  ├─ program/components/   # ProgramPanel, RoundTable
 │  ├─ results/components/   # ResultsPanel, RoundResultTable
 │  ├─ prediction/components/# PredictionCard, RunnerPicker
