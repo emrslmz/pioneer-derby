@@ -43,7 +43,9 @@ describe('responsive layout & header', () => {
     const { wrapper, race } = mountApp()
     expect(wrapper.find('header [data-testid="generate-button"]').exists()).toBe(false)
     const empty = wrapper.get('[data-testid="program-panel"] [data-testid="generate-button"]')
-    expect(wrapper.get('[data-testid="results-panel"]').text()).toContain('No results yet')
+    expect(wrapper.get('[data-testid="results-panel"]').text()).toContain(
+      'Results appear here as each round finishes.',
+    )
 
     await empty.trigger('click')
     expect(race.status).toBe('ready')
@@ -157,7 +159,7 @@ describe('responsive layout & header', () => {
     expect(race.speed).toBe(0.5)
 
     await wrapper.get('[data-testid="theme-toggle"]').trigger('click')
-    expect(document.documentElement.dataset.theme).toBe('light')
+    expect(document.documentElement.dataset.theme).toBe('dark')
     localStorage.clear()
     delete document.documentElement.dataset.theme
   })
@@ -196,5 +198,18 @@ describe('responsive layout & header', () => {
     vi.runAllTimers()
     await nextTick()
     expect(announcer().text()).toBe('All rounds finished.')
+  })
+
+  it('[X9] the footer is a signature: "Created by" with a link, the same in every language', async () => {
+    setViewportWidth(1440)
+    for (const locale of ['en', 'tr'] as const) {
+      const { wrapper } = mountApp({ locale })
+      const footer = wrapper.get('[data-testid="app-footer"]')
+      expect(footer.text()).toBe('Created by emresolmaz.com.tr')
+      const link = footer.get('[data-testid="footer-link"]')
+      expect(link.attributes('href')).toBe('https://emresolmaz.com.tr')
+      expect(link.attributes('rel')).toContain('noopener')
+      wrapper.unmount()
+    }
   })
 })

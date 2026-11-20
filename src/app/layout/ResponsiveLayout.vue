@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import BaseTabs from '@/shared/ui/BaseTabs.vue'
 import { tabId, tabPanelId } from '@/shared/ui/tabs'
 import { useBreakpoint } from '@/shared/composables/useBreakpoint'
+import { useSettingsStore } from '@/stores/settings.store'
 import MobileTabBar from './MobileTabBar.vue'
 
 /**
@@ -16,6 +17,7 @@ type Section = 'horses' | 'program' | 'results'
 
 const { t } = useI18n()
 const breakpoint = useBreakpoint()
+const settings = useSettingsStore()
 const active = ref<Section>('program')
 const group = 'sections'
 
@@ -32,7 +34,12 @@ const activeTab = computed({
 </script>
 
 <template>
-  <div v-if="breakpoint === 'desktop'" class="layout layout--desktop" data-layout="desktop">
+  <div
+    v-if="breakpoint === 'desktop'"
+    class="layout layout--desktop"
+    :class="{ 'layout--rail': !settings.horsesPanelOpen }"
+    data-layout="desktop"
+  >
     <div class="layout__horses"><slot name="horses" /></div>
     <div class="layout__track"><slot name="track" /></div>
     <div class="layout__side">
@@ -80,9 +87,20 @@ const activeTab = computed({
 
 .layout--desktop {
   display: grid;
-  grid-template-columns: minmax(340px, 1.1fr) minmax(0, 1.9fr) minmax(500px, 1.7fr);
+  grid-template-columns: var(--col-horses) minmax(0, 1.9fr) minmax(500px, 1.7fr);
   gap: var(--layout-gap);
-  height: calc(100dvh - var(--header-height));
+  height: calc(100dvh - var(--header-height) - var(--footer-height));
+}
+
+// The horse column is a registered length, so folding the list glides: the track takes the room.
+.layout--desktop {
+  --col-horses: clamp(340px, 24vw, 440px);
+
+  transition: --col-horses 380ms cubic-bezier(0.3, 0.8, 0.2, 1);
+}
+
+.layout--rail {
+  --col-horses: 76px;
 }
 
 .layout--desktop > * {
@@ -108,7 +126,8 @@ const activeTab = computed({
 }
 
 .layout--stacked[data-layout='mobile'] {
-  padding-bottom: calc(var(--tabbar-height) + var(--layout-gap) + env(safe-area-inset-bottom));
+  // The footer (above the fixed tab bar) sits under the content.
+  padding-bottom: var(--layout-gap);
 }
 
 .layout__panel {

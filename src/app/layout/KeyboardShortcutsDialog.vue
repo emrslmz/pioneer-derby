@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import BaseButton from '@/shared/ui/BaseButton.vue'
 import BaseDialog from '@/shared/ui/BaseDialog.vue'
 
 const open = defineModel<boolean>('open', { required: true })
+defineEmits<{ 'start-tour': [] }>()
 const { t } = useI18n()
 
 const shortcuts = [
@@ -28,12 +30,32 @@ const shortcuts = [
         <dd>{{ t(shortcut.label) }}</dd>
       </div>
     </dl>
+    <div class="tour">
+      <p class="tour__hint">{{ t('shortcuts.tourHint') }}</p>
+      <BaseButton icon="play" data-testid="restart-tour" @click="$emit('start-tour')">
+        {{ t('shortcuts.tour') }}
+      </BaseButton>
+    </div>
   </BaseDialog>
 </template>
 
 <style scoped lang="scss">
 .intro {
   margin-bottom: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.tour {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.tour__hint {
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
 }

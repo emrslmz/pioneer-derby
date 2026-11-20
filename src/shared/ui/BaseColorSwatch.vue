@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import HorseRunner from '../components/HorseRunner.vue'
 import BaseShortName from './BaseShortName.vue'
 import BaseTooltip from './BaseTooltip.vue'
 
@@ -9,12 +10,21 @@ defineProps<{
   hideLabel?: boolean
   /** Show a person's name as "Grace H." (full name on hover and for screen readers). */
   abbreviate?: boolean
+  /** Draw the horse itself (in this colour, with its number) instead of a dot. */
+  horseNumber?: number
 }>()
 </script>
 
 <template>
   <span class="swatch">
-    <span class="swatch__dot" :style="{ '--swatch': hex }" aria-hidden="true" />
+    <HorseRunner
+      v-if="horseNumber !== undefined"
+      class="swatch__horse"
+      :color="hex"
+      :number="horseNumber"
+      :galloping="false"
+    />
+    <span v-else class="swatch__dot" :style="{ '--swatch': hex }" aria-hidden="true" />
     <span v-if="hideLabel" class="visually-hidden">{{ label }}</span>
     <span v-else-if="abbreviate" class="swatch__label"><BaseShortName :name="label" /></span>
     <!-- Long labels end in "…"; the tooltip then shows the whole label. -->
@@ -43,6 +53,12 @@ defineProps<{
   box-shadow:
     0 0 0 2px var(--color-surface),
     0 0 0 3px var(--color-border-strong);
+}
+
+.swatch__horse {
+  width: 1.9rem;
+  height: auto;
+  flex-shrink: 0;
 }
 
 .swatch__tip {

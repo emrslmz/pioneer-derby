@@ -13,7 +13,7 @@
     "close": "Close",
     "replay": "Replay",
     "nextRound": "Next round",
-    "autoAdvance": "Auto next",
+    "autoAdvance": "Next round continues automatically",
     "autoAdvanceHint": "On: the next round starts after a 6-second break. Off: press Next round.",
     "startNow": "Start now",
     "cancel": "Cancel"
@@ -64,9 +64,7 @@
   "empty": {
     "horses": "The horses will line up here.",
     "program": "Press Generate Program to draw six rounds of ten horses.",
-    "results": "Results appear here as each round finishes.",
-    "programTitle": "No program yet",
-    "resultsTitle": "No results yet"
+    "results": "Results appear here as each round finishes."
   },
   "shortcuts": {
     "title": "Keyboard shortcuts",
@@ -78,7 +76,9 @@
     "theme": "Switch theme",
     "help": "Show this help",
     "close": "Close this dialog",
-    "replay": "Replay the same race"
+    "replay": "Replay the same race",
+    "tour": "Take the tour again",
+    "tourHint": "A 30-second walk through the screen."
   },
   "announce": {
     "generated": "New program ready: {rounds} rounds. Press Start to begin.",
@@ -118,7 +118,11 @@
     "color": "Color",
     "lane": "Lane {lane}",
     "inRace": "Running in lane {lane} of the current round",
-    "laneShort": "L{lane}"
+    "laneShort": "L{lane}",
+    "railTitle": "Horses",
+    "railLabel": "{name}, condition {condition}, {color}",
+    "expand": "Show the horse list",
+    "collapse": "Fold the horse list"
   },
   "program": {
     "lane": "Lane",
@@ -129,7 +133,8 @@
       "next": "Next",
       "done": "Finished",
       "upcoming": "Upcoming"
-    }
+    },
+    "drawing": "Drawing the program…"
   },
   "results": {
     "position": "Position",
@@ -141,7 +146,9 @@
       "1": "Gold",
       "2": "Silver",
       "3": "Bronze"
-    }
+    },
+    "inProgress": "Race in progress",
+    "pausedLine": "Race paused"
   },
   "track": {
     "label": "Race track — {lap}. {count} horses, lane 1 at the top; finish line on the right.",
@@ -231,7 +238,8 @@
     "live": "Live",
     "photoFinish": "Photo finish",
     "margin": "won by {time}",
-    "position": "Position {position}: {name}"
+    "position": "Position {position}: {name}",
+    "waiting": "Live commentary starts with the race."
   },
   "commentary": {
     "START": "And they're off in the {lap}!",
@@ -278,5 +286,36 @@
     "button": "Change program",
     "locked": "Pause the race to change the program.",
     "short": "Change"
+  },
+  "tour": {
+    "next": "Next",
+    "prev": "Back",
+    "done": "Let's race",
+    "steps": {
+      "welcome": {
+        "title": "Welcome to Pioneer Derby",
+        "body": "Twenty computing pioneers, six rounds, one champion. This 30-second tour shows how it works."
+      },
+      "program": {
+        "title": "1. Draw the program",
+        "body": "Press Generate Program (or G). Ten horses are drawn for each of the six rounds, from 1200 m to 2200 m."
+      },
+      "prediction": {
+        "title": "2. Pick a winner",
+        "body": "Before a round, back one horse: 3 points for the winner, 1 for a podium finish. The star marks our tip."
+      },
+      "start": {
+        "title": "3. Start the race",
+        "body": "Start runs the rounds one at a time. Space starts and pauses, too."
+      },
+      "player": {
+        "title": "4. Watch and control",
+        "body": "Change the speed, turn off the automatic next round to start each round yourself, or pick the Follow or Whole track camera. Full screen opens the race in a modal."
+      },
+      "results": {
+        "title": "5. Results, one by one",
+        "body": "Each result appears here only after the last horse crosses the line. Share the link to replay the same race."
+      }
+    }
   }
 }

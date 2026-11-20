@@ -29,6 +29,9 @@ export interface AnalyticsEventMap {
   }
   link_shared: { seed: number; method: 'clipboard' | 'share-sheet' }
   horse_stats_opened: { horseId: HorseId }
+  tour_started: { source: 'first_visit' | 'manual' }
+  tour_completed: { steps: number }
+  tour_skipped: { atStep: number; steps: number }
 }
 
 export type AnalyticsEventName = keyof AnalyticsEventMap

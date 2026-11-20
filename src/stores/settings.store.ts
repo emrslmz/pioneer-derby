@@ -4,6 +4,9 @@ import { analytics, type ThemePreference } from '@/shared/analytics'
 import { readStorage, writeStorage } from '@/shared/utils/storage'
 
 export const THEME_STORAGE_KEY = 'pioneer-derby:theme'
+/** First visit: the light theme (open to everyone); the toggle remembers any other choice. */
+export const DEFAULT_THEME: ThemePreference = 'light'
+export const HORSES_PANEL_STORAGE_KEY = 'pioneer-derby:horses-panel'
 export const THEME_PREFERENCES: readonly ThemePreference[] = ['system', 'light', 'dark']
 
 function isThemePreference(value: unknown): value is ThemePreference {
@@ -16,7 +19,15 @@ function isThemePreference(value: unknown): value is ThemePreference {
  */
 export const useSettingsStore = defineStore('settings', () => {
   const stored = readStorage(THEME_STORAGE_KEY)
-  const theme = ref<ThemePreference>(isThemePreference(stored) ? stored : 'system')
+  const theme = ref<ThemePreference>(isThemePreference(stored) ? stored : DEFAULT_THEME)
+
+  // The horse list can fold into a slim rail of horses on wide screens (the track gets the room).
+  const horsesPanelOpen = ref(readStorage(HORSES_PANEL_STORAGE_KEY) !== 'closed')
+
+  function setHorsesPanelOpen(open: boolean): void {
+    horsesPanelOpen.value = open
+    writeStorage(HORSES_PANEL_STORAGE_KEY, open ? 'open' : 'closed')
+  }
 
   function setTheme(next: ThemePreference): void {
     if (next === theme.value) return
@@ -31,5 +42,5 @@ export const useSettingsStore = defineStore('settings', () => {
     setTheme(THEME_PREFERENCES[(index + 1) % THEME_PREFERENCES.length] as ThemePreference)
   }
 
-  return { theme, setTheme, cycleTheme }
+  return { theme, setTheme, cycleTheme, horsesPanelOpen, setHorsesPanelOpen }
 })

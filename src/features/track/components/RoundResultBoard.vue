@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import HorseRunner from '@/shared/components/HorseRunner.vue'
 import { INTERMISSION_MS, PODIUM_SIZE } from '@/domain/constants'
 import type { RoundResult } from '@/domain/types'
 import { useLocale } from '@/i18n/useLocale'
@@ -77,9 +78,12 @@ const pick = computed(() => {
         data-testid="result-podium-row"
       >
         <span class="board__medal" aria-hidden="true">{{ row.position }}</span>
-        <span class="board__coat" :style="{ '--coat': row.horse.color.hex }" aria-hidden="true">
-          {{ row.horse.id }}
-        </span>
+        <HorseRunner
+          class="board__horse"
+          :color="row.horse.color.hex"
+          :number="row.horse.id"
+          :galloping="false"
+        />
         <span class="board__name">{{ row.horse.name }}</span>
         <span class="board__time">{{ raceTime(row.timeMs) }}</span>
       </li>
@@ -219,21 +223,11 @@ const pick = computed(() => {
   background: var(--color-bronze);
 }
 
-.board__coat {
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  border: 2px solid rgb(0 0 0 / 0.35);
-  border-radius: 50%;
-  background: var(--coat);
-  color: #fff;
-  font-family: var(--font-display);
-  font-size: var(--font-size-xs);
-  font-weight: 700;
-  text-shadow:
-    0 0 2px #000,
-    0 0 2px #000;
+// The horse in its own colour, number on the saddle cloth.
+.board__horse {
+  width: 40px;
+  height: auto;
+  flex-shrink: 0;
 }
 
 .board__name {

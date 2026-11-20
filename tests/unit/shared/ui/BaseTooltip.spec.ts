@@ -82,4 +82,21 @@ describe('BaseTooltip (when truncated)', () => {
     await cut.get('.tooltip-trigger').trigger('pointerenter')
     expect(tooltip()?.textContent?.trim()).toBe('Camgöbeği')
   })
+
+  it('[X8] side="right" opens beside the trigger, for a slim side rail', async () => {
+    vi.useFakeTimers()
+    const wrapper = mount(BaseTooltip, {
+      props: { text: 'Grace Hopper', side: 'right' },
+      slots: { default: () => h('button', { type: 'button' }, 'Grace H.') },
+      attachTo: document.body,
+    })
+    wrapper.get('.tooltip-trigger').element.getBoundingClientRect = () =>
+      ({ top: 100, bottom: 140, left: 8, right: 60, width: 52, height: 40 }) as DOMRect
+    await wrapper.get('.tooltip-trigger').trigger('pointerenter')
+    const bubble = tooltip()!
+    expect(bubble.classList.contains('tooltip--right')).toBe(true)
+    // 8 px to the right of the trigger, centred on its height.
+    expect(bubble.style.left).toBe('68px')
+    expect(bubble.style.top).toBe('120px')
+  })
 })

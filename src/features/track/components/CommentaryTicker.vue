@@ -15,6 +15,7 @@ const { t } = useI18n()
     <span v-if="text" class="ticker__tag" :class="{ 'ticker__tag--live': live }">{{
       t('broadcast.live')
     }}</span>
+    <span v-if="!text" class="ticker__hint" aria-hidden="true">{{ t('broadcast.waiting') }}</span>
     <Transition name="ticker" mode="out-in">
       <p :key="text" class="ticker__line" aria-hidden="true" data-testid="commentary-line">
         {{ text }}
@@ -25,6 +26,11 @@ const { t } = useI18n()
 </template>
 
 <style scoped lang="scss">
+.ticker__hint {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
 .ticker {
   display: flex;
   align-items: center;

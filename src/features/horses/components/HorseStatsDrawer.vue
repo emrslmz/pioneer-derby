@@ -78,7 +78,11 @@ const formString = computed(() => stats.value?.form.join('-') ?? '')
     <div v-if="horse" class="stats" data-testid="horse-stats">
       <div class="stats__identity">
         <span class="stats__number">{{ t('stats.number', { number: horse.id }) }}</span>
-        <BaseColorSwatch :hex="horse.color.hex" :label="t(`colors.${horse.color.key}`)" />
+        <BaseColorSwatch
+          :hex="horse.color.hex"
+          :label="t(`colors.${horse.color.key}`)"
+          :horse-number="horse.id"
+        />
       </div>
 
       <div class="stats__condition">

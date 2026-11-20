@@ -36,6 +36,8 @@ export const ICONS = {
     fill: true,
   },
   check: { d: 'M5 12.5l4.5 4.5L19 7.5', fill: false },
+  panelClose: { d: 'M3 5h18v14H3zM9 5v14M16 9.5L13.5 12l2.5 2.5', fill: false },
+  panelOpen: { d: 'M3 5h18v14H3zM9 5v14M13.5 9.5L16 12l-2.5 2.5', fill: false },
   expand: { d: 'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5', fill: false },
   collapse: { d: 'M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5', fill: false },
   bug: {

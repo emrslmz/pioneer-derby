@@ -81,6 +81,7 @@ const language = computed({ get: () => locale.value, set: setLocale })
 
     <div class="header__actions">
       <BaseButton
+        data-tour="start"
         data-testid="toggle-button"
         variant="primary"
         :icon="controls.toggleIcon.value"
@@ -259,14 +260,19 @@ const language = computed({ get: () => locale.value, set: setLocale })
   gap: var(--space-2);
 }
 
+// Phone: two rows. Brand + language/theme on top; the race status and the one action below.
 @media (max-width: 767px) {
   .header {
-    grid-template-areas: 'brand brand' 'status status' 'actions actions' 'utilities utilities';
+    grid-template-areas: 'brand utilities' 'status actions';
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 
   .header__utilities {
-    flex-wrap: wrap;
-    justify-content: flex-end;
+    gap: var(--space-1);
+  }
+
+  .header__actions {
+    grid-template-columns: auto;
   }
 }
 
