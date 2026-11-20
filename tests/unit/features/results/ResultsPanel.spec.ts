@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
 import ResultsPanel from '@/features/results/components/ResultsPanel.vue'
+import RoundResultTable from '@/features/results/components/RoundResultTable.vue'
 import { useHorsesStore } from '@/stores/horses.store'
 import { mountFeature } from '../mount'
 
@@ -170,6 +171,23 @@ describe('ResultsPanel', () => {
       await nextTick()
       expect(rows(wrapper)).toHaveLength(shown)
       expect(shown).toBeGreaterThanOrEqual(3)
+    })
+  })
+
+  describe('time column', () => {
+    const result = (timeMs: number) => ({
+      roundIndex: 5,
+      distance: 2200,
+      placings: [{ position: 1, horseId: 1, timeMs }],
+    })
+    const timeWidth = (timeMs: number) => {
+      const { wrapper } = mountFeature(RoundResultTable, { props: { result: result(timeMs) } })
+      return (wrapper.findAll('th')[2]!.element as HTMLElement).style.width
+    }
+
+    it('[R5] is wide enough for the longest time: 134,25sn must not end in an ellipsis', () => {
+      expect(timeWidth(71_940)).toBe('4.75rem') // "71.94s": 7 characters
+      expect(timeWidth(134_250)).toBe('5.75rem') // "134.25s": 8 characters, the long rounds
     })
   })
 })

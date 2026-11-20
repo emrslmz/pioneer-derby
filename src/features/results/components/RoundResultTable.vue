@@ -22,10 +22,18 @@ const horsesStore = useHorsesStore()
 
 const lap = computed(() => lapLabel(props.result.roundIndex, props.result.distance))
 
+/**
+ * The time column fits its longest value: "71,94sn" is 7 characters, "134,25sn" (the long rounds)
+ * is 8. The table has fixed column widths, so a narrow column would end the time in "…".
+ */
+const timeWidth = computed(() =>
+  props.result.placings.some((placing) => placing.timeMs >= 100_000) ? '5.75rem' : '4.75rem',
+)
+
 const columns = computed<TableColumn<Placing>[]>(() => [
   { key: 'position', label: t('results.position'), align: 'center', width: '3.25rem' },
   { key: 'name', label: t('results.name') },
-  { key: 'time', label: t('results.time'), align: 'end', width: '4.75rem' },
+  { key: 'time', label: t('results.time'), align: 'end', width: timeWidth.value },
 ])
 
 const isMedal = (position: number) => position <= PODIUM_SIZE
