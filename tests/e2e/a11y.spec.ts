@@ -35,6 +35,20 @@ test.describe('accessibility (axe, WCAG 2.2 AA)', () => {
     })
   }
 
+  test('[X8] with reduced motion, content is named the instant it appears', async ({ page }) => {
+    // Regression: a reduced-motion rule that only shortened transitions turned them on for every
+    // property, so names stayed visibility:hidden for a moment after Generate.
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto('/?seed=42')
+    await page.getByTestId('generate-button').click()
+    const names = await page
+      .getByTestId('pick-option')
+      .evaluateAll((options) =>
+        options.map((o) => getComputedStyle(o.querySelector('.short-name__visible')!).visibility),
+      )
+    expect(names).toEqual(Array(10).fill('visible'))
+  })
+
   test('[X8] mobile layout has no serious violations', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 })
     await page.goto('/?seed=42')
