@@ -43,10 +43,10 @@ const rows = computed(() => {
 })
 
 const columns = computed<TableColumn<Horse>[]>(() => [
-  { key: 'number', label: t('horses.number'), align: 'end', width: '3.25rem', sortable: true },
+  { key: 'number', label: t('horses.number'), align: 'end', width: '2.75rem', sortable: true },
   { key: 'name', label: t('horses.name') },
-  { key: 'condition', label: t('horses.condition'), width: '6rem', sortable: true },
-  { key: 'color', label: t('horses.color'), width: 'var(--color-column, 7.5rem)' },
+  { key: 'condition', label: t('horses.condition'), width: '5.5rem', sortable: true },
+  { key: 'color', label: t('horses.color'), width: '6rem' },
 ])
 
 function onSort(key: string) {
@@ -98,12 +98,7 @@ function onSort(key: string) {
           </span>
         </span>
         <ConditionBar v-else-if="column.key === 'condition'" :value="row.condition" />
-        <BaseColorSwatch
-          v-else
-          class="color"
-          :hex="row.color.hex"
-          :label="t(`colors.${row.color.key}`)"
-        />
+        <BaseColorSwatch v-else :hex="row.color.hex" :label="t(`colors.${row.color.key}`)" />
       </template>
     </BaseTable>
     <HorseStatsDrawer v-model:open="statsOpen" :horse-id="statsHorseId" />
@@ -111,26 +106,6 @@ function onSort(key: string) {
 </template>
 
 <style scoped lang="scss">
-// Narrow panel: keep the colour dot, hide the colour name visually (still read by screen readers).
-.horse-list {
-  container-type: inline-size;
-}
-
-@container (max-width: 360px) {
-  .horse-list :deep(table) {
-    --color-column: 2.75rem;
-  }
-
-  .color :deep(.swatch__label) {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-  }
-}
-
 .number {
   color: var(--color-text-muted);
   font-family: var(--font-display);

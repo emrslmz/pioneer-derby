@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BaseShortName from './BaseShortName.vue'
+import BaseTooltip from './BaseTooltip.vue'
 
 /** A colour dot plus its (translated) name. The name is real text, so colour is never the only cue. */
 defineProps<{
@@ -14,10 +15,12 @@ defineProps<{
 <template>
   <span class="swatch">
     <span class="swatch__dot" :style="{ '--swatch': hex }" aria-hidden="true" />
-    <span :class="hideLabel ? 'visually-hidden' : 'swatch__label'">
-      <BaseShortName v-if="abbreviate" :name="label" />
-      <template v-else>{{ label }}</template>
-    </span>
+    <span v-if="hideLabel" class="visually-hidden">{{ label }}</span>
+    <span v-else-if="abbreviate" class="swatch__label"><BaseShortName :name="label" /></span>
+    <!-- Long labels end in "…"; the tooltip then shows the whole label. -->
+    <BaseTooltip v-else :text="label" when-truncated class="swatch__tip">
+      <span class="swatch__label" data-truncate>{{ label }}</span>
+    </BaseTooltip>
   </span>
 </template>
 
@@ -27,6 +30,8 @@ defineProps<{
   align-items: center;
   gap: var(--space-2);
   min-width: 0;
+  // Never wider than its cell, so long labels end in "…" instead of being clipped.
+  max-width: 100%;
 }
 
 .swatch__dot {
@@ -38,6 +43,11 @@ defineProps<{
   box-shadow:
     0 0 0 2px var(--color-surface),
     0 0 0 3px var(--color-border-strong);
+}
+
+.swatch__tip {
+  flex: 1;
+  min-width: 0;
 }
 
 .swatch__label {

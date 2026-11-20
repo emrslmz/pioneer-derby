@@ -10,9 +10,18 @@ import { nextTick, onBeforeUnmount, ref, useId, watch } from 'vue'
  * Rendered in <body> with fixed positioning, so panels with `overflow: hidden` never clip it.
  * The text is supplementary: callers keep the same information in the accessible name.
  */
-const props = withDefaults(defineProps<{ text: string; hideDelayMs?: number }>(), {
-  hideDelayMs: 120,
-})
+const props = withDefaults(
+  defineProps<{
+    text: string
+    hideDelayMs?: number
+    /**
+     * Only show when the text is cut off ("…"): measures the element marked `data-truncate`
+     * inside the trigger (or the trigger itself).
+     */
+    whenTruncated?: boolean
+  }>(),
+  { hideDelayMs: 120 },
+)
 
 defineSlots<{ default(): unknown }>()
 
@@ -32,6 +41,10 @@ async function show() {
   cancelHide()
   const element = trigger.value
   if (!element) return
+  if (props.whenTruncated) {
+    const measured = element.querySelector<HTMLElement>('[data-truncate]') ?? element
+    if (measured.scrollWidth <= measured.clientWidth) return
+  }
   const rect = element.getBoundingClientRect()
   const placement = rect.top < 48 ? 'bottom' : 'top'
   position.value = {
