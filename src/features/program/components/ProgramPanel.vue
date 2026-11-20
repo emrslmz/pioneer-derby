@@ -61,7 +61,6 @@ watch(currentRoundIndex, async () => {
       icon="program"
       :title="t('empty.programTitle')"
       :description="t('empty.program')"
-      :skeleton="4"
     >
       <BaseButton
         variant="primary"

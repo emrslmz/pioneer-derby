@@ -4,18 +4,12 @@ import type { IconName } from './icons'
 
 /**
  * A panel with nothing in it yet: an icon, what it is for, what to do, and optionally the action.
- * The faint bars sketch the content that will arrive, so the panel does not look broken.
  */
-withDefaults(
-  defineProps<{
-    icon: IconName
-    title: string
-    description: string
-    /** Number of ghost rows drawn under the text. */
-    skeleton?: number
-  }>(),
-  { skeleton: 0 },
-)
+defineProps<{
+  icon: IconName
+  title: string
+  description: string
+}>()
 </script>
 
 <template>
@@ -24,9 +18,6 @@ withDefaults(
     <p class="empty__title">{{ title }}</p>
     <p class="empty__text">{{ description }}</p>
     <div v-if="$slots.default" class="empty__action"><slot /></div>
-    <div v-if="skeleton > 0" class="empty__ghosts" aria-hidden="true">
-      <span v-for="row in skeleton" :key="row" class="empty__ghost" />
-    </div>
   </div>
 </template>
 
@@ -67,26 +58,5 @@ withDefaults(
 
 .empty__action {
   margin-top: var(--space-2);
-}
-
-.empty__ghosts {
-  display: grid;
-  gap: var(--space-2);
-  width: 100%;
-  margin-top: var(--space-4);
-}
-
-.empty__ghost {
-  height: 28px;
-  border-radius: var(--radius-sm);
-  background: linear-gradient(
-    90deg,
-    var(--color-surface-sunken),
-    color-mix(in srgb, var(--color-surface-sunken) 50%, transparent)
-  );
-
-  &:nth-child(odd) {
-    opacity: 0.7;
-  }
 }
 </style>

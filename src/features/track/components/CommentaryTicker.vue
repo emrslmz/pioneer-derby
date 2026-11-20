@@ -29,7 +29,7 @@ const { t } = useI18n()
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  min-height: 40px;
+  min-height: 41px;
   padding: var(--space-2) var(--space-3);
   overflow: hidden;
   border-top: 1px solid var(--color-border);

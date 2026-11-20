@@ -87,4 +87,19 @@ test.describe('race track', () => {
       expect(style).not.toMatch(/(^|;)\s*(left|width)\s*:/)
     }
   })
+
+  test('[R6] the track keeps its size from the empty page to a running race', async ({ page }) => {
+    await page.goto('/?seed=42')
+    const track = page.getByTestId('race-track')
+    const height = async () => (await track.boundingBox())!.height
+    const idle = await height()
+
+    await page.getByTestId('generate-button').click()
+    await expect(page.getByTestId('runner')).toHaveCount(10)
+    expect(await height()).toBe(idle)
+
+    await page.getByTestId('toggle-button').click()
+    await expect(page.getByTestId('leaderboard-entry')).toHaveCount(10)
+    expect(await height()).toBe(idle)
+  })
 })

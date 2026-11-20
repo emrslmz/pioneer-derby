@@ -55,6 +55,9 @@ const entries = computed(() =>
 .leaderboard {
   display: flex;
   gap: var(--space-1);
+  // Reserved before the first standings exist (26 px entries + padding), so Generate and Start
+  // never resize the track.
+  min-height: calc(26px + 2 * var(--space-2) + 1px);
   margin: 0;
   padding: var(--space-2) var(--space-3);
   overflow-x: auto;
