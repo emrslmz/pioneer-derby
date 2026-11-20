@@ -86,6 +86,7 @@ const language = computed({ get: () => locale.value, set: setLocale })
     <div class="header__actions">
       <BaseButton
         data-testid="generate-button"
+        :class="{ 'header__generate--attention': controls.status.value === 'idle' }"
         icon="generate"
         shortcut="G"
         :disabled="!controls.canGenerate.value"
@@ -112,7 +113,7 @@ const language = computed({ get: () => locale.value, set: setLocale })
         class="header__speed"
         size="sm"
         :label="t('speed.label')"
-        :options="controls.speedOptions"
+        :options="controls.speedOptions.value"
       />
       <BaseSegmentedControl
         v-model="language"
@@ -265,6 +266,25 @@ const language = computed({ get: () => locale.value, set: setLocale })
 
   @include bp.from(desktop) {
     display: flex;
+  }
+}
+
+// First visit: draw the eye to the one action that starts everything.
+.header__generate--attention {
+  border-color: var(--color-accent);
+  animation: attention 1.8s ease-in-out infinite;
+}
+
+@keyframes attention {
+  50% {
+    box-shadow: 0 0 0 6px var(--color-accent-soft);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header__generate--attention {
+    animation: none;
+    box-shadow: 0 0 0 3px var(--color-accent-soft);
   }
 }
 

@@ -1,5 +1,26 @@
 import { expect, test } from '@playwright/test'
 
+test.describe('first visit', () => {
+  test('[R3] a new visitor is guided to Generate Program', async ({ page }) => {
+    await page.goto('/?seed=42')
+    const guide = page.getByTestId('onboarding')
+    await expect(guide).toBeVisible()
+    await expect(guide).toContainText('How to play')
+    await expect(page.getByTestId('generate-button')).toHaveClass(/header__generate--attention/)
+
+    await guide.getByTestId('onboarding-generate').click()
+    await expect(page.getByTestId('race-status')).toContainText('Ready')
+    await expect(guide).toBeHidden()
+    await expect(page.getByTestId('pick-option')).toHaveCount(10)
+  })
+
+  test('[R4] slow motion: 0.5× is available', async ({ page }) => {
+    await page.goto('/?seed=42')
+    await page.getByRole('radio', { name: '0.5×' }).click()
+    await expect(page.getByRole('radio', { name: '0.5×' })).toHaveAttribute('aria-checked', 'true')
+  })
+})
+
 test.describe('header & controls', () => {
   test('[R3] [R4] Generate Program then Start / Pause from the header', async ({ page }) => {
     await page.goto('/?seed=42')

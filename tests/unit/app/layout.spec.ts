@@ -38,6 +38,16 @@ describe('responsive layout & header', () => {
     expect(wrapper.find('[data-testid="results-panel"]').exists()).toBe(true)
   })
 
+  it('[R3] before a program exists, Generate Program draws attention', async () => {
+    setViewportWidth(1440)
+    const { wrapper, race } = mountApp()
+    const generate = () => wrapper.get('[data-testid="generate-button"]')
+    expect(generate().classes()).toContain('header__generate--attention')
+    race.generateProgram()
+    await nextTick()
+    expect(generate().classes()).not.toContain('header__generate--attention')
+  })
+
   it('[R4] header buttons follow the race: Generate → Start → Pause → Resume', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'performance', 'Date'] })
     setViewportWidth(1440)
@@ -98,8 +108,12 @@ describe('responsive layout & header', () => {
     expect(document.documentElement.lang).toBe('tr')
 
     const speeds = wrapper.findAll('.header__speed [role="radio"]')
-    await speeds[2]!.trigger('click')
+    // Turkish formatting: "0,5×"; slow motion is the first option.
+    expect(speeds.map((s) => s.text())).toEqual(['0,5×', '1×', '2×', '4×'])
+    await speeds[3]!.trigger('click')
     expect(race.speed).toBe(4)
+    await speeds[0]!.trigger('click')
+    expect(race.speed).toBe(0.5)
 
     await wrapper.get('[data-testid="theme-toggle"]').trigger('click')
     expect(document.documentElement.dataset.theme).toBe('light')

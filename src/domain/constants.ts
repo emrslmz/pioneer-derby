@@ -105,8 +105,8 @@ export const PODIUM_SIZE = 3
  */
 export const INTERMISSION_MS = 2500
 
-/** Playback speeds the race clock supports. */
-export const RACE_SPEEDS = [1, 2, 4] as const
+/** Playback speeds the race clock supports (0.5× is slow motion). */
+export const RACE_SPEEDS = [0.5, 1, 2, 4] as const
 
 /**
  * Independent random streams derived from one game seed (A11).

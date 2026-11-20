@@ -32,7 +32,7 @@ export function useRaceControls() {
     seed,
   } = storeToRefs(race)
   const { roundCount } = storeToRefs(useScheduleStore())
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
 
   const isRunning = computed(() => status.value === 'running' || status.value === 'intermission')
 
@@ -53,10 +53,14 @@ export function useRaceControls() {
   const statusLabel = computed(() => t(`status.${status.value}`))
   const statusTone = computed(() => STATUS_TONES[status.value])
 
-  const speedOptions = RACE_SPEEDS.map((value) => ({
-    value,
-    label: t('speed.value', { speed: value }),
-  }))
+  // Computed so labels follow the language: "0.5×" / "0,5×".
+  const speedOptions = computed(() => {
+    const number = new Intl.NumberFormat(locale.value)
+    return RACE_SPEEDS.map((value) => ({
+      value,
+      label: t('speed.value', { speed: number.format(value) }),
+    }))
+  })
 
   return {
     status,

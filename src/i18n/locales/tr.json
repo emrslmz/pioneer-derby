@@ -67,7 +67,7 @@
     "intro": "Kısayollar, bir alana yazı yazarken hariç her yerde çalışır.",
     "generate": "Yeni program oluştur",
     "toggle": "Başlat, duraklat veya devam et",
-    "speed": "Yarış hızını 1×, 2× veya 4× yap",
+    "speed": "Yarış hızını 0,5×, 1×, 2× veya 4× yap",
     "language": "Dili değiştir",
     "theme": "Temayı değiştir",
     "help": "Bu yardımı göster",
@@ -232,6 +232,24 @@
       "winner": "Tahminin kazandı: +{points} puan",
       "podium": "Tahminin {ordinal} oldu: +{points} puan",
       "miss": "Tahminin {ordinal} oldu: puan yok"
+    }
+  },
+  "onboarding": {
+    "title": "Nasıl oynanır?",
+    "cta": "Program Oluştur",
+    "steps": {
+      "generate": {
+        "title": "Programı oluştur",
+        "text": "On atlık altı tur çekilir."
+      },
+      "predict": {
+        "title": "Kazananı tahmin et",
+        "text": "Her turdan önce bir at seç: kazanan 3, podyum 1 puan."
+      },
+      "start": {
+        "title": "Yarışı başlat",
+        "text": "Turlar sırayla koşulur; sonuçlar bitince görünür."
+      }
     }
   }
 }

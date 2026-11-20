@@ -23,7 +23,8 @@ const { lapLabel, ordinal } = useLocale()
 const prediction = usePredictionStore()
 const { isOpen, recommendation, currentPick, predictions, totalPoints, correctWinners } =
   storeToRefs(prediction)
-const { status, currentRound } = storeToRefs(useRaceStore())
+const race = useRaceStore()
+const { status, currentRound } = storeToRefs(race)
 const { roundCount } = storeToRefs(useScheduleStore())
 const horsesStore = useHorsesStore()
 
@@ -71,6 +72,12 @@ const lastOutcome = computed(() => {
 })
 
 const outcomeTone = { winner: 'success', podium: 'info', miss: 'neutral' } as const
+
+const guideSteps = [
+  { key: 'generate', kbd: 'G' },
+  { key: 'predict', kbd: '' },
+  { key: 'start', kbd: 'Space' },
+] as const
 
 type Mode = 'idle' | 'open' | 'locked' | 'finished'
 const mode = computed<Mode>(() => {
@@ -149,55 +156,97 @@ const canBackTip = computed(
       </span>
     </header>
 
-    <div class="prediction__ask">
-      <p class="prediction__question">{{ headline }}</p>
-      <span class="prediction__rules">{{ t('prediction.rules') }}</span>
-    </div>
-
-    <div class="prediction__tip" :class="`prediction__tip--${mode}`">
-      <p :data-testid="tipTestId">
-        <template v-if="mode === 'locked'">
-          <strong>{{
-            currentPick !== null
-              ? t('prediction.yourPick', { name: nameOf(currentPick) })
-              : t('prediction.noPick')
-          }}</strong>
-          <span class="prediction__muted">
-            {{ currentPick !== null ? t('prediction.pending') : t('prediction.locked') }}
-          </span>
-        </template>
-        <template v-else>{{ tipText }}</template>
-      </p>
-      <BaseButton
-        size="sm"
-        icon="star"
-        class="prediction__tip-button"
-        :class="{ 'is-hidden': !canBackTip }"
-        :disabled="!canBackTip"
-        :aria-hidden="!canBackTip"
-        :tabindex="canBackTip ? undefined : -1"
-        data-testid="pick-tip-button"
-        @click="recommendation && (pick = recommendation.horseId)"
+    <!--
+      Two layers share one grid cell: the "how to play" guide before a program exists, the game
+      afterwards. The card is as tall as the taller layer in every state, so nothing jumps.
+    -->
+    <div class="prediction__stage">
+      <div
+        class="prediction__layer prediction__guide"
+        :class="{ 'is-hidden': mode !== 'idle' }"
+        :inert="mode !== 'idle' || undefined"
+        data-testid="onboarding"
       >
-        {{ t('prediction.pickTip') }}
-      </BaseButton>
+        <p class="guide__title">{{ t('onboarding.title') }}</p>
+        <ol class="guide__steps">
+          <li v-for="(step, index) in guideSteps" :key="step.key" class="guide__step">
+            <span class="guide__number" aria-hidden="true">{{ index + 1 }}</span>
+            <span class="guide__text">
+              <strong>{{ t(`onboarding.steps.${step.key}.title`) }}</strong>
+              <span>{{ t(`onboarding.steps.${step.key}.text`) }}</span>
+            </span>
+            <kbd v-if="step.kbd" aria-hidden="true">{{ step.kbd }}</kbd>
+          </li>
+        </ol>
+        <BaseButton
+          variant="primary"
+          size="lg"
+          icon="generate"
+          shortcut="G"
+          class="guide__cta"
+          data-testid="onboarding-generate"
+          @click="race.generateProgram()"
+        >
+          {{ t('onboarding.cta') }}
+        </BaseButton>
+      </div>
+
+      <div
+        class="prediction__layer prediction__game"
+        :class="{ 'is-hidden': mode === 'idle' }"
+        :inert="mode === 'idle' || undefined"
+      >
+        <div class="prediction__ask">
+          <p class="prediction__question">{{ headline }}</p>
+          <span class="prediction__rules">{{ t('prediction.rules') }}</span>
+        </div>
+
+        <div class="prediction__tip" :class="`prediction__tip--${mode}`">
+          <p :data-testid="tipTestId">
+            <template v-if="mode === 'locked'">
+              <strong>{{
+                currentPick !== null
+                  ? t('prediction.yourPick', { name: nameOf(currentPick) })
+                  : t('prediction.noPick')
+              }}</strong>
+              <span class="prediction__muted">
+                {{ currentPick !== null ? t('prediction.pending') : t('prediction.locked') }}
+              </span>
+            </template>
+            <template v-else>{{ tipText }}</template>
+          </p>
+          <BaseButton
+            size="sm"
+            icon="star"
+            class="prediction__tip-button"
+            :class="{ 'is-hidden': !canBackTip }"
+            :disabled="!canBackTip"
+            :aria-hidden="!canBackTip"
+            :tabindex="canBackTip ? undefined : -1"
+            data-testid="pick-tip-button"
+            @click="recommendation && (pick = recommendation.horseId)"
+          >
+            {{ t('prediction.pickTip') }}
+          </BaseButton>
+        </div>
+
+        <RunnerPicker
+          v-model="pick"
+          :runners="runners"
+          :slots="HORSES_PER_ROUND"
+          :disabled="!isOpen"
+          :label="t('prediction.pickLabel', { lap })"
+          :recommended-id="isOpen ? (recommendation?.horseId ?? null) : null"
+          :recommended-label="t('prediction.recommended')"
+        />
+
+        <p class="prediction__outcome" aria-live="polite" data-testid="prediction-outcome">
+          <BaseBadge v-if="lastOutcome" :tone="outcomeTone[lastOutcome.outcome]">
+            {{ lastOutcome.text }}
+          </BaseBadge>
+        </p>
+      </div>
     </div>
-
-    <RunnerPicker
-      v-model="pick"
-      :runners="runners"
-      :slots="HORSES_PER_ROUND"
-      :disabled="!isOpen"
-      :label="t('prediction.pickLabel', { lap })"
-      :recommended-id="isOpen ? (recommendation?.horseId ?? null) : null"
-      :recommended-label="t('prediction.recommended')"
-    />
-
-    <p class="prediction__outcome" aria-live="polite" data-testid="prediction-outcome">
-      <BaseBadge v-if="lastOutcome" :tone="outcomeTone[lastOutcome.outcome]">
-        {{ lastOutcome.text }}
-      </BaseBadge>
-    </p>
   </section>
 </template>
 
@@ -281,6 +330,84 @@ const canBackTip = computed(
   font-weight: 700;
   letter-spacing: 0.04em;
   white-space: nowrap;
+}
+
+.prediction__stage {
+  display: grid;
+}
+
+// Both layers occupy the same cell; the hidden one still reserves its height.
+.prediction__layer {
+  display: grid;
+  grid-area: 1 / 1;
+  gap: var(--space-2);
+  align-content: start;
+  min-width: 0;
+}
+
+.guide__title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.guide__steps {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guide__step {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  font-size: var(--font-size-sm);
+}
+
+.guide__number {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--gradient-accent);
+  color: var(--color-accent-contrast);
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.guide__text {
+  display: -webkit-box;
+  min-width: 0;
+  overflow: hidden;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+
+  span {
+    margin-left: var(--space-2);
+    color: var(--color-text-muted);
+  }
+}
+
+.guide__cta {
+  justify-self: start;
+  animation: cta-pulse 2s ease-in-out infinite;
+}
+
+@keyframes cta-pulse {
+  50% {
+    box-shadow:
+      0 6px 20px rgb(244 72 43 / 0.35),
+      0 0 0 6px rgb(244 72 43 / 0.18);
+  }
 }
 
 .prediction__ask {
