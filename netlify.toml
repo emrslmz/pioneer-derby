@@ -1,0 +1,23 @@
+# Netlify builds `main` and every pull request (deploy previews). CI (GitHub Actions) is the gate:
+# lint, types, unit, E2E, visual, axe, bundle budget and Lighthouse all pass before a merge.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "24"
+
+# Hashed assets never change: cache them for a year. The page itself is always revalidated, so a
+# new deploy reaches visitors at once.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"

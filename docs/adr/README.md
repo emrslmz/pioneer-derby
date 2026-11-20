@@ -15,5 +15,6 @@
 | 0011 | [Distance-based camera and viewer-controlled rounds](0011-track-camera-and-manual-rounds.md)       | Partly superseded by 0012 |
 | 0012 | [Real racing pace, a true-scale camera and one player bar](0012-real-pace-true-scale-broadcast.md) | Accepted                  |
 | 0013 | [First-visit tour, light default and live results](0013-first-visit-tour-and-live-results.md)      | Accepted                  |
+| 0014 | [Netlify delivery with CI as the gate](0014-netlify-delivery-and-quality-gates.md)                 | Accepted                  |
 
 New ADR: copy [0000-template.md](0000-template.md).

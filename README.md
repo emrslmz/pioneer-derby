@@ -1,9 +1,16 @@
 # Pioneer Derby 🏇
 
 [![CI](https://github.com/emrslmz/pioneer-derby/actions/workflows/ci.yml/badge.svg)](https://github.com/emrslmz/pioneer-derby/actions/workflows/ci.yml)
+[![Live demo](https://img.shields.io/badge/live%20demo-pioneerderby.netlify.app-00c7b7?logo=netlify&logoColor=white)](https://pioneerderby.netlify.app)
+![Lighthouse](https://img.shields.io/badge/Lighthouse-96%20%C2%B7%20100%20%C2%B7%20100%20%C2%B7%20100-0cce6b?logo=lighthouse&logoColor=white)
+![Tests](https://img.shields.io/badge/tests-308%20unit%20%C2%B7%2058%20E2E%20%C2%B7%20visual%20%C2%B7%20axe-15743b)
 
 An interactive horse racing game built with **Vue 3, TypeScript and Pinia** for the Insider One Front-end Developer case study.
 Twenty horses — named after computing pioneers — race across six rounds from 1200 m to 2200 m.
+
+**Try it: [pioneerderby.netlify.app](https://pioneerderby.netlify.app)** (a first visit starts with a short guided tour).
+
+![Round 1 of Pioneer Derby: the camera follows the leaders, results arrive horse by horse](docs/media/demo.gif)
 
 The game includes the brief's full flow and optional predictions, replay, horse statistics and a live broadcast camera. See the [implementation plan](docs/PLAN.md) for delivery status.
 
@@ -16,6 +23,14 @@ Horses run at a real racing pace: 16.5 m/s, so 1200 m takes about 73 seconds. Th
 The **Follow** camera is true scale. A horse is as long on screen as a real horse is on the track, so about 20–30 m are in view. Horses left behind show their gap to the leader, and the line under the track shows the leader's distance to go. **Whole track** fits the full distance, and full screen opens the same live panel in a modal. A horse that has finished stands still. Pausing mid-race shows a "Paused" card, never a result.
 
 A first visit starts with a short guided tour (driver.js) that asks your language first. It resumes after a reload and can be taken again from the help dialog (`?`) or with `?tour=1`. The app opens in the light theme; the toggle in the header changes it. On wide screens the horse list folds into a rail of horses, and the Results panel shows each horse as it crosses the line.
+
+## Screens
+
+| Desktop, light                               | Desktop, dark, a race under way                         | Phone, Turkish                     |
+| -------------------------------------------- | ------------------------------------------------------- | ---------------------------------- |
+| ![Light theme](docs/media/desktop-light.png) | ![Dark theme, racing](docs/media/desktop-dark-race.png) | ![Phone](docs/media/mobile-tr.png) |
+
+The media are generated from the seeded game by `npm run media`.
 
 ## Architecture
 
@@ -70,6 +85,29 @@ git diff --stat tests/visual/__snapshots__
 ```
 
 Locally, `npm run test:visual:update` writes macOS baselines (git-ignored) for quick checks.
+
+## Quality gates
+
+Every pull request has to pass these checks in CI before it is merged (a required status check each):
+
+| Gate                | Tool                                | Threshold                                           | Measured on `main`                |
+| ------------------- | ----------------------------------- | --------------------------------------------------- | --------------------------------- |
+| Lint and formatting | oxlint, ESLint boundaries, Prettier | 0 errors, architecture boundaries enforced          | clean                             |
+| Types               | vue-tsc, strict                     | 0 errors                                            | clean                             |
+| Unit and property   | Vitest, fast-check                  | domain 95 %, stores 90 % coverage                   | domain 100 %, stores 99 %         |
+| End to end          | Playwright                          | all flows green (fake clock, seeded)                | 58 tests                          |
+| Visual              | Playwright screenshots              | Linux baselines, light and dark, EN and TR          | 14 screens                        |
+| Accessibility       | axe (WCAG 2.2 AA)                   | 0 serious or critical violations                    | 0, including the tour and dialogs |
+| Performance         | Lighthouse CI, 3 runs, median       | 90 performance, 95 accessibility and best practices | 95 to 96 · 100 · 100 · 100 (SEO)  |
+| Bundle              | `scripts/check-bundle.ts`           | JS 120 KiB, CSS 30 KiB, all assets 650 KiB (gzip)   | JS 92 · CSS 14 · all 480 KiB      |
+| Requirements traced | `scripts/traceability.ts`           | every requirement ID has a test                     | 33 of 33                          |
+
+## Deployment
+
+Netlify builds `main` on every merge and creates a **deploy preview for each pull request**
+([`netlify.toml`](netlify.toml): build, immutable caching of hashed assets, security headers).
+GitHub Actions is the gate; Netlify only publishes what has passed review. Decision:
+[ADR 0014](docs/adr/0014-netlify-delivery-and-quality-gates.md).
 
 ## Fairness
 
@@ -131,6 +169,9 @@ npm run dev        # http://localhost:5173
 | `npm run test:coverage`           | Unit tests with coverage thresholds                                     |
 | `npm run test:e2e`                | Playwright end-to-end tests (`npx playwright install chromium` once)    |
 | `npm run test:visual`             | Playwright screenshot tests                                             |
+| `npm run check:bundle`            | Compressed bundle size against the budget (after `npm run build-only`)  |
+| `npm run test:lighthouse`         | Lighthouse CI on the production build (needs Chrome)                    |
+| `npm run media`                   | README screenshots and GIF from the seeded game (needs ffmpeg)          |
 | `npm run lint` / `npm run format` | Auto-fix lint and formatting                                            |
 
 ## Contributing

@@ -61,7 +61,9 @@ and fix what it does poorly:
 src/
 ├─ app/                     # App shell: App.vue, layout, global providers
 │  ├─ App.vue
-│  └─ layout/               # AppHeader, ResponsiveLayout, MobileTabBar
+│  ├─ splash.ts             # first-load splash and intro (ADR 0013)
+│  ├─ tour/                 # first-visit tour: steps, driver.js wiring, progress (ADR 0013)
+│  └─ layout/               # AppHeader, AppFooter, ResponsiveLayout, MobileTabBar, dialogs
 ├─ domain/                  # PURE TypeScript — no Vue, no Pinia imports
 │  ├─ constants.ts          # HORSE_COUNT, ROUND_DISTANCES, HORSES_PER_ROUND …
 │  ├─ types.ts              # Horse, Round, RoundResult, RaceStatus …
@@ -90,7 +92,8 @@ src/
 │  ├─ prediction/components/# PredictionCard, RecommendedHorse, ScoreBadge
 │  └─ race/composables/     # useRaceControls
 ├─ shared/
-│  ├─ ui/                   # BaseButton, BasePanel, BaseTable, BaseBadge, BaseTabs, BaseDrawer
+│  ├─ components/           # HorseRunner (a horse in its colour, reused by several features)
+│  ├─ ui/                   # BaseButton, BasePanel, BaseTable, BaseBadge, BaseTabs, BaseDialog, BaseSwitch, BaseEmptyState, BaseTooltip
 │  ├─ analytics/            # AnalyticsClient interface, event map, console + memory adapters, DebugPanel
 │  ├─ composables/          # useMediaQuery, useReducedMotion, useBreakpoint, useAnimationFrame, useKeyboardShortcuts
 │  └─ utils/                # assert, storage

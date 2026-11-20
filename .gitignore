@@ -35,3 +35,7 @@ Insider One Case Study*.pdf
 # visual baselines: only the CI (Linux) ones are committed
 tests/visual/__snapshots__/*-darwin.png
 tests/visual/__snapshots__/*-win32.png
+
+# Lighthouse CI output
+.lighthouseci/
+lighthouse-report/

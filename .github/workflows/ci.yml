@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -68,6 +69,40 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build-only
+      # X6 — the compressed payload stays within budget (scripts/check-bundle.ts).
+      - name: Bundle size budget
+        run: npm run check:bundle
+      - uses: actions/upload-artifact@v4
+        with:
+          name: production-build
+          path: dist/
+          retention-days: 7
+
+  lighthouse:
+    name: Lighthouse
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: production-build
+          path: dist/
+      # lighthouserc.json: three runs of the production build; the median must be at least 90 for
+      # performance and 95 for accessibility and best practices.
+      - name: Lighthouse CI
+        run: npm run test:lighthouse
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-report
+          path: lighthouse-report/
+          retention-days: 7
 
   evidence:
     name: Evidence reports
