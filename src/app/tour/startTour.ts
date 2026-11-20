@@ -23,6 +23,24 @@ export interface StartTourOptions {
 type DriverFactory = typeof import('driver.js').driver
 
 /**
+ * For a step without an element, driver.js highlights an invisible 0×0 <div> and puts
+ * `aria-expanded`, `aria-haspopup` and `aria-controls` on it. A bare div may not have them (axe:
+ * aria-allowed-attr), and nothing is focusable there, so they are removed. driver.js sets them
+ * right after it renders the popover, so this also runs from `onHighlighted` and a frame later.
+ */
+export function cleanDummyElementSoon(): void {
+  cleanDummyElement()
+  requestAnimationFrame(() => cleanDummyElement())
+}
+
+export function cleanDummyElement(root: ParentNode = document): void {
+  const dummy = root.querySelector('#driver-dummy-element')
+  for (const name of ['aria-expanded', 'aria-haspopup', 'aria-controls']) {
+    dummy?.removeAttribute(name)
+  }
+}
+
+/**
  * Step zero: pick a language, then Continue. Choosing applies the language straight away, so the
  * page behind the overlay switches too. Resolves with the final pick, or null if dismissed.
  */
@@ -46,7 +64,9 @@ function askLanguage(
       allowClose: true,
       overlayOpacity: 0.72,
       steps: [{ popover: { title: LANGUAGE_PROMPT.title, description: '' } }],
+      onHighlighted: cleanDummyElementSoon,
       onPopoverRender: (popover) => {
+        cleanDummyElementSoon()
         const row = document.createElement('div')
         row.className = 'pd-tour__languages'
         const next = document.createElement('button')
@@ -154,6 +174,8 @@ export async function startTour({
         align: 'center',
       },
     })),
+    onHighlighted: cleanDummyElementSoon,
+    onPopoverRender: cleanDummyElementSoon,
     // A reload resumes at the step being shown. The step is saved when it is left, from the index
     // we are moving to (driver.js hooks run before its own state changes).
     onNextClick: (_element, _step, { driver: active }) => {

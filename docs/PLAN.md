@@ -99,12 +99,12 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 
 ## Faz 8 — Teslim · X6, X14
 
-- [ ] Tam CI: lint, type-check, coverage, E2E, visual, axe, Lighthouse CI, bundle boyut bütçesi · X6
-- [ ] README badge'leri (CI, coverage, Lighthouse)
-- [ ] ADR'leri tamamla (`docs/adr/`) · X14
-- [ ] README: demo linki, GIF, mimari diyagram, kararlar, adalet grafiği, izlenebilirlik tablosu, nasıl çalıştırılır
-- [ ] Deploy (Vercel / Netlify / GitHub Pages) — CI'dan otomatik
-- [ ] Son review: `/review-case`
+- [x] Tam CI: lint, type-check, coverage, E2E, visual, axe, Lighthouse CI, bundle boyut bütçesi · X6
+- [x] README badge'leri (CI, coverage, Lighthouse)
+- [x] ADR'leri tamamla (`docs/adr/`) · X14
+- [x] README: demo linki, GIF, mimari diyagram, kararlar, adalet grafiği, izlenebilirlik tablosu, nasıl çalıştırılır
+- [x] Deploy (Vercel / Netlify / GitHub Pages) — CI'dan otomatik
+- [x] Son review: `/review-case`
 - **Çıktı:** gönderime hazır proje.
 
 ---

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { startTour } from '@/app/tour/startTour'
+import { cleanDummyElement, startTour } from '@/app/tour/startTour'
 import {
   markTourSeen,
   readTourResumeStep,
@@ -246,5 +246,29 @@ describe('first-visit tour', () => {
     drive.mockClear()
     // Welcome has no target, so a tour of one card is still offered; an empty list never is.
     expect(resolveSteps(document.createDocumentFragment())).toHaveLength(1)
+  })
+
+  it('[X8] removes the ARIA attributes driver.js puts on its invisible helper element', () => {
+    document.body.innerHTML =
+      '<div id="driver-dummy-element" aria-haspopup="dialog" aria-expanded="true" aria-controls="x"></div>'
+    cleanDummyElement()
+    const dummy = document.getElementById('driver-dummy-element')!
+    expect(dummy.hasAttribute('aria-expanded')).toBe(false)
+    expect(dummy.hasAttribute('aria-haspopup')).toBe(false)
+    expect(dummy.hasAttribute('aria-controls')).toBe(false)
+    expect(() => cleanDummyElement(document.createDocumentFragment())).not.toThrow()
+  })
+
+  it('[X8] the tour cleans the helper element every time a popover renders', async () => {
+    renderTargets(ALL)
+    await startTour({ t, reducedMotion: false, source: 'manual' })
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div id="driver-dummy-element" aria-expanded="true"></div>',
+    )
+    ;(driverConfigs[0] as { onPopoverRender: () => void }).onPopoverRender()
+    expect(document.getElementById('driver-dummy-element')?.hasAttribute('aria-expanded')).toBe(
+      false,
+    )
   })
 })

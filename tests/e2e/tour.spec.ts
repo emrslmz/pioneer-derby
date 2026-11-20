@@ -124,6 +124,17 @@ test.describe('first-visit tour', () => {
     await page.getByTestId('tour-language-continue').click()
     await expect(title(page)).toHaveText('Welcome to Pioneer Derby')
     expect(await serious()).toEqual([])
+
+    // The whole page, while the welcome card is up: driver.js's invisible helper element must
+    // not carry ARIA attributes a bare <div> may not have (Lighthouse found it).
+    const wholePage = (
+      await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+        .analyze()
+    ).violations
+      .filter((v) => v.impact === 'serious' || v.impact === 'critical')
+      .map((v) => v.id)
+    expect(wholePage).toEqual([])
     await page.getByRole('button', { name: 'Next' }).click()
     await expect(title(page)).toHaveText('1. Draw the program')
     expect(await serious()).toEqual([])

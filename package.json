@@ -23,7 +23,10 @@
     "report:traceability": "tsx scripts/traceability.ts",
     "verify": "run-s lint:check format:check type-check \"test:unit --run\"",
     "test:visual:update": "playwright test --project=visual --update-snapshots",
-    "visual:pull": "bash scripts/pull-visual-baselines.sh"
+    "visual:pull": "bash scripts/pull-visual-baselines.sh",
+    "check:bundle": "tsx scripts/check-bundle.ts",
+    "test:lighthouse": "lhci autorun",
+    "media": "tsx scripts/capture-media.ts"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",
@@ -35,6 +38,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
+    "@lhci/cli": "^0.16.1",
     "@playwright/test": "^1.63.0",
     "@tsconfig/node24": "^24.0.5",
     "@types/jsdom": "^30.0.0",
@@ -70,5 +74,5 @@
   "engines": {
     "node": "^22.18.0 || >=24.12.0"
   },
-  "description": "Pioneer Derby — horse racing game for the Insider One front-end case"
+  "description": "Pioneer Derby \u2014 horse racing game for the Insider One front-end case"
 }
