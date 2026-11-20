@@ -174,7 +174,7 @@ idle ──GENERATE──▶ ready ──START──▶ running ──PAUSE─�
                      ▲                 │                  │
                      │          ROUND_FINISHED            └──GENERATE──▶ ready
                      │                 ▼
-                 GENERATE      intermission ──NEXT_ROUND (auto)──▶ running
+                 GENERATE      intermission ──NEXT_ROUND (manual/opt-in auto)──▶ running
                      │                 └──PAUSE──▶ paused
                      │
                  finished ◀──PROGRAM_FINISHED── running (last round)
@@ -237,3 +237,7 @@ No horizontal page scroll at 360px.
 - **Accessibility**: axe scan in idle, running and finished states.
 - **Visual**: seeded, animations disabled; desktop / tablet / mobile × light / dark × tr / en.
 - **Performance**: frame timing during a race, no long tasks > 50 ms.
+
+## Current playback decisions
+
+See [ADR 0011](adr/0011-track-camera-and-manual-rounds.md) for manual round advancement, 12–18 s base timing, the distance-based camera, and the native modal theater. These decisions supersede earlier automatic-default and overlay descriptions.
