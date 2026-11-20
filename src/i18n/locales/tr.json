@@ -276,6 +276,7 @@
     "message": "Yeni bir at listesi ve altı yeni tur oluşturulur. Mevcut sonuçlar ve tahminlerin kaybolur.",
     "confirm": "Programı değiştir",
     "button": "Programı değiştir",
-    "locked": "Programı değiştirmek için yarışı duraklat."
+    "locked": "Programı değiştirmek için yarışı duraklat.",
+    "short": "Değiştir"
   }
 }

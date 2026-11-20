@@ -276,6 +276,7 @@
     "message": "This draws a new set of horses and six new rounds. The current results and your predictions will be lost.",
     "confirm": "Change program",
     "button": "Change program",
-    "locked": "Pause the race to change the program."
+    "locked": "Pause the race to change the program.",
+    "short": "Change"
   }
 }
