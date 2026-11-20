@@ -6,7 +6,6 @@
   },
   "actions": {
     "generate": "Generate Program",
-    "generateShort": "Generate",
     "start": "Start",
     "pause": "Pause",
     "resume": "Resume",
@@ -16,7 +15,8 @@
     "nextRound": "Next round",
     "autoAdvance": "Auto next",
     "autoAdvanceHint": "On: the next round starts after a 6-second break. Off: press Next round.",
-    "startNow": "Start now"
+    "startNow": "Start now",
+    "cancel": "Cancel"
   },
   "status": {
     "label": "Race status",
@@ -64,7 +64,9 @@
   "empty": {
     "horses": "The horses will line up here.",
     "program": "Press Generate Program to draw six rounds of ten horses.",
-    "results": "Results appear here as each round finishes."
+    "results": "Results appear here as each round finishes.",
+    "programTitle": "No program yet",
+    "resultsTitle": "No results yet"
   },
   "shortcuts": {
     "title": "Keyboard shortcuts",
@@ -268,5 +270,12 @@
         "text": "Rounds run one by one; results appear as each finishes."
       }
     }
+  },
+  "changeProgram": {
+    "title": "Change the program?",
+    "message": "This draws a new set of horses and six new rounds. The current results and your predictions will be lost.",
+    "confirm": "Change program",
+    "button": "Change program",
+    "locked": "Pause the race to change the program."
   }
 }

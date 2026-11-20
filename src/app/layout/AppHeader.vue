@@ -81,17 +81,6 @@ const language = computed({ get: () => locale.value, set: setLocale })
 
     <div class="header__actions">
       <BaseButton
-        data-testid="generate-button"
-        :class="{ 'header__generate--attention': controls.status.value === 'idle' }"
-        icon="generate"
-        shortcut="G"
-        :disabled="!controls.canGenerate.value"
-        @click="controls.generate"
-      >
-        <span class="header__long">{{ t('actions.generate') }}</span>
-        <span class="header__short">{{ t('actions.generateShort') }}</span>
-      </BaseButton>
-      <BaseButton
         data-testid="toggle-button"
         variant="primary"
         :icon="controls.toggleIcon.value"
@@ -255,44 +244,11 @@ const language = computed({ get: () => locale.value, set: setLocale })
 .header__actions {
   display: grid;
   grid-area: actions;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: var(--space-2);
 
   @include bp.from(desktop) {
     display: flex;
-  }
-}
-
-// First visit: draw the eye to the one action that starts everything.
-.header__generate--attention {
-  border-color: var(--color-accent);
-  animation: attention 1.8s ease-in-out infinite;
-}
-
-@keyframes attention {
-  50% {
-    box-shadow: 0 0 0 6px var(--color-accent-soft);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .header__generate--attention {
-    animation: none;
-    box-shadow: 0 0 0 3px var(--color-accent-soft);
-  }
-}
-
-.header__short {
-  @include bp.from(tablet) {
-    display: none;
-  }
-}
-
-.header__long {
-  display: none;
-
-  @include bp.from(tablet) {
-    display: inline;
   }
 }
 

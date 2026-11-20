@@ -12,8 +12,10 @@ withDefaults(
     closeLabel: string
     /** `end` slides in from the side as a drawer. */
     placement?: 'center' | 'end'
+    /** `alertdialog` for a question the user must answer (confirmations). */
+    role?: 'dialog' | 'alertdialog'
   }>(),
-  { placement: 'center' },
+  { placement: 'center', role: 'dialog' },
 )
 
 const open = defineModel<boolean>('open', { required: true })
@@ -35,6 +37,11 @@ function sync(isOpen: boolean) {
 onMounted(() => sync(open.value))
 watch(open, sync)
 
+/** `close` fires asynchronously: a dialog reopened in the meantime must stay open. */
+function onClose() {
+  if (!dialog.value?.open) open.value = false
+}
+
 function onBackdropClick(event: MouseEvent) {
   if (event.target === dialog.value) open.value = false
 }
@@ -45,8 +52,9 @@ function onBackdropClick(event: MouseEvent) {
     ref="dialog"
     class="dialog"
     :class="`dialog--${placement}`"
+    :role="role"
     :aria-labelledby="titleId"
-    @close="open = false"
+    @close="onClose"
     @click="onBackdropClick"
   >
     <div class="dialog__card">

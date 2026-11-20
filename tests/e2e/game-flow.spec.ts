@@ -50,7 +50,7 @@ test.describe('full game flow', () => {
       '6th Lap – 2200 m',
     ])
     await expect(page.getByTestId('race-status')).toContainText('Finished')
-    await expect(page.getByTestId('generate-button')).toBeEnabled()
+    await expect(page.getByTestId('change-program-button')).toBeEnabled()
   })
 
   test('[X11] the same seed produces the same winners', async ({ page, browser }) => {

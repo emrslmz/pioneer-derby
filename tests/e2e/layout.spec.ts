@@ -6,7 +6,10 @@ test.describe('first visit', () => {
     const guide = page.getByTestId('onboarding')
     await expect(guide).toBeVisible()
     await expect(guide).toContainText('Generate a program to start predicting.')
-    await expect(page.getByTestId('generate-button')).toHaveClass(/header__generate--attention/)
+    // Generate lives where the program will appear, not in the header.
+    await expect(page.locator('header').getByTestId('generate-button')).toHaveCount(0)
+    await expect(page.getByTestId('program-panel').getByTestId('generate-button')).toBeVisible()
+    await expect(page.getByTestId('results-panel')).toContainText('No results yet')
 
     await page.getByTestId('track-generate').click()
     await expect(page.getByTestId('race-status')).toContainText('Ready')
@@ -33,11 +36,32 @@ test.describe('header & controls', () => {
 
     await toggle.click()
     await expect(page.getByTestId('race-status')).toContainText('Live')
-    await expect(page.getByTestId('generate-button')).toBeDisabled()
+    await expect(page.getByTestId('change-program-button')).toBeDisabled()
 
     await toggle.click()
     await expect(page.getByTestId('race-status')).toContainText('Paused')
     await expect(toggle).toContainText('Resume')
+  })
+
+  test('[R3] changing the program asks for confirmation first', async ({ page }) => {
+    await page.goto('/?seed=42')
+    await page.getByTestId('generate-button').click()
+    const firstHorse = page.getByTestId('program-round').first().locator('tbody tr').first()
+    const before = await firstHorse.textContent()
+
+    await page.getByTestId('change-program-button').click()
+    const dialog = page.getByRole('alertdialog', { name: 'Change the program?' })
+    await expect(dialog).toBeVisible()
+    await expect(dialog.getByTestId('change-program-cancel')).toBeFocused()
+    await page.keyboard.press('Escape')
+    await expect(dialog).toBeHidden()
+    await expect(firstHorse).toHaveText(before!)
+
+    await page.keyboard.press('g')
+    await dialog.getByTestId('change-program-confirm').click()
+    await expect(dialog).toBeHidden()
+    await expect(page.getByTestId('race-status')).toContainText('Ready')
+    await expect(firstHorse).not.toHaveText(before!)
   })
 
   test('[X8] the race can be driven from the keyboard alone', async ({ page }) => {

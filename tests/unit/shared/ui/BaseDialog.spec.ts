@@ -36,8 +36,16 @@ describe('BaseDialog', () => {
     expect(wrapper.props('open')).toBe(false)
 
     await wrapper.setProps({ open: true })
+    // The browser closes the element first, then fires `close`.
+    wrapper.get('dialog').element.removeAttribute('open')
     await wrapper.get('dialog').trigger('close')
     expect(wrapper.props('open')).toBe(false)
+  })
+
+  it('[X8] a late native close event does not shut a dialog that was reopened meanwhile', async () => {
+    const wrapper = setup(true)
+    await wrapper.get('dialog').trigger('close') // the element is still open: it was reopened
+    expect(wrapper.props('open')).toBe(true)
   })
 
   it('[X8] clicks inside the card do not close it', async () => {
