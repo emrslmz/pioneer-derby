@@ -310,8 +310,10 @@ function paintBehindLabels(leaderMetres: number, start: number) {
   const follow = cameraMode.value === 'follow'
   for (const [lane, label] of behindLabels) {
     const run = runMetres.get(lane)
-    const behind = follow && run !== undefined && run < start + TRACK_CAMERA.horseMetres
-    if (behind) setMetres(label, Math.round(leaderMetres - run), (gap) => `−${gap}`)
+    const gap = run === undefined ? 0 : Math.round(leaderMetres - run)
+    // Only a real gap: at the gate (and in a photo finish) nobody is "−0 m".
+    const behind = follow && gap >= 1 && run! < start + TRACK_CAMERA.horseMetres
+    if (behind) setMetres(label, gap, (text) => `−${text}`)
     if (label.hidden === behind) label.hidden = !behind
   }
 }
@@ -570,14 +572,15 @@ useRaceLoop({
           </div>
 
           <!-- Race map: the whole distance, every horse and the camera window. -->
-          <div v-if="displayRace" class="race-map" data-testid="race-map">
+          <div class="race-map" data-testid="race-map">
             <!-- Broadcast caption: the round, and while it runs the leader's distance to go. -->
             <span class="race-map__info">
-              <span data-testid="track-caption">{{ lap }}</span>
+              <span v-if="lap" data-testid="track-caption">{{ lap }}</span>
               <span v-if="showToGo" ref="toGo" class="race-map__to-go" data-testid="to-go" />
             </span>
             <div class="race-map__run" aria-hidden="true">
               <span
+                v-if="displayRace"
                 ref="mapWindow"
                 class="race-map__window"
                 :style="{ width: `${(geometry.visible / geometry.metres) * 100}%` }"
@@ -1049,6 +1052,8 @@ useRaceLoop({
 
 // Race map: the whole distance at a glance.
 .race-map {
+  // Always laid out: Generate must not push the track around.
+  min-height: 29px;
   display: flex;
   align-items: center;
   gap: var(--space-2);

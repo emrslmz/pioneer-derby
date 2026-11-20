@@ -420,4 +420,15 @@ describe('HorseRunner', () => {
     expect(gaps.length).toBeGreaterThan(0)
     for (const gap of gaps) expect(gap.text()).toMatch(/^−\d+ m$/)
   })
+
+  it('[R6] at the gate nobody is "−0 m" behind: gaps only show for real distances', async () => {
+    const { wrapper, race } = setup()
+    race.generateProgram()
+    race.start()
+    await frames(100)
+    const shown = wrapper
+      .findAll('[data-testid="behind-gap"]')
+      .filter((gap) => gap.attributes('hidden') === undefined)
+    expect(shown).toHaveLength(0)
+  })
 })

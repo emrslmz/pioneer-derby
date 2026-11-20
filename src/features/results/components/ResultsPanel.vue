@@ -68,7 +68,6 @@ watch(
       icon="results"
       :title="t('empty.resultsTitle')"
       :description="t('empty.results')"
-      :skeleton="4"
     />
   </BasePanel>
 </template>
