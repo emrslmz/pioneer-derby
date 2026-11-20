@@ -44,7 +44,7 @@ const level = computed(() => (props.value >= 70 ? 'high' : props.value >= 40 ? '
 
 .condition__track {
   flex: 1;
-  min-width: 2.5rem;
+  min-width: 1.5rem;
   height: 6px;
   overflow: hidden;
   border-radius: var(--radius-pill);
