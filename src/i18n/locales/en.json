@@ -67,7 +67,7 @@
     "intro": "Shortcuts work anywhere except while typing in a field.",
     "generate": "Generate a new program",
     "toggle": "Start, pause or resume",
-    "speed": "Set race speed to 1×, 2× or 4×",
+    "speed": "Set race speed to 0.5×, 1×, 2× or 4×",
     "language": "Switch language",
     "theme": "Switch theme",
     "help": "Show this help",
@@ -232,6 +232,24 @@
       "winner": "Your pick won: +{points} pts",
       "podium": "Your pick finished {ordinal}: +{points} pt",
       "miss": "Your pick finished {ordinal}: no points"
+    }
+  },
+  "onboarding": {
+    "title": "How to play",
+    "cta": "Generate Program",
+    "steps": {
+      "generate": {
+        "title": "Generate the program",
+        "text": "Six rounds of ten horses are drawn."
+      },
+      "predict": {
+        "title": "Predict the winner",
+        "text": "Pick a horse before each round: winner 3 pts, podium 1 pt."
+      },
+      "start": {
+        "title": "Start the race",
+        "text": "Rounds run one by one; results appear as each finishes."
+      }
     }
   }
 }

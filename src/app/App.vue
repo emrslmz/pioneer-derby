@@ -37,6 +37,7 @@ useKeyboardShortcuts({
   g: () => controls.generate(),
   space: () => controls.primary(),
   r: () => controls.replay(),
+  '0': () => controls.setSpeed(0.5),
   '1': () => controls.setSpeed(1),
   '2': () => controls.setSpeed(2),
   '4': () => controls.setSpeed(4),
