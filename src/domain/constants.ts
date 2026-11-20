@@ -72,13 +72,13 @@ export const HORSE_NAMES = [
 
 /**
  * Race engine tuning (docs/ARCHITECTURE.md §5, ADR 0001).
- * Rounds take 6–9 s of race time whatever their length, so long rounds stay watchable.
+ * Rounds take 12–18 s of race time whatever their length, so long rounds stay watchable.
  */
 export const RACE_TIMING = {
   /** Race time of an average-speed horse in the shortest round. */
-  shortestRoundMs: 6000,
+  shortestRoundMs: 12000,
   /** Race time of an average-speed horse in the longest round. */
-  longestRoundMs: 9000,
+  longestRoundMs: 18000,
 } as const
 
 /**
@@ -142,4 +142,4 @@ export const COMMENTARY = {
 } as const
 
 /** X13 — a finish this close between 1st and 2nd (race time) is a photo finish (~15 % of rounds). */
-export const PHOTO_FINISH_MS = 45
+export const PHOTO_FINISH_MS = 90

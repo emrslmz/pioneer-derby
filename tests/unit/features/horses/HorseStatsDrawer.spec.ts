@@ -36,6 +36,7 @@ describe('HorseStatsDrawer', () => {
     const { wrapper, race } = mountFeature(HorseList, { attachTo: document.body })
     race.generateProgram()
     race.start()
+    race.setAutoAdvance(true)
     vi.runAllTimers()
     await nextTick()
 

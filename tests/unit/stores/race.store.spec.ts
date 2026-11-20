@@ -86,6 +86,40 @@ describe('race store', () => {
   })
 
   describe('running rounds', () => {
+    it('[R4] waits indefinitely by default, then starts exactly one next round', () => {
+      const race = setupRace()
+      expect(race.autoAdvance).toBe(false)
+      expect(race.nextRound()).toBe(false)
+      race.generateProgram()
+      race.start()
+      vi.advanceTimersByTime(msToRoundEnd(race))
+      vi.advanceTimersByTime(60_000)
+      expect(race.status).toBe('intermission')
+      expect(race.completedResults).toHaveLength(1)
+      expect(race.elapsedMs()).toBe(0)
+      expect(race.toggle()).toBe(true)
+      expect(race.currentRoundIndex).toBe(1)
+      expect(race.status).toBe('running')
+      expect(race.nextRound()).toBe(false)
+    })
+
+    it('[R4] changing auto advance during the break schedules or cancels the next round', () => {
+      const race = setupRace()
+      race.generateProgram()
+      race.start()
+      vi.advanceTimersByTime(msToRoundEnd(race))
+      race.setAutoAdvance(true)
+      vi.advanceTimersByTime(INTERMISSION_MS - 1)
+      race.setAutoAdvance(false)
+      vi.advanceTimersByTime(60_000)
+      expect(race.status).toBe('intermission')
+      race.setAutoAdvance(true)
+      race.setAutoAdvance(true)
+      vi.advanceTimersByTime(INTERMISSION_MS)
+      expect(race.status).toBe('running')
+      expect(race.currentRoundIndex).toBe(1)
+    })
+
     it('[R4] Start runs the first round only', () => {
       const race = setupRace()
       race.generateProgram()
@@ -111,8 +145,9 @@ describe('race store', () => {
       )
     })
 
-    it('[R4] after a short intermission the next round starts by itself (A4)', () => {
+    it('[R4] with auto advance selected the next round starts after a short intermission', () => {
       const race = setupRace()
+      race.setAutoAdvance(true)
       race.generateProgram()
       race.start()
       vi.advanceTimersByTime(msToRoundEnd(race))
@@ -130,6 +165,7 @@ describe('race store', () => {
       const race = setupRace()
       race.generateProgram()
       race.start()
+      race.setAutoAdvance(true)
       vi.runAllTimers()
 
       expect(race.status).toBe('finished')
@@ -144,6 +180,24 @@ describe('race store', () => {
   })
 
   describe('pause, resume & speed', () => {
+    it('[X10] 0.5× gives twice as long to watch, including after pausing and changing speed', () => {
+      const race = setupRace()
+      race.generateProgram()
+      race.setSpeed(0.5)
+      race.start()
+      const duration = race.currentRace!.durationMs
+      vi.advanceTimersByTime(Math.floor(duration))
+      expect(race.status).toBe('running')
+      expect(race.elapsedMs()).toBeCloseTo(Math.floor(duration) / 2)
+      race.pause()
+      race.setSpeed(1)
+      const frozen = race.elapsedMs()
+      vi.advanceTimersByTime(30_000)
+      expect(race.elapsedMs()).toBe(frozen)
+      race.resume()
+      vi.advanceTimersByTime(msToRoundEnd(race))
+      expect(race.completedResults).toHaveLength(1)
+    })
     it('[R4] Pause freezes the race clock and Resume continues from the same spot', () => {
       const race = setupRace()
       race.generateProgram()
@@ -190,6 +244,7 @@ describe('race store', () => {
 
     it('[R4] the intermission is real time, whatever the race speed (A28)', () => {
       const race = setupRace()
+      race.setAutoAdvance(true)
       race.generateProgram()
       race.setSpeed(4)
       race.start()
@@ -246,6 +301,7 @@ describe('race store', () => {
       const race = setupRace(7)
       race.generateProgram()
       race.start()
+      race.setAutoAdvance(true)
       vi.runAllTimers()
       const firstResults = race.completedResults
 
@@ -255,6 +311,7 @@ describe('race store', () => {
       expect(race.completedResults).toEqual([])
 
       race.start()
+      race.setAutoAdvance(true)
       vi.runAllTimers()
       expect(race.completedResults).toEqual(firstResults)
     })

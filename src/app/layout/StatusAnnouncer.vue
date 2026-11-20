@@ -13,7 +13,7 @@ import { useScheduleStore } from '@/stores/schedule.store'
  */
 const { t } = useI18n()
 const { lapLabel } = useLocale()
-const { status, currentRound } = storeToRefs(useRaceStore())
+const { status, currentRound, autoAdvance } = storeToRefs(useRaceStore())
 const { roundCount } = storeToRefs(useScheduleStore())
 
 const message = ref('')
@@ -33,7 +33,9 @@ function describe(next: RaceStatus, previous: RaceStatus | undefined): string {
     case 'paused':
       return t('announce.paused')
     case 'intermission':
-      return t('announce.intermission', { lap: lap() })
+      return t(autoAdvance.value ? 'announce.autoIntermission' : 'announce.intermission', {
+        lap: lap(),
+      })
     case 'finished':
       return t('announce.finished')
     default:

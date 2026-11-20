@@ -36,6 +36,7 @@ describe('ResultsPanel', () => {
     expect(blocks()).toHaveLength(1)
     expect(blocks()[0]!.get('h3').text()).toBe('1st Lap – 1200 m')
 
+    race.setAutoAdvance(true)
     vi.runAllTimers()
     await nextTick()
     expect(blocks().map((b) => b.get('h3').text())).toEqual([

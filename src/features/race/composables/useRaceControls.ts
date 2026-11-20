@@ -27,6 +27,7 @@ export function useRaceControls() {
     canToggle,
     canReplay,
     speed,
+    autoAdvance,
     currentRound,
     currentRoundIndex,
     seed,
@@ -34,7 +35,7 @@ export function useRaceControls() {
   const { roundCount } = storeToRefs(useScheduleStore())
   const { t, locale } = useI18n()
 
-  const isRunning = computed(() => status.value === 'running' || status.value === 'intermission')
+  const isRunning = computed(() => status.value === 'running')
 
   /** The big primary button: Start / Pause / Resume, and Replay once the program has finished. */
   const isReplay = computed(() => status.value === 'finished')
@@ -42,6 +43,7 @@ export function useRaceControls() {
 
   const toggleLabel = computed(() => {
     if (isReplay.value) return t('actions.replay')
+    if (status.value === 'intermission') return t('actions.nextRound')
     if (status.value === 'paused') return t('actions.resume')
     return isRunning.value ? t('actions.pause') : t('actions.start')
   })
@@ -65,6 +67,7 @@ export function useRaceControls() {
   return {
     status,
     speed,
+    autoAdvance,
     canGenerate,
     canToggle,
     canReplay,
@@ -86,5 +89,6 @@ export function useRaceControls() {
     /** Primary action: replay when finished, otherwise start / pause / resume. */
     primary: () => (status.value === 'finished' ? race.replay() : race.toggle()),
     setSpeed: (value: RaceSpeed) => race.setSpeed(value),
+    setAutoAdvance: (enabled: boolean) => race.setAutoAdvance(enabled),
   }
 }

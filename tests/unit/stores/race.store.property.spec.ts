@@ -34,6 +34,7 @@ describe('race store (properties)', () => {
             )
           }
 
+          race.setAutoAdvance(true)
           // Let the program finish, whatever state the actions left it in.
           if (race.status === 'paused') race.resume()
           vi.runAllTimers()

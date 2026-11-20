@@ -115,6 +115,15 @@ const language = computed({ get: () => locale.value, set: setLocale })
         :label="t('speed.label')"
         :options="controls.speedOptions.value"
       />
+      <label class="header__auto" :title="t('actions.autoAdvanceHint')">
+        <input
+          type="checkbox"
+          data-testid="auto-advance"
+          :checked="controls.autoAdvance.value"
+          @change="controls.setAutoAdvance(($event.target as HTMLInputElement).checked)"
+        />
+        <span>{{ t('actions.autoAdvance') }}</span>
+      </label>
       <BaseSegmentedControl
         v-model="language"
         data-testid="language-switch"
@@ -309,7 +318,33 @@ const language = computed({ get: () => locale.value, set: setLocale })
   gap: var(--space-2);
 }
 
-.header__speed,
+.header__auto {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  cursor: pointer;
+
+  input {
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--color-accent);
+  }
+}
+
+@media (max-width: 767px) {
+  .header {
+    grid-template-areas: 'brand brand' 'status status' 'actions actions' 'utilities utilities';
+  }
+
+  .header__utilities {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}
+
 .header__help {
   display: none !important;
 
