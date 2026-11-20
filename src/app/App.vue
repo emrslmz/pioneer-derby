@@ -64,7 +64,7 @@ useKeyboardShortcuts({
   '1': () => controls.setSpeed(1),
   '2': () => controls.setSpeed(2),
   '4': () => controls.setSpeed(4),
-  '8': () => controls.setSpeed(8),
+  '9': () => controls.setSpeed(16),
   l: toggleLocale,
   t: settings.cycleTheme,
   '?': () => (shortcutsOpen.value = true),

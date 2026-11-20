@@ -23,9 +23,9 @@ const horsesStore = useHorsesStore()
 const lap = computed(() => lapLabel(props.result.roundIndex, props.result.distance))
 
 const columns = computed<TableColumn<Placing>[]>(() => [
-  { key: 'position', label: t('results.position'), align: 'center', width: '3.5rem' },
+  { key: 'position', label: t('results.position'), align: 'center', width: '3.25rem' },
   { key: 'name', label: t('results.name') },
-  { key: 'time', label: t('results.time'), align: 'end', width: '4.25rem' },
+  { key: 'time', label: t('results.time'), align: 'end', width: '4.75rem' },
 ])
 
 const isMedal = (position: number) => position <= PODIUM_SIZE
@@ -81,7 +81,10 @@ const isMedal = (position: number) => position <= PODIUM_SIZE
 </template>
 
 <style scoped lang="scss">
+// A smaller horse: the Results panel is the narrowest column, and the time must stay whole.
 .result {
+  --swatch-horse: 1.5rem;
+
   border-bottom: 1px solid var(--color-border);
   animation: result-in 560ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }

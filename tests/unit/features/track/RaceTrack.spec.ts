@@ -65,11 +65,11 @@ const frames = async (ms: number) => {
 
 /**
  * Advances `raceMs` of race time at the race's speed. Rounds last over a minute at a real pace;
- * tests that run whole rounds watch at 8×, so they need a few hundred fake frames, not thousands.
+ * tests that run whole rounds watch at 16×, so they need a few hundred fake frames, not thousands.
  */
 const runRace = (race: { speed: number }, raceMs: number) =>
   frames(Math.ceil(raceMs / race.speed) + 1)
-const FAST = 8
+const FAST = 16
 
 describe('RaceTrack', () => {
   it('[R6] draws 10 numbered lanes with a finish line, and invites you to generate', () => {

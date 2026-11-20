@@ -56,7 +56,7 @@ defineProps<{
 }
 
 .swatch__horse {
-  width: 1.9rem;
+  width: var(--swatch-horse, 1.9rem);
   height: auto;
   flex-shrink: 0;
 }

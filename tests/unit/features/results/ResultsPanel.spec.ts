@@ -88,6 +88,8 @@ describe('ResultsPanel', () => {
   })
 
   describe('live finishing order', () => {
+    const SPEED = 16
+
     function startFramedRace() {
       vi.useFakeTimers({
         toFake: [
@@ -101,7 +103,7 @@ describe('ResultsPanel', () => {
       })
       const mounted = mountFeature(ResultsPanel)
       mounted.race.generateProgram()
-      mounted.race.setSpeed(8)
+      mounted.race.setSpeed(SPEED)
       mounted.race.start()
       return mounted
     }
@@ -118,7 +120,7 @@ describe('ResultsPanel', () => {
       expect(wrapper.find('.result__dots').exists()).toBe(true)
 
       // Just after the winner crosses the line: one row, and still no official result.
-      vi.advanceTimersByTime(Math.ceil(placings[0]!.timeMs / 8) + 20)
+      vi.advanceTimersByTime(Math.ceil(placings[0]!.timeMs / SPEED) + 20)
       await nextTick()
       expect(rows(wrapper)).toHaveLength(1)
       expect(rows(wrapper)[0]!.text()).toContain(
@@ -128,7 +130,7 @@ describe('ResultsPanel', () => {
       expect(wrapper.get('[data-testid="result-live"]').text()).toContain('Live')
 
       // Then the second, in order.
-      vi.advanceTimersByTime(Math.ceil((placings[1]!.timeMs - placings[0]!.timeMs) / 8) + 20)
+      vi.advanceTimersByTime(Math.ceil((placings[1]!.timeMs - placings[0]!.timeMs) / SPEED) + 20)
       await nextTick()
       expect(rows(wrapper)).toHaveLength(2)
       expect(rows(wrapper)[1]!.find('.position').text()).toContain('2')
@@ -136,7 +138,7 @@ describe('ResultsPanel', () => {
 
     it('[R5] when the last horse finishes the live block becomes the official result', async () => {
       const { wrapper, race } = startFramedRace()
-      vi.advanceTimersByTime(Math.ceil(race.currentRace!.durationMs / 8) + 50)
+      vi.advanceTimersByTime(Math.ceil(race.currentRace!.durationMs / SPEED) + 50)
       await nextTick()
       await nextTick()
       expect(wrapper.find('[data-testid="result-live"]').exists()).toBe(false)
@@ -159,7 +161,7 @@ describe('ResultsPanel', () => {
       const { wrapper, race } = startFramedRace()
       const placings = race.currentRace!.result.placings
       await nextTick() // the frame loop starts once the clock runs
-      vi.advanceTimersByTime(Math.ceil(placings[2]!.timeMs / 8) + 20)
+      vi.advanceTimersByTime(Math.ceil(placings[2]!.timeMs / SPEED) + 20)
       await nextTick()
       const shown = rows(wrapper).length
       expect(shown).toBeGreaterThanOrEqual(3)

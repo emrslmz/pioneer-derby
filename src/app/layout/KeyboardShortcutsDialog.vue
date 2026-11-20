@@ -11,7 +11,7 @@ const shortcuts = [
   { keys: ['G'], label: 'shortcuts.generate' },
   { keys: ['Space'], label: 'shortcuts.toggle' },
   { keys: ['R'], label: 'shortcuts.replay' },
-  { keys: ['0', '1', '2', '4', '8'], label: 'shortcuts.speed' },
+  { keys: ['0', '1', '2', '4', '9'], label: 'shortcuts.speed' },
   { keys: ['L'], label: 'shortcuts.language' },
   { keys: ['T'], label: 'shortcuts.theme' },
   { keys: ['?'], label: 'shortcuts.help' },

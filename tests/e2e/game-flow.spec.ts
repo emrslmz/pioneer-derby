@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { FAST, installClock, PROGRAM_AT_8X, ROUND_1_AT_8X } from './clock'
+import { FAST, installClock, PROGRAM_AT_FAST, ROUND_1_AT_FAST } from './clock'
 
 /** The brief end to end: Generate → 6×10 program → Start → results one round at a time. */
 test.describe('full game flow', () => {
@@ -32,14 +32,14 @@ test.describe('full game flow', () => {
     await expect(page.getByTestId('program-round').first()).toHaveAttribute('data-state', 'live')
 
     // Round 1 finishes → exactly one result block, round 2 becomes current.
-    await page.clock.runFor(ROUND_1_AT_8X)
+    await page.clock.runFor(ROUND_1_AT_FAST)
     await expect(results).toHaveCount(1)
     await expect(results.first().locator('h3')).toHaveText('1st Lap – 1200 m')
     await expect(results.first().locator('tbody tr')).toHaveCount(10)
     await expect(page.getByTestId('program-round').first()).toHaveAttribute('data-state', 'done')
 
     // The rest of the program, still strictly in order.
-    await page.clock.runFor(PROGRAM_AT_8X)
+    await page.clock.runFor(PROGRAM_AT_FAST)
     await expect(results).toHaveCount(6)
     await expect(results.locator('h3')).toHaveText([
       '1st Lap – 1200 m',
@@ -60,7 +60,7 @@ test.describe('full game flow', () => {
       await target.getByTestId('generate-button').click()
       await target.getByRole('radio', { name: FAST }).click()
       await target.getByTestId('toggle-button').click()
-      await target.clock.runFor(ROUND_1_AT_8X)
+      await target.clock.runFor(ROUND_1_AT_FAST)
       const first = target.getByTestId('result-round').first()
       await expect(first).toBeVisible()
       return first.locator('tbody tr').first().locator('.swatch__label').textContent()

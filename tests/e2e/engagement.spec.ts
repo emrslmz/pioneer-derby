@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
-import { FAST, installClock, PROGRAM_AT_8X, ROUND_1_AT_8X } from './clock'
+import { FAST, installClock, PROGRAM_AT_FAST, ROUND_1_AT_FAST } from './clock'
 
 test.describe('engagement layer', () => {
   test.setTimeout(90_000)
@@ -23,7 +23,7 @@ test.describe('engagement layer', () => {
     await page.getByRole('radio', { name: FAST }).click()
     await page.getByTestId('toggle-button').click()
     await expect(page.getByTestId('prediction-locked')).toContainText('Your pick:')
-    await page.clock.runFor(ROUND_1_AT_8X)
+    await page.clock.runFor(ROUND_1_AT_FAST)
     await expect(page.getByTestId('prediction-outcome')).toContainText('1st Lap – 1200 m:')
     await expect(page.getByTestId('prediction-score')).toHaveText(/^\d+ pts$/)
   })
@@ -48,7 +48,7 @@ test.describe('engagement layer', () => {
     await page.getByTestId('toggle-button').click()
     await page.clock.runFor(3_000)
     const running = await height()
-    await page.clock.runFor(ROUND_1_AT_8X - 3_000) // into the break, with an outcome
+    await page.clock.runFor(ROUND_1_AT_FAST - 3_000) // into the break, with an outcome
     await expect(page.getByTestId('round-result')).toBeVisible()
     const intermission = await height()
 
@@ -98,7 +98,7 @@ test.describe('engagement layer', () => {
     await page.getByRole('radio', { name: FAST }).click()
     await page.getByTestId('toggle-button').click()
     const results = page.getByTestId('result-round')
-    await page.clock.runFor(PROGRAM_AT_8X)
+    await page.clock.runFor(PROGRAM_AT_FAST)
     await expect(results).toHaveCount(6)
     const first = await results.locator('.swatch__label').allTextContents()
 
@@ -106,7 +106,7 @@ test.describe('engagement layer', () => {
     await page.getByTestId('toggle-button').click()
     await expect(results).toHaveCount(0)
     await page.getByTestId('toggle-button').click()
-    await page.clock.runFor(PROGRAM_AT_8X)
+    await page.clock.runFor(PROGRAM_AT_FAST)
     await expect(results).toHaveCount(6)
     await expect(results.locator('.swatch__label')).toHaveText(first)
   })
