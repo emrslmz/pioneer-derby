@@ -38,21 +38,60 @@ describe('responsive layout & header', () => {
     expect(wrapper.find('[data-testid="results-panel"]').exists()).toBe(true)
   })
 
-  it('[R3] before a program exists, Generate Program draws attention', async () => {
+  it('[R3] the header has no Generate button; the empty Program panel offers it instead', async () => {
     setViewportWidth(1440)
     const { wrapper, race } = mountApp()
-    const generate = () => wrapper.get('[data-testid="generate-button"]')
-    expect(generate().classes()).toContain('header__generate--attention')
-    race.generateProgram()
-    await nextTick()
-    expect(generate().classes()).not.toContain('header__generate--attention')
+    expect(wrapper.find('header [data-testid="generate-button"]').exists()).toBe(false)
+    const empty = wrapper.get('[data-testid="program-panel"] [data-testid="generate-button"]')
+    expect(wrapper.get('[data-testid="results-panel"]').text()).toContain('No results yet')
+
+    await empty.trigger('click')
+    expect(race.status).toBe('ready')
+    expect(wrapper.find('[data-testid="generate-button"]').exists()).toBe(false)
+    expect(wrapper.find('[data-testid="change-program-button"]').exists()).toBe(true)
   })
 
-  it('[R4] header buttons follow the race: Generate → Start → Pause → Resume', async () => {
+  it('[R3] changing the program asks first, and only a confirmation re-rolls it', async () => {
+    setViewportWidth(1440)
+    const { wrapper, race } = mountApp({ seed: 7 })
+    race.generateProgram()
+    await nextTick()
+    const before = race.seed
+
+    await wrapper.get('[data-testid="change-program-button"]').trigger('click')
+    expect(wrapper.get('dialog[role="alertdialog"]').attributes('open')).toBeDefined()
+    await wrapper.get('[data-testid="change-program-cancel"]').trigger('click')
+    expect(race.seed).toBe(before)
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'g' }))
+    await nextTick()
+    expect(wrapper.get('dialog[role="alertdialog"]').attributes('open')).toBeDefined()
+    await wrapper.get('[data-testid="change-program-confirm"]').trigger('click')
+    expect(race.seed).not.toBe(before)
+    expect(race.status).toBe('ready')
+  })
+
+  it('[R3] the program cannot be changed while a round is running (A6)', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'performance', 'Date'] })
+    setViewportWidth(1440)
+    const { wrapper, race } = mountApp()
+    race.generateProgram()
+    race.start()
+    await nextTick()
+    expect(
+      wrapper.get('[data-testid="change-program-button"]').attributes('disabled'),
+    ).toBeDefined()
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'g' }))
+    await nextTick()
+    expect(wrapper.get('dialog[role="alertdialog"]').attributes('open')).toBeUndefined()
+  })
+
+  it('[R4] the header button follows the race: Start → Pause → Resume', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'performance', 'Date'] })
     setViewportWidth(1440)
     const { wrapper, race } = mountApp()
     const generate = () => wrapper.get('[data-testid="generate-button"]')
+    const change = () => wrapper.get('[data-testid="change-program-button"]')
     const toggle = () => wrapper.get('[data-testid="toggle-button"]')
 
     expect(toggle().attributes('disabled')).toBeDefined()
@@ -63,7 +102,7 @@ describe('responsive layout & header', () => {
     await toggle().trigger('click')
     expect(race.status).toBe('running')
     expect(toggle().text()).toContain('Pause')
-    expect(generate().attributes('disabled')).toBeDefined()
+    expect(change().attributes('disabled')).toBeDefined()
 
     await toggle().trigger('click')
     expect(toggle().text()).toContain('Resume')

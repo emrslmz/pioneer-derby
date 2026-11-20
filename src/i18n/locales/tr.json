@@ -6,7 +6,6 @@
   },
   "actions": {
     "generate": "Program Oluştur",
-    "generateShort": "Oluştur",
     "start": "Başlat",
     "pause": "Duraklat",
     "resume": "Devam Et",
@@ -16,7 +15,8 @@
     "nextRound": "Sonraki tur",
     "autoAdvance": "Oto geçiş",
     "autoAdvanceHint": "Açık: sıradaki tur 6 saniyelik aradan sonra başlar. Kapalı: Sonraki tur'a basın.",
-    "startNow": "Şimdi başlat"
+    "startNow": "Şimdi başlat",
+    "cancel": "Vazgeç"
   },
   "status": {
     "label": "Yarış durumu",
@@ -64,7 +64,9 @@
   "empty": {
     "horses": "Atlar burada sıralanacak.",
     "program": "On atlık altı tur çekmek için Program Oluştur'a basın.",
-    "results": "Her tur bittiğinde sonuçlar burada görünür."
+    "results": "Her tur bittiğinde sonuçlar burada görünür.",
+    "programTitle": "Henüz program yok",
+    "resultsTitle": "Henüz sonuç yok"
   },
   "shortcuts": {
     "title": "Klavye kısayolları",
@@ -268,5 +270,12 @@
         "text": "Turlar sırayla koşulur; sonuçlar bitince görünür."
       }
     }
+  },
+  "changeProgram": {
+    "title": "Program değişsin mi?",
+    "message": "Yeni bir at listesi ve altı yeni tur oluşturulur. Mevcut sonuçlar ve tahminlerin kaybolur.",
+    "confirm": "Programı değiştir",
+    "button": "Programı değiştir",
+    "locked": "Programı değiştirmek için yarışı duraklat."
   }
 }

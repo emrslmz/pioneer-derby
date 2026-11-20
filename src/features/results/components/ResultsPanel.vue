@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useLocale } from '@/i18n/useLocale'
 import { useReducedMotion } from '@/shared/composables/useMediaQuery'
 import { scrollWithinContainer } from '@/shared/utils/scroll'
+import BaseEmptyState from '@/shared/ui/BaseEmptyState.vue'
 import BasePanel from '@/shared/ui/BasePanel.vue'
 import { useHorsesStore } from '@/stores/horses.store'
 import { useRaceStore } from '@/stores/race.store'
@@ -62,14 +63,14 @@ watch(
         :result="result"
       />
     </div>
-    <p v-else class="empty">{{ t('empty.results') }}</p>
+    <BaseEmptyState
+      v-else
+      icon="results"
+      :title="t('empty.resultsTitle')"
+      :description="t('empty.results')"
+      :skeleton="4"
+    />
   </BasePanel>
 </template>
 
-<style scoped lang="scss">
-.empty {
-  padding: var(--space-6) var(--space-4);
-  color: var(--color-text-muted);
-  text-align: center;
-}
-</style>
+<style scoped lang="scss"></style>

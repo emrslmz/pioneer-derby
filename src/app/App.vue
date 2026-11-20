@@ -12,8 +12,11 @@ import AnalyticsDebugPanel from '@/shared/analytics/AnalyticsDebugPanel.vue'
 import { isDebugMode } from '@/shared/utils/debug'
 import { useLocale } from '@/i18n/useLocale'
 import { useKeyboardShortcuts } from '@/shared/composables/useKeyboardShortcuts'
+import { useRaceStore } from '@/stores/race.store'
+import { useScheduleStore } from '@/stores/schedule.store'
 import { useSettingsStore } from '@/stores/settings.store'
 import AppHeader from './layout/AppHeader.vue'
+import ChangeProgramDialog from './layout/ChangeProgramDialog.vue'
 import KeyboardShortcutsDialog from './layout/KeyboardShortcutsDialog.vue'
 import ResponsiveLayout from './layout/ResponsiveLayout.vue'
 import StatusAnnouncer from './layout/StatusAnnouncer.vue'
@@ -23,7 +26,16 @@ const { toggleLocale } = useLocale()
 const controls = useRaceControls()
 const settings = useSettingsStore()
 const { theme } = storeToRefs(settings)
+const race = useRaceStore()
+const schedule = useScheduleStore()
 const shortcutsOpen = ref(false)
+const changeProgramOpen = ref(false)
+
+/** The first program is drawn straight away; replacing one asks first (it discards the results). */
+function requestProgram() {
+  if (!schedule.hasProgram) race.generateProgram()
+  else if (race.canGenerate) changeProgramOpen.value = true
+}
 const debug = isDebugMode()
 
 // Explicit light/dark wins over the system preference (tokens.scss).
@@ -34,7 +46,7 @@ watchEffect(() => {
 })
 
 useKeyboardShortcuts({
-  g: () => controls.generate(),
+  g: requestProgram,
   space: () => controls.primary(),
   r: () => controls.replay(),
   '0': () => controls.setSpeed(0.5),
@@ -66,7 +78,7 @@ useKeyboardShortcuts({
       </template>
 
       <template #program>
-        <ProgramPanel />
+        <ProgramPanel @change="requestProgram" />
       </template>
 
       <template #results>
@@ -76,6 +88,7 @@ useKeyboardShortcuts({
   </main>
 
   <KeyboardShortcutsDialog v-model:open="shortcutsOpen" />
+  <ChangeProgramDialog v-model:open="changeProgramOpen" @confirm="race.generateProgram()" />
   <StatusAnnouncer />
   <AnalyticsDebugPanel v-if="debug" />
 </template>
