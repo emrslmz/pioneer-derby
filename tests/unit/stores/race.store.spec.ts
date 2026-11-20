@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { INTERMISSION_MS } from '@/domain/constants'
+import { DEFAULT_RACE_SPEED, INTERMISSION_MS } from '@/domain/constants'
+import { createPinia, setActivePinia } from 'pinia'
+import { useRaceStore } from '@/stores/race.store'
 import { horsesForSeed, roundRaceForSeed, scheduleForSeed } from '@/domain/game'
 import { useHorsesStore } from '@/stores/horses.store'
 import { useScheduleStore } from '@/stores/schedule.store'
@@ -86,8 +88,23 @@ describe('race store', () => {
   })
 
   describe('running rounds', () => {
-    it('[R4] waits indefinitely by default, then starts exactly one next round', () => {
+    it('[R4] Start runs the whole program by default: auto advance after a 6 s break', () => {
       const race = setupRace()
+      expect(race.autoAdvance).toBe(true)
+      race.generateProgram()
+      race.start()
+      vi.advanceTimersByTime(msToRoundEnd(race))
+      expect(race.status).toBe('intermission')
+      vi.advanceTimersByTime(INTERMISSION_MS - 1)
+      expect(race.status).toBe('intermission')
+      vi.advanceTimersByTime(1)
+      expect(race.status).toBe('running')
+      expect(race.currentRoundIndex).toBe(1)
+    })
+
+    it('[R4] with auto advance off, waits indefinitely, then starts exactly one next round', () => {
+      const race = setupRace()
+      race.setAutoAdvance(false)
       expect(race.autoAdvance).toBe(false)
       expect(race.nextRound()).toBe(false)
       race.generateProgram()
@@ -180,6 +197,28 @@ describe('race store', () => {
   })
 
   describe('pause, resume & speed', () => {
+    it('[R4] a real-pace race is watched at 2× by default', () => {
+      setActivePinia(createPinia())
+      expect(useRaceStore().speed).toBe(DEFAULT_RACE_SPEED)
+      expect(DEFAULT_RACE_SPEED).toBe(2)
+    })
+
+    it('[R4] pausing mid-round is not the break between rounds, even from round 2 on', () => {
+      const race = setupRace()
+      race.generateProgram()
+      race.start()
+      vi.advanceTimersByTime(msToRoundEnd(race))
+      expect(race.isBetweenRounds).toBe(true)
+      race.pause()
+      expect(race.isBetweenRounds).toBe(true) // paused during the break: the result stays
+      race.resume()
+      vi.advanceTimersByTime(5000)
+      race.pause()
+      expect(race.currentRoundIndex).toBe(1)
+      expect(race.completedResults).toHaveLength(1)
+      expect(race.isBetweenRounds).toBe(false) // paused mid-race: not a finished round
+    })
+
     it('[X10] 0.5× gives twice as long to watch, including after pausing and changing speed', () => {
       const race = setupRace()
       race.generateProgram()

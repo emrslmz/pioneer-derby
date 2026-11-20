@@ -20,6 +20,8 @@ export function mountFeature<C extends Component>(
   setActivePinia(pinia)
   const race = useRaceStore(pinia)
   race.initialize(seed)
+  // Real time (1×), so race time equals fake-timer time; the 2× default is tested in the store.
+  race.$patch({ speed: 1 })
   const wrapper = mount(component, {
     ...options,
     global: { plugins: [pinia, createAppI18n(locale)] },
