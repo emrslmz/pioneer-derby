@@ -54,6 +54,7 @@ function onBackdropClick(event: MouseEvent) {
     :class="`dialog--${placement}`"
     :role="role"
     :aria-labelledby="titleId"
+    @cancel="open = false"
     @close="onClose"
     @click="onBackdropClick"
   >

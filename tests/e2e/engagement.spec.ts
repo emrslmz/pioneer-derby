@@ -31,6 +31,8 @@ test.describe('engagement layer', () => {
   test('[X4] the prediction card keeps the same height in every state (no layout shift)', async ({
     page,
   }) => {
+    // No intro animation: a card scaled in mid-animation would measure a different height.
+    await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.clock.install({ time: new Date('2026-11-20T12:00:00Z') })
     await page.goto('/?seed=42')
     await page.clock.pauseAt(new Date('2026-11-20T12:00:05Z'))

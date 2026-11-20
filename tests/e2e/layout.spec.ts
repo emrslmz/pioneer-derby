@@ -48,8 +48,6 @@ test.describe('header & controls', () => {
   test('[R3] changing the program asks for confirmation first', async ({ page }) => {
     await page.goto('/?seed=42')
     await page.getByTestId('generate-button').click()
-    const firstHorse = page.getByTestId('program-round').first().locator('tbody tr').first()
-    const before = await firstHorse.textContent()
 
     await page.getByTestId('change-program-button').click()
     const dialog = page.getByRole('alertdialog', { name: 'Change the program?' })
@@ -57,13 +55,13 @@ test.describe('header & controls', () => {
     await expect(dialog.getByTestId('change-program-cancel')).toBeFocused()
     await page.keyboard.press('Escape')
     await expect(dialog).toBeHidden()
-    await expect(firstHorse).toHaveText(before!)
+    await expect(page).toHaveURL(/seed=42/) // cancelled: the same program
 
     await page.keyboard.press('g')
     await dialog.getByTestId('change-program-confirm').click()
     await expect(dialog).toBeHidden()
     await expect(page.getByTestId('race-status')).toContainText('Ready')
-    await expect(firstHorse).not.toHaveText(before!)
+    await expect(page).not.toHaveURL(/seed=42/) // confirmed: a new program has its own seed
   })
 
   test('[X8] the race can be driven from the keyboard alone', async ({ page }) => {

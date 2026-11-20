@@ -11,8 +11,132 @@
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#f4482b" />
     <title>Pioneer Derby · Race of the Computing Pioneers</title>
+    <script>
+      // Before the first paint: the saved theme (light on a first visit) and, unless motion is
+      // reduced, the intro that lets the cards arrive one by one (see src/app/splash.ts).
+      try {
+        var theme = localStorage.getItem('pioneer-derby:theme') || 'light'
+        if (theme !== 'system') document.documentElement.dataset.theme = theme
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches)
+          document.documentElement.dataset.intro = ''
+      } catch (error) {
+        /* storage blocked: the app falls back to its defaults */
+      }
+    </script>
+    <style>
+      /* The splash is plain HTML and CSS: it paints before any JavaScript has loaded. */
+      #splash {
+        position: fixed;
+        inset: 0;
+        z-index: 2147483000;
+        display: grid;
+        align-content: center;
+        justify-items: center;
+        gap: 18px;
+        background: #f4f6fb;
+        color: #101828;
+        pointer-events: none;
+        transition: opacity 360ms ease;
+      }
+      html[data-theme='dark'] #splash {
+        background: #0b1020;
+        color: #f2f4f8;
+      }
+      @media (prefers-color-scheme: dark) {
+        html:not([data-theme]) #splash {
+          background: #0b1020;
+          color: #f2f4f8;
+        }
+      }
+      #splash.splash--hide {
+        opacity: 0;
+      }
+      .splash__logo {
+        width: 76px;
+        height: 76px;
+        animation: splash-pop 700ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+        filter: drop-shadow(0 10px 26px rgb(244 72 43 / 0.45));
+      }
+      .splash__name {
+        font:
+          700 30px/1 'Barlow Condensed',
+          'Arial Narrow',
+          Arial,
+          sans-serif;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        animation: splash-rise 600ms 150ms ease both;
+      }
+      .splash__bar {
+        width: 150px;
+        height: 4px;
+        overflow: hidden;
+        border-radius: 4px;
+        background: rgb(127 134 150 / 0.25);
+        animation: splash-rise 600ms 250ms ease both;
+      }
+      .splash__bar span {
+        display: block;
+        width: 40%;
+        height: 100%;
+        border-radius: 4px;
+        background: linear-gradient(90deg, #f4482b, #ff8a3d);
+        animation: splash-run 1100ms ease-in-out infinite;
+      }
+      @keyframes splash-pop {
+        from {
+          opacity: 0;
+          transform: scale(0.6) rotate(-8deg);
+        }
+      }
+      @keyframes splash-rise {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+      }
+      @keyframes splash-run {
+        from {
+          transform: translateX(-100%);
+        }
+        to {
+          transform: translateX(250%);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #splash {
+          display: none;
+        }
+      }
+    </style>
   </head>
   <body>
+    <div id="splash" aria-hidden="true">
+      <svg class="splash__logo" viewBox="0 0 40 40" focusable="false">
+        <defs>
+          <linearGradient id="splash-gradient" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f4482b" />
+            <stop offset="1" stop-color="#ff8a3d" />
+          </linearGradient>
+        </defs>
+        <rect width="40" height="40" rx="11" fill="url(#splash-gradient)" />
+        <path
+          d="M12 9v11a8 8 0 0 0 16 0V9"
+          fill="none"
+          stroke="#fff"
+          stroke-width="4.5"
+          stroke-linecap="round"
+        />
+        <g fill="#d9361b">
+          <circle cx="12" cy="13" r="1.1" />
+          <circle cx="12" cy="18" r="1.1" />
+          <circle cx="28" cy="13" r="1.1" />
+          <circle cx="28" cy="18" r="1.1" />
+        </g>
+      </svg>
+      <div class="splash__name">Pioneer Derby</div>
+      <div class="splash__bar"><span></span></div>
+    </div>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>

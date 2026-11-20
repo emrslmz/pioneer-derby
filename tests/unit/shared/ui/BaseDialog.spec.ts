@@ -53,4 +53,10 @@ describe('BaseDialog', () => {
     await wrapper.get('p').trigger('click')
     expect(wrapper.props('open')).toBe(true)
   })
+
+  it('[X8] Escape updates the state at once, so the dialog can be reopened right away', async () => {
+    const wrapper = setup(true)
+    await wrapper.get('dialog').trigger('cancel') // fired on Escape, before the element closes
+    expect(wrapper.props('open')).toBe(false)
+  })
 })

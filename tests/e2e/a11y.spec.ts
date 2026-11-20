@@ -51,6 +51,8 @@ test.describe('accessibility (axe, WCAG 2.2 AA)', () => {
   })
 
   test('[X8] mobile layout has no serious violations', async ({ page }) => {
+    // The intro cards fade in on a first load; axe must not measure them half-transparent.
+    await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.setViewportSize({ width: 375, height: 812 })
     await page.goto('/?seed=42')
     expect(await seriousViolations(page)).toEqual([])

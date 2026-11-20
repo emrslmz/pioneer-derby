@@ -71,3 +71,56 @@ kbd {
     scroll-behavior: auto !important;
   }
 }
+
+// First load only (`html[data-intro]`, set in index.html and removed by main.ts): the header, the
+// columns and the footer arrive one after another as the splash fades. Reduced motion never sets
+// the attribute; the rule below is a second guard, as `animation-delay` would still hold cards back.
+@keyframes intro-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0) scale(0.985);
+  }
+}
+
+html[data-intro] {
+  .header,
+  .layout > *,
+  [data-testid='app-footer'] {
+    animation: intro-in 560ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+    animation-delay: calc(420ms + var(--n, 0) * 90ms);
+  }
+
+  .header {
+    --n: 0;
+  }
+
+  .layout > :nth-child(1) {
+    --n: 1;
+  }
+
+  .layout > :nth-child(2) {
+    --n: 2;
+  }
+
+  .layout > :nth-child(3) {
+    --n: 3;
+  }
+
+  .layout > :nth-child(4) {
+    --n: 4;
+  }
+
+  [data-testid='app-footer'] {
+    --n: 5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-intro] {
+    .header,
+    .layout > *,
+    [data-testid='app-footer'] {
+      animation: none;
+    }
+  }
+}
