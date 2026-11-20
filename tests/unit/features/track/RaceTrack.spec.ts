@@ -63,6 +63,14 @@ const frames = async (ms: number) => {
   await nextTick()
 }
 
+/**
+ * Advances `raceMs` of race time at the race's speed. Rounds last over a minute at a real pace;
+ * tests that run whole rounds watch at 8×, so they need a few hundred fake frames, not thousands.
+ */
+const runRace = (race: { speed: number }, raceMs: number) =>
+  frames(Math.ceil(raceMs / race.speed) + 1)
+const FAST = 8
+
 describe('RaceTrack', () => {
   it('[R6] draws 10 numbered lanes with a finish line, and invites you to generate', () => {
     const { wrapper } = setup()
@@ -207,10 +215,11 @@ describe('RaceTrack', () => {
     const { wrapper, race } = setup()
     race.setAutoAdvance(false) // keep the break open to inspect it
     race.generateProgram()
+    race.setSpeed(FAST)
     race.start()
     const firstLineUp = race.currentRound!.horseIds
     const winner = race.currentRace!.result.placings[0]!.horseId
-    await frames(race.currentRace!.durationMs + 1)
+    await runRace(race, race.currentRace!.durationMs)
     await nextTick()
     await nextTick()
 
@@ -242,11 +251,12 @@ describe('RaceTrack', () => {
   it('[X4] the result board shows how your prediction did', async () => {
     const { wrapper, race } = setup()
     race.generateProgram()
+    race.setSpeed(FAST)
     const { usePredictionStore } = await import('@/stores/prediction.store')
     const winner = race.currentRace!.result.placings[0]!.horseId
     usePredictionStore().pick(winner)
     race.start()
-    await frames(Math.ceil(race.currentRace!.durationMs) + 1)
+    await runRace(race, race.currentRace!.durationMs)
     await nextTick()
     await nextTick()
     expect(wrapper.get('[data-testid="result-pick"]').text()).toBe('Your pick won: +3 pts')
@@ -255,6 +265,7 @@ describe('RaceTrack', () => {
   it('[X13] shows live standings and commentary while racing', async () => {
     const { wrapper, race } = setup()
     race.generateProgram()
+    race.setSpeed(FAST)
     await nextTick()
     // Always laid out, so the track keeps its height; before the start it is empty.
     expect(wrapper.find('[data-testid="commentary-line"]').text()).toBe('')
@@ -266,7 +277,7 @@ describe('RaceTrack', () => {
       "And they're off in the 1st Lap – 1200 m!",
     )
 
-    await frames(race.currentRace!.result.placings[0]!.timeMs)
+    await runRace(race, race.currentRace!.result.placings[0]!.timeMs)
     expect(wrapper.get('[data-testid="leaderboard-entry"]').attributes('data-horse-id')).toBe(
       String(race.currentRace!.result.placings[0]!.horseId),
     )
@@ -275,12 +286,13 @@ describe('RaceTrack', () => {
   it('[X13] a photo finish flashes the camera and is stamped on the podium', async () => {
     const { wrapper, race } = setupWithSeed(17)
     race.generateProgram()
+    race.setSpeed(FAST)
     race.start()
-    await frames(race.currentRace!.result.placings[0]!.timeMs - 200)
+    await runRace(race, race.currentRace!.result.placings[0]!.timeMs - 200)
     expect(wrapper.get('[data-testid="commentary-line"]').text()).toBe("It's a photo finish!")
     expect(wrapper.find('[data-testid="photo-flash"]').exists()).toBe(true)
 
-    await frames(Math.ceil(race.currentRace!.durationMs - race.elapsedMs()) + 1)
+    await runRace(race, race.currentRace!.durationMs - race.elapsedMs())
     await nextTick()
     await nextTick()
     expect(race.status).toBe('intermission')
@@ -293,8 +305,9 @@ describe('RaceTrack', () => {
     setReducedMotion(true)
     const { wrapper, race } = setupWithSeed(17)
     race.generateProgram()
+    race.setSpeed(FAST)
     race.start()
-    await frames(race.currentRace!.result.placings[0]!.timeMs + 20)
+    await runRace(race, race.currentRace!.result.placings[0]!.timeMs + 20)
     expect(wrapper.find('[data-testid="photo-flash"]').exists()).toBe(false)
   })
 
@@ -360,10 +373,11 @@ describe('HorseRunner', () => {
   it('[R4] pausing mid-race in round 2 says Paused and never shows the previous result', async () => {
     const { wrapper, race } = setup()
     race.generateProgram()
+    race.setSpeed(FAST)
     race.start()
-    await frames(Math.ceil(race.currentRace!.durationMs) + 1)
+    await runRace(race, race.currentRace!.durationMs)
     race.nextRound()
-    await frames(5000)
+    await runRace(race, 5000)
     race.pause()
     await nextTick()
     await nextTick()
@@ -377,9 +391,10 @@ describe('HorseRunner', () => {
   it('[R6] a horse that has crossed the line stands still while the others finish', async () => {
     const { wrapper, race } = setup()
     race.generateProgram()
+    race.setSpeed(FAST)
     race.start()
     const [first, second] = race.currentRace!.result.placings
-    await frames(Math.ceil((first!.timeMs + second!.timeMs) / 2))
+    await runRace(race, (first!.timeMs + second!.timeMs) / 2)
     const stopped = wrapper
       .findAll('[data-testid="runner"]')
       .filter((runner) => runner.classes('carrier--finished'))
@@ -391,10 +406,11 @@ describe('HorseRunner', () => {
   it('[R6] true scale: the leader’s distance to go, and gaps for horses left behind', async () => {
     const { wrapper, race } = setup()
     race.generateProgram()
+    race.setSpeed(FAST)
     await nextTick()
     expect(wrapper.find('[data-testid="to-go"]').exists()).toBe(false)
     race.start()
-    await frames(60_000)
+    await runRace(race, 60_000)
     const leader = Math.max(...painted(wrapper)) / 100
     const toGo = Math.ceil(1200 - leader * 1200)
     expect(wrapper.get('[data-testid="to-go"]').text()).toBe(`${toGo} m to go`)
