@@ -17,7 +17,7 @@ import CommentaryTicker from './CommentaryTicker.vue'
 import FinishLine from './FinishLine.vue'
 import HorseRunner from './HorseRunner.vue'
 import LiveLeaderboard from './LiveLeaderboard.vue'
-import PodiumCard from './PodiumCard.vue'
+import RoundResultBoard from './RoundResultBoard.vue'
 import TrackLane from './TrackLane.vue'
 
 /**
@@ -53,12 +53,8 @@ const lap = computed(() =>
 )
 const nextLap = computed(() =>
   status.value === 'intermission' && currentRound.value
-    ? t('track.intermission', {
-        lap: lapLabel(currentRound.value.index, currentRound.value.distance),
-      })
-    : status.value === 'finished'
-      ? t('track.finished')
-      : '',
+    ? t('result.next', { lap: lapLabel(currentRound.value.index, currentRound.value.distance) })
+    : '',
 )
 
 const winnerId = computed(() =>
@@ -81,16 +77,17 @@ const markers = computed(() => {
   return marks
 })
 
+/** Status card over the track when nothing is moving: eyebrow, title and how to continue. */
 const overlay = computed(() => {
   switch (status.value) {
     case 'idle':
-      return t('track.idle')
+      return { eyebrow: '', title: t('track.idleTitle'), hint: t('track.idleHint') }
     case 'ready':
-      return t('track.ready', { lap: lap.value })
+      return { eyebrow: t('track.readyEyebrow'), title: lap.value, hint: t('track.readyHint') }
     case 'paused':
-      return t('track.paused')
+      return { eyebrow: t('track.pausedEyebrow'), title: lap.value, hint: t('track.pausedHint') }
     default:
-      return ''
+      return null
   }
 })
 
@@ -200,12 +197,24 @@ useRaceLoop({
 
         <div v-if="flash" class="track__flash" aria-hidden="true" data-testid="photo-flash" />
 
-        <div v-if="showingFinished && displayRace" class="track__overlay">
-          <PodiumCard :result="displayRace.result" :photo-finish="photoFinish" :next="nextLap" />
+        <div v-if="showingFinished && displayRace" class="track__overlay track__overlay--result">
+          <RoundResultBoard
+            :result="displayRace.result"
+            :photo-finish="photoFinish"
+            :finished="status === 'finished'"
+          >
+            <template #next>
+              <span data-testid="result-next">{{ nextLap }}</span>
+            </template>
+          </RoundResultBoard>
         </div>
-        <p v-else-if="overlay" class="track__overlay" data-testid="track-overlay">
-          <span class="track__message">{{ overlay }}</span>
-        </p>
+        <div v-else-if="overlay" class="track__overlay" data-testid="track-overlay">
+          <div class="track__message">
+            <p v-if="overlay.eyebrow" class="track__eyebrow">{{ overlay.eyebrow }}</p>
+            <p class="track__title">{{ overlay.title }}</p>
+            <p class="track__hint">{{ overlay.hint }}</p>
+          </div>
+        </div>
       </div>
 
       <template v-if="showBroadcast">
@@ -299,19 +308,45 @@ useRaceLoop({
   pointer-events: none;
 }
 
+.track__overlay--result {
+  // Keep the horses at the finish line (right) in view.
+  justify-items: start;
+  padding-left: calc(2rem + var(--space-4));
+}
+
 .track__message {
-  max-width: 36ch;
+  display: grid;
+  gap: var(--space-1);
+  max-width: min(34ch, 100%);
   padding: var(--space-3) var(--space-5);
-  border: 1px solid rgb(255 255 255 / 0.25);
-  border-radius: var(--radius-pill);
-  background: rgb(6 10 22 / 0.72);
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: var(--radius-lg);
+  background: rgb(6 10 22 / 0.8);
   color: #fff;
-  font-family: var(--font-display);
-  font-size: var(--font-size-lg);
-  font-weight: 700;
-  letter-spacing: 0.03em;
   text-align: center;
   backdrop-filter: blur(6px);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.35);
+}
+
+.track__eyebrow {
+  color: var(--color-gold);
+  font-family: var(--font-display);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  letter-spacing: var(--letter-spacing-caps);
+  text-transform: uppercase;
+}
+
+.track__title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.track__hint {
+  color: rgb(255 255 255 / 0.8);
+  font-size: var(--font-size-sm);
 }
 
 // Camera flash for a photo finish (skipped under reduced motion).
