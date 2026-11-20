@@ -110,7 +110,8 @@
     "condition": "Kondisyon",
     "color": "Renk",
     "lane": "{lane}. kulvar",
-    "inRace": "Bu turda {lane}. kulvarda koşuyor"
+    "inRace": "Bu turda {lane}. kulvarda koşuyor",
+    "laneShort": "K{lane}"
   },
   "program": {
     "lane": "Kulvar",
@@ -137,15 +138,16 @@
   },
   "track": {
     "label": "Yarış pisti — {lap}. {count} at, 1. kulvar en üstte; bitiş çizgisi sağda.",
-    "idle": "Atları dizmek için bir program oluşturun.",
-    "ready": "Hazır — {lap}. Başlat'a basın.",
-    "paused": "Duraklatıldı",
-    "intermission": "Sıradaki: {lap}",
-    "finished": "Program tamamlandı",
     "start": "Start",
     "finish": "Bitiş",
     "lane": "{lane}. kulvar",
-    "marker": "{distance}"
+    "marker": "{distance}",
+    "idleTitle": "Henüz program yok",
+    "idleHint": "Atları dizmek için Program Oluştur'a ya da G'ye basın.",
+    "readyEyebrow": "Hazır",
+    "readyHint": "Başlatmak için Başlat'a ya da Space'e basın.",
+    "pausedEyebrow": "Duraklatıldı",
+    "pausedHint": "Devam etmek için Devam Et'e ya da Space'e basın."
   },
   "prediction": {
     "title": "Kazananı Tahmin Et",
@@ -171,10 +173,13 @@
       "IN_FORM": "formda",
       "PREVIOUS_WINNER": "daha önce bir tur kazandı",
       "BEST_RATING": "en yüksek genel puan"
-    }
+    },
+    "makePick": "Tahminini yap",
+    "pickTip": "Öneriyi seç",
+    "picked": "Tahminin: {name}",
+    "pending": "Tur bitince puanlanır."
   },
   "stats": {
-    "open": "{name} istatistiklerini göster",
     "title": "{name}",
     "number": "No {number}",
     "condition": "Kondisyon",
@@ -186,7 +191,8 @@
     "form": "Form",
     "formCaption": "Koştuğu her turdaki bitiş sırası (1 = kazanan).",
     "noForm": "Henüz biten tur yok.",
-    "formPoint": "{lap}: {ordinal}"
+    "formPoint": "{lap}: {ordinal}",
+    "openSuffix": ", istatistikleri göster"
   },
   "share": {
     "button": "Paylaşım linkini kopyala",
@@ -202,7 +208,6 @@
   "broadcast": {
     "standings": "Canlı sıralama",
     "live": "Canlı",
-    "result": "{lap} — sonuç",
     "photoFinish": "Foto-finiş",
     "margin": "fark {time}",
     "position": "{position}. sıra: {name}"
@@ -214,5 +219,16 @@
     "FINAL_STRETCH": "Son düzlük — önde {name}!",
     "PHOTO_FINISH": "Foto-finiş!",
     "WINNER": "{lap}: kazanan {name}!"
+  },
+  "result": {
+    "eyebrow": "{lap} · Sonuç",
+    "next": "Sıradaki: {lap}",
+    "finished": "Program tamamlandı",
+    "finalScore": "{points} puan topladın.",
+    "pick": {
+      "winner": "Tahminin kazandı: +{points} puan",
+      "podium": "Tahminin {ordinal} oldu: +{points} puan",
+      "miss": "Tahminin {ordinal} oldu: puan yok"
+    }
   }
 }

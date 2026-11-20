@@ -30,6 +30,15 @@ describe('HorseList', () => {
     expect(first.find('.swatch__label').text()).toMatch(/^[A-Z][a-z]+$/)
   })
 
+  it('[R2] abbreviates surnames visually but keeps the full name for hover and screen readers', () => {
+    const { wrapper } = mountFeature(HorseList)
+    const horse = useHorsesStore().horses[0]!
+    const name = wrapper.findAll('[data-testid="short-name"]')[0]!
+    expect(name.attributes('title')).toBe(horse.name)
+    expect(name.get('.short-name__visible').text()).toMatch(/^\S+ [A-ZÇĞİÖŞÜ]\.$/)
+    expect(name.get('.visually-hidden').text()).toBe(`(${horse.name})`)
+  })
+
   it('[X9] translates colour names', () => {
     const { wrapper } = mountFeature(HorseList, { locale: 'tr' })
     const colors = wrapper.findAll('.swatch__label').map((label) => label.text())
@@ -71,7 +80,9 @@ describe('HorseList', () => {
     expect(badges).toHaveLength(10)
     const firstHorse = race.currentRound!.horseIds[0]!
     const row = bodyRows(wrapper).find((r) => r.find('.number').text() === String(firstHorse))!
-    expect(row.get('[data-testid="lane-badge"]').text()).toBe('Lane 1')
+    const badge = row.get('[data-testid="lane-badge"]')
+    expect(badge.get('[aria-hidden="true"]').text()).toBe('L1')
+    expect(badge.get('.visually-hidden').text()).toBe('Lane 1')
   })
 })
 

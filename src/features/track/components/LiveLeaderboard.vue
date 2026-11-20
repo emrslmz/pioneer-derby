@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { PODIUM_SIZE } from '@/domain/constants'
 import type { HorseId } from '@/domain/types'
+import { shortName } from '@/shared/utils/names'
 import { useHorsesStore } from '@/stores/horses.store'
 
 /**
@@ -44,7 +45,7 @@ const entries = computed(() =>
         {{ horse.id }}
       </span>
       <span v-if="position <= PODIUM_SIZE" class="leaderboard__name" aria-hidden="true">
-        {{ horse.name }}
+        {{ shortName(horse.name) }}
       </span>
     </li>
   </ol>
