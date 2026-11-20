@@ -151,4 +151,22 @@ test.describe('first-visit tour', () => {
     await expect(page).toHaveTitle('Pioneer Derby · Race of the Computing Pioneers')
     await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', /favicon\.svg$/)
   })
+
+  test('[X10] the first load shows a splash that fades away, then the cards arrive', async ({
+    page,
+  }) => {
+    await page.goto('/?seed=42', { waitUntil: 'commit' })
+    await expect(page.locator('#splash')).toBeAttached()
+    await expect(page.locator('#splash')).toHaveCount(0, { timeout: 4000 })
+    await expect(page.getByTestId('horses-panel')).toBeVisible()
+    await expect(page.locator('html')).not.toHaveAttribute('data-intro', '', { timeout: 5000 })
+  })
+
+  test('[X8] with reduced motion there is no splash and no intro', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto('/?seed=42', { waitUntil: 'commit' })
+    await expect(page.getByTestId('horses-panel')).toBeVisible()
+    await expect(page.locator('#splash')).toHaveCount(0)
+    await expect(page.locator('html')).not.toHaveAttribute('data-intro', '')
+  })
 })
