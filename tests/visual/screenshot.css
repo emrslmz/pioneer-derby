@@ -1,0 +1,11 @@
+/*
+ * Applied only while Playwright takes a visual-test screenshot (expect.toHaveScreenshot.stylePath).
+ * Overlay scrollbars fade in and out on their own timer, which made baselines flaky on Linux CI.
+ */
+* {
+  scrollbar-width: none !important;
+}
+
+*::-webkit-scrollbar {
+  display: none !important;
+}

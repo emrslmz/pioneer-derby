@@ -34,7 +34,14 @@ export default defineConfig({
       // Baselines are per platform; CI (Linux) is authoritative. See README → Testing.
       snapshotPathTemplate: '{testDir}/__snapshots__/{arg}-{platform}{ext}',
       use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
-      expect: { toHaveScreenshot: { maxDiffPixelRatio: 0.002, animations: 'disabled' } },
+      expect: {
+        toHaveScreenshot: {
+          maxDiffPixelRatio: 0.002,
+          animations: 'disabled',
+          // Hides scrollbars during screenshots: their fade timing is not deterministic.
+          stylePath: './tests/visual/screenshot.css',
+        },
+      },
     },
   ],
   webServer: {
