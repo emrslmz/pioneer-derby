@@ -240,4 +240,13 @@ No horizontal page scroll at 360px.
 
 ## Current playback decisions
 
-See [ADR 0011](adr/0011-track-camera-and-manual-rounds.md) for manual round advancement, 12–18 s base timing, the distance-based camera, and the native modal theater. These decisions supersede earlier automatic-default and overlay descriptions.
+See [ADR 0012](adr/0012-real-pace-true-scale-broadcast.md), which builds on [ADR 0011](adr/0011-track-camera-and-manual-rounds.md):
+
+- real racing pace (16.5 m/s, default 2×, up to 8×);
+- a true-scale follow camera over a looping turf layer;
+- finished horses standing still;
+- the pause origin in the store (`isBetweenRounds`);
+- one player bar under the track;
+- auto advance on by default, with a 6 s countdown.
+
+ADR 0011 still covers the metre-based world, the race map and the native modal theater.
