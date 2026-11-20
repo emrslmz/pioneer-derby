@@ -5,10 +5,10 @@ test.describe('first visit', () => {
     await page.goto('/?seed=42')
     const guide = page.getByTestId('onboarding')
     await expect(guide).toBeVisible()
-    await expect(guide).toContainText('How to play')
+    await expect(guide).toContainText('Generate a program to start predicting.')
     await expect(page.getByTestId('generate-button')).toHaveClass(/header__generate--attention/)
 
-    await guide.getByTestId('onboarding-generate').click()
+    await page.getByTestId('track-generate').click()
     await expect(page.getByTestId('race-status')).toContainText('Ready')
     await expect(guide).toBeHidden()
     await expect(page.getByTestId('pick-option')).toHaveCount(10)

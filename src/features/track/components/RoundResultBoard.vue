@@ -309,4 +309,39 @@ const pick = computed(() => {
     animation: none;
   }
 }
+
+// On a short track (laptop screens) the board tightens up so it fits without scrolling.
+@container track (max-height: 340px) {
+  .board {
+    gap: var(--space-1);
+    padding: var(--space-2);
+  }
+
+  .board__podium {
+    gap: 2px;
+  }
+
+  .board__row,
+  .board__row--1 {
+    padding: 2px var(--space-2);
+  }
+
+  .board__row--1 .board__name {
+    font-size: var(--font-size-md);
+  }
+
+  .board__row--1 .board__medal {
+    width: 26px;
+    height: 26px;
+    font-size: var(--font-size-md);
+  }
+
+  .board__pick {
+    padding: 2px var(--space-2);
+  }
+
+  .board__footer {
+    font-size: var(--font-size-sm);
+  }
+}
 </style>

@@ -9,6 +9,7 @@ import { useLocale } from '@/i18n/useLocale'
 import { useElementSize } from '@/shared/composables/useElementSize'
 import { useReducedMotion } from '@/shared/composables/useMediaQuery'
 import BaseSegmentedControl from '@/shared/ui/BaseSegmentedControl.vue'
+import BaseSwitch from '@/shared/ui/BaseSwitch.vue'
 import BaseButton from '@/shared/ui/BaseButton.vue'
 import BasePanel from '@/shared/ui/BasePanel.vue'
 import { useHorsesStore } from '@/stores/horses.store'
@@ -16,7 +17,7 @@ import { useRaceStore } from '@/stores/race.store'
 import { useScheduleStore } from '@/stores/schedule.store'
 import { useBroadcast } from '../composables/useBroadcast'
 import { useRaceLoop } from '../composables/useRaceLoop'
-import { cameraStart, TRACK_CAMERA, visibleMetres, type CameraMode } from '../camera'
+import { cameraStart, TRACK_CAMERA, trueScale, visibleMetres, type CameraMode } from '../camera'
 import CommentaryTicker from './CommentaryTicker.vue'
 import HorseRunner from './HorseRunner.vue'
 import LiveLeaderboard from './LiveLeaderboard.vue'
@@ -41,19 +42,14 @@ const {
   isClockRunning,
   autoAdvance,
   canToggle,
+  isBetweenRounds,
 } = storeToRefs(race)
 const { rounds } = storeToRefs(useScheduleStore())
 const horsesStore = useHorsesStore()
 const reducedMotion = useReducedMotion()
 
-const showingFinished = computed(
-  () =>
-    status.value === 'intermission' ||
-    status.value === 'finished' ||
-    (status.value === 'paused' &&
-      race.completedResults.length === currentRoundIndex.value &&
-      currentRoundIndex.value > 0),
-)
+/** A finished round is on screen: between rounds (even if paused there) or at the very end. */
+const showingFinished = computed(() => status.value === 'finished' || isBetweenRounds.value)
 
 /** The round on screen: the running one, or the one that just finished during the intermission. */
 const displayRace = computed<RoundRace | null>(() => {
@@ -105,9 +101,12 @@ const geometry = computed(() => {
   const laneHeight = (height - 2 * RAIL_PX) / HORSES_PER_ROUND
   const runnerWidth = laneHeight * 0.9 * (72 / 46)
   const startPad = runnerWidth + 12
-  const visible = visibleMetres(metres, cameraMode.value)
-  const pxPerMetre = (width - startPad - END_PAD_PX) / visible
+  const usable = Math.max(1, width - startPad - END_PAD_PX)
+  // Follow = true scale: the horse drawing is as long as a real horse, in track metres.
+  const visible = visibleMetres(metres, cameraMode.value, usable / trueScale(runnerWidth))
+  const pxPerMetre = usable / visible
   return {
+    marks: TRACK_CAMERA.marks[cameraMode.value],
     metres,
     visible,
     pxPerMetre,
@@ -117,15 +116,15 @@ const geometry = computed(() => {
   }
 })
 
-/** Distance ticks every 100 m; every 200 m a red-and-white pole with a label. */
+/** Distance ticks, and labelled red-and-white poles (spacing depends on the camera). */
 const ticks = computed(() => {
-  const { metres, startPad, pxPerMetre } = geometry.value
+  const { metres, startPad, pxPerMetre, marks } = geometry.value
   const list: { m: number; x: number; pole: boolean; label: string }[] = []
-  for (let m = TRACK_CAMERA.tickMetres; m < metres; m += TRACK_CAMERA.tickMetres) {
+  for (let m = marks.tickMetres; m < metres; m += marks.tickMetres) {
     list.push({
       m,
       x: startPad + m * pxPerMetre,
-      pole: m % TRACK_CAMERA.poleMetres === 0,
+      pole: m % marks.poleMetres === 0,
       label: distance(m),
     })
   }
@@ -136,8 +135,19 @@ const worldStyle = computed(() => ({
   width: `${geometry.value.worldWidth}px`,
   '--start-pad': `${geometry.value.startPad}px`,
   '--finish-x': `${geometry.value.finishX}px`,
-  '--stripe': `${TRACK_CAMERA.stripeMetres * geometry.value.pxPerMetre}px`,
 }))
+
+/** One turf pattern repeat (a light and a dark stripe), in px: the turf layer loops by it. */
+const turfPeriod = computed(() => 2 * geometry.value.marks.stripeMetres * geometry.value.pxPerMetre)
+const turfStyle = computed(() => {
+  const period = turfPeriod.value
+  return {
+    width: `calc(100% + ${period}px)`,
+    '--stripe': `${period / 2}px`,
+    // The grain tile is a whole number of periods wide, so the loop has no seam.
+    '--grain': `${period * Math.max(1, Math.round(180 / period))}px`,
+  }
+})
 
 /** Status card over the track when nothing is moving: eyebrow, title and how to continue. */
 const overlay = computed(() => {
@@ -147,7 +157,10 @@ const overlay = computed(() => {
     case 'ready':
       return { eyebrow: t('track.readyEyebrow'), title: lap.value, hint: t('track.readyHint') }
     case 'paused':
-      return { eyebrow: t('track.pausedEyebrow'), title: lap.value, hint: t('track.pausedHint') }
+      // Paused between rounds: the result board stays, with its own Resume button.
+      return isBetweenRounds.value
+        ? null
+        : { eyebrow: t('track.pausedEyebrow'), title: lap.value, hint: t('track.pausedHint') }
     default:
       return null
   }
@@ -162,7 +175,8 @@ const { standings, line, photoFinish } = broadcast
 const commentaryText = computed(() => {
   const event = line.value
   const round = displayRound.value
-  if (!event || !round) return ''
+  // Nothing is said before the gates open.
+  if (!event || !round || status.value === 'idle' || status.value === 'ready') return ''
   const name = event.horseId === null ? '' : (horsesStore.getHorse(event.horseId)?.name ?? '')
   return t(`commentary.${event.code}`, {
     lap: lapLabel(round.index, round.distance),
@@ -180,7 +194,24 @@ const flash = computed(
     (line.value?.code === 'PHOTO_FINISH' || line.value?.code === 'WINNER') &&
     !reducedMotion.value,
 )
-const showBroadcast = computed(() => status.value === 'running' || status.value === 'paused')
+/** Leader's distance to the line, shown while a round is under way. */
+const showToGo = computed(
+  () => !showingFinished.value && (status.value === 'running' || status.value === 'paused'),
+)
+
+/** The player bar's play button: the same action as the header's Start / Pause. */
+const play = computed(() => {
+  switch (status.value) {
+    case 'running':
+      return { icon: 'pause' as const, label: t('actions.pause') }
+    case 'intermission':
+      return { icon: 'play' as const, label: t('actions.nextRound') }
+    case 'paused':
+      return { icon: 'play' as const, label: t('actions.resume') }
+    default:
+      return { icon: 'play' as const, label: t('actions.start') }
+  }
+})
 
 // ── Theater (full screen) ─────────────────────────────────────────────────
 const expanded = ref(false)
@@ -238,7 +269,12 @@ watch(expanded, async (isExpanded, wasExpanded) => {
 // ── Per-frame painting: transforms only, straight to the DOM (X10, ADR 0008) ───
 const carriers = new Map<number, HTMLElement>()
 const mapDots = new Map<number, HTMLElement>()
+const behindLabels = new Map<number, HTMLElement>()
+/** Each horse's distance this frame, in metres (scratch data for the frame, not state). */
+const runMetres = new Map<number, number>()
+const toGo = ref<HTMLElement | null>(null)
 const world = ref<HTMLElement | null>(null)
+const turf = ref<HTMLElement | null>(null)
 const mapWindow = ref<HTMLElement | null>(null)
 function setCarrier(lane: number, element: unknown) {
   if (element instanceof HTMLElement) carriers.set(lane, element)
@@ -248,8 +284,37 @@ function setMapDot(lane: number, element: unknown) {
   if (element instanceof HTMLElement) mapDots.set(lane, element)
   else mapDots.delete(lane)
 }
+function setBehindLabel(lane: number, element: unknown) {
+  if (element instanceof HTMLElement) behindLabels.set(lane, element)
+  else behindLabels.delete(lane)
+}
+
+/** Writes text only when it changes, so a steady frame touches nothing. */
+function setText(element: HTMLElement, text: string) {
+  if (element.textContent !== text) element.textContent = text
+}
 
 let leaderProgress = 0
+
+/** Last whole-metre value written per label: text is only formatted when it changes. */
+const shownMetres = new Map<HTMLElement, number>()
+watch(locale, () => shownMetres.clear())
+function setMetres(element: HTMLElement, metres: number, format: (text: string) => string) {
+  if (shownMetres.get(element) === metres) return
+  shownMetres.set(element, metres)
+  setText(element, format(distance(metres)))
+}
+
+/** Horses left behind the true-scale camera get a "−23 m" gap at the left edge of their lane. */
+function paintBehindLabels(leaderMetres: number, start: number) {
+  const follow = cameraMode.value === 'follow'
+  for (const [lane, label] of behindLabels) {
+    const run = runMetres.get(lane)
+    const behind = follow && run !== undefined && run < start + TRACK_CAMERA.horseMetres
+    if (behind) setMetres(label, Math.round(leaderMetres - run), (gap) => `−${gap}`)
+    if (label.hidden === behind) label.hidden = !behind
+  }
+}
 
 useRaceLoop({
   race: displayRace,
@@ -261,21 +326,32 @@ useRaceLoop({
     const nose = startPad + progress * metres * pxPerMetre
     const carrier = carriers.get(profile.lane)
     if (carrier) carrier.style.transform = `translate3d(calc(${nose.toFixed(2)}px - 100%), 0, 0)`
+    // A horse that has crossed the line stops: no more gallop.
+    if (carrier) carrier.classList.toggle('carrier--finished', progress >= 1)
     const dot = mapDots.get(profile.lane)
     if (dot) dot.style.transform = `translate3d(${(progress * 100).toFixed(3)}%, 0, 0)`
+    runMetres.set(profile.lane, progress * metres)
     if (progress > leaderProgress) leaderProgress = progress
   },
   onFrame: (elapsed) => {
     const { metres, visible, pxPerMetre } = geometry.value
-    const start = cameraStart(leaderProgress * metres, metres, visible)
+    const leaderMetres = leaderProgress * metres
+    const start = cameraStart(leaderMetres, metres, visible)
     leaderProgress = 0
+    paintBehindLabels(leaderMetres, start)
+    if (toGo.value)
+      setMetres(toGo.value, Math.ceil(Math.max(0, metres - leaderMetres)), (left) =>
+        t('track.toGo', { distance: left }),
+      )
     if (world.value)
       world.value.style.transform = `translate3d(${(-start * pxPerMetre).toFixed(2)}px, 0, 0)`
+    if (turf.value)
+      turf.value.style.transform = `translate3d(${(-((start * pxPerMetre) % turfPeriod.value)).toFixed(2)}px, 0, 0)`
     if (mapWindow.value)
       mapWindow.value.style.transform = `translate3d(${((start / visible) * 100).toFixed(3)}%, 0, 0)`
     broadcast.update(elapsed)
   },
-  repaintOn: [status, geometry, expanded],
+  repaintOn: [status, geometry, expanded, showToGo, locale],
 })
 </script>
 
@@ -294,43 +370,6 @@ useRaceLoop({
         data-testid="track-panel"
       >
         <template #actions>
-          <template v-if="expanded">
-            <BaseSegmentedControl
-              :model-value="speed"
-              :options="speedOptions"
-              :label="t('speed.label')"
-              size="sm"
-              @update:model-value="race.setSpeed"
-            />
-            <label class="theater__auto"
-              ><input
-                type="checkbox"
-                :checked="autoAdvance"
-                @change="race.setAutoAdvance(($event.target as HTMLInputElement).checked)"
-              />{{ t('actions.autoAdvance') }}</label
-            >
-          </template>
-          <BaseButton
-            v-if="expanded"
-            variant="primary"
-            size="sm"
-            :icon="status === 'running' ? 'pause' : 'play'"
-            :disabled="!canToggle"
-            data-testid="theater-toggle"
-            @click="race.toggle()"
-          >
-            {{
-              t(
-                status === 'running'
-                  ? 'actions.pause'
-                  : status === 'intermission'
-                    ? 'actions.nextRound'
-                    : status === 'paused'
-                      ? 'actions.resume'
-                      : 'actions.start',
-              )
-            }}
-          </BaseButton>
           <BaseSegmentedControl
             v-if="!reducedMotion"
             v-model="cameraChoice"
@@ -364,37 +403,7 @@ useRaceLoop({
           />
         </template>
 
-        <figure class="stage">
-          <div v-if="$slots.prediction" class="stage__prediction"><slot name="prediction" /></div>
-          <div
-            class="track__banner"
-            :class="{ 'track__banner--paused': status === 'paused' }"
-            data-testid="track-banner"
-          >
-            <template v-if="status === 'paused' || status === 'ready'">
-              <strong>{{ overlay?.eyebrow }}</strong>
-              <span>{{ overlay?.hint }}</span>
-              <BaseButton
-                size="sm"
-                :variant="status === 'paused' ? 'primary' : 'ghost'"
-                icon="play"
-                @click="race.toggle()"
-              >
-                {{ t(status === 'paused' ? 'actions.resume' : 'actions.start') }}
-              </BaseButton>
-            </template>
-            <template v-else>
-              <strong>{{ t(`status.${status}`) }}</strong>
-              <span>{{ nextLap || lap || t('track.idleHint') }}</span>
-              <BaseButton
-                v-if="status === 'intermission'"
-                size="sm"
-                variant="primary"
-                @click="race.nextRound()"
-                >{{ t('actions.nextRound') }}</BaseButton
-              >
-            </template>
-          </div>
+        <div class="stage">
           <!-- The track is one labelled image; overlays sit beside it (not inside role="img"), so
                their text and buttons stay reachable for assistive technology. -->
           <div class="track-wrap">
@@ -420,8 +429,10 @@ useRaceLoop({
               </div>
 
               <div ref="viewport" class="track__viewport">
-                <!-- The world is drawn in metres; the camera moves it, the horses move in it. -->
-                <div ref="world" class="track__world" :style="worldStyle" data-testid="track-world">
+                <!-- Turf, rails and lane lines look the same all along the track: a layer one
+                     stripe wider than the screen loops under the camera, so a 2 km track at true
+                     scale never needs a 50 000 px textured layer. -->
+                <div ref="turf" class="track__turf" :style="turfStyle">
                   <span class="track__rail track__rail--top" />
                   <span class="track__rail track__rail--bottom" />
                   <span
@@ -430,6 +441,9 @@ useRaceLoop({
                     class="track__lane-line"
                     :style="{ '--lane': index }"
                   />
+                </div>
+                <!-- The world is drawn in metres; the camera moves it, the horses move in it. -->
+                <div ref="world" class="track__world" :style="worldStyle" data-testid="track-world">
                   <span
                     v-for="tick in ticks"
                     :key="tick.m"
@@ -470,6 +484,17 @@ useRaceLoop({
                     </div>
                   </template>
                 </div>
+                <!-- Gap to the leader for horses the true-scale camera has left behind. -->
+                <template v-for="{ lane, profile } in lanes" :key="`behind-${lane}`">
+                  <span
+                    v-if="profile"
+                    :ref="(element) => setBehindLabel(profile.lane, element)"
+                    class="track__behind"
+                    :style="{ '--lane': lane - 1 }"
+                    data-testid="behind-gap"
+                    hidden
+                  />
+                </template>
                 <span
                   v-if="winnerLane"
                   class="track__winner-lane"
@@ -480,12 +505,8 @@ useRaceLoop({
 
             <div v-if="flash" class="track__flash" aria-hidden="true" data-testid="photo-flash" />
 
-            <div
-              v-if="status === 'idle' && overlay"
-              class="track__overlay"
-              data-testid="track-overlay"
-            >
-              <div class="track__message">
+            <div v-if="overlay" class="track__overlay" data-testid="track-overlay">
+              <div class="track__message" data-testid="track-banner">
                 <p v-if="overlay.eyebrow" class="track__eyebrow">{{ overlay.eyebrow }}</p>
                 <p class="track__title">{{ overlay.title }}</p>
                 <p class="track__hint">{{ overlay.hint }}</p>
@@ -499,36 +520,63 @@ useRaceLoop({
                 >
                   {{ t('onboarding.cta') }}
                 </BaseButton>
+                <BaseButton
+                  v-else
+                  variant="primary"
+                  icon="play"
+                  class="track__cta"
+                  data-testid="track-play"
+                  @click="race.toggle()"
+                >
+                  {{ t(status === 'paused' ? 'actions.resume' : 'actions.start') }}
+                </BaseButton>
               </div>
+            </div>
+            <div
+              v-if="showingFinished && displayRace"
+              class="track__overlay track__overlay--result"
+            >
+              <RoundResultBoard
+                :result="displayRace.result"
+                :photo-finish="photoFinish"
+                :finished="status === 'finished'"
+                :auto-advance="autoAdvance && status === 'intermission'"
+              >
+                <template #next>
+                  <span data-testid="result-next">{{ nextLap }}</span>
+                  <BaseButton
+                    v-if="status === 'intermission'"
+                    :variant="autoAdvance ? 'secondary' : 'primary'"
+                    size="sm"
+                    icon="play"
+                    data-testid="next-round"
+                    @click="race.nextRound()"
+                  >
+                    {{ t(autoAdvance ? 'actions.startNow' : 'actions.nextRound') }}
+                  </BaseButton>
+                  <BaseButton
+                    v-else-if="status === 'paused'"
+                    variant="primary"
+                    size="sm"
+                    icon="play"
+                    data-testid="track-play"
+                    @click="race.toggle()"
+                  >
+                    {{ t('actions.resume') }}
+                  </BaseButton>
+                </template>
+              </RoundResultBoard>
             </div>
           </div>
 
-          <RoundResultBoard
-            v-if="showingFinished && displayRace"
-            :result="displayRace.result"
-            :photo-finish="photoFinish"
-            :finished="status === 'finished'"
-            :auto-advance="autoAdvance && status === 'intermission'"
-          >
-            <template #next>
-              <span data-testid="result-next">{{ nextLap }}</span>
-              <BaseButton
-                v-if="status === 'intermission'"
-                variant="primary"
-                size="sm"
-                data-testid="next-round"
-                @click="race.nextRound()"
-              >
-                {{ t('actions.nextRound') }}
-              </BaseButton>
-              <span v-if="!autoAdvance">{{ t('result.waiting') }}</span>
-            </template>
-          </RoundResultBoard>
-
           <!-- Race map: the whole distance, every horse and the camera window. -->
-          <div v-if="displayRace" class="race-map" aria-hidden="true" data-testid="race-map">
-            <span class="race-map__label">{{ t('track.mapStart') }}</span>
-            <div class="race-map__run">
+          <div v-if="displayRace" class="race-map" data-testid="race-map">
+            <!-- Broadcast caption: the round, and while it runs the leader's distance to go. -->
+            <span class="race-map__info">
+              <span data-testid="track-caption">{{ lap }}</span>
+              <span v-if="showToGo" ref="toGo" class="race-map__to-go" data-testid="to-go" />
+            </span>
+            <div class="race-map__run" aria-hidden="true">
               <span
                 ref="mapWindow"
                 class="race-map__window"
@@ -545,18 +593,43 @@ useRaceLoop({
                 </span>
               </template>
             </div>
-            <span class="race-map__label">{{ t('track.mapFinish') }}</span>
+            <span class="race-map__label" aria-hidden="true">{{ t('track.mapFinish') }}</span>
           </div>
 
-          <template v-if="showBroadcast">
-            <LiveLeaderboard :standings="standings" />
-            <CommentaryTicker :text="commentaryText" :spoken="spokenCommentary" :live="galloping" />
-          </template>
+          <!-- Player bar: everything that controls playback, in one place under the picture. -->
+          <div class="player" role="group" :aria-label="t('track.controls')" data-testid="player">
+            <BaseButton
+              variant="primary"
+              size="sm"
+              :icon="play.icon"
+              icon-only
+              :aria-label="play.label"
+              :title="play.label"
+              :disabled="!canToggle"
+              data-testid="player-toggle"
+              @click="race.toggle()"
+            />
+            <BaseSegmentedControl
+              :model-value="speed"
+              class="player__speed"
+              :options="speedOptions"
+              :label="t('speed.label')"
+              size="sm"
+              data-testid="player-speed"
+              @update:model-value="race.setSpeed"
+            />
+            <BaseSwitch
+              :model-value="autoAdvance"
+              :label="t('actions.autoAdvance')"
+              :hint="t('actions.autoAdvanceHint')"
+              data-testid="auto-advance"
+              @update:model-value="race.setAutoAdvance"
+            />
+          </div>
 
-          <figcaption v-if="lap" class="stage__caption" data-testid="track-caption">
-            {{ lap }}
-          </figcaption>
-        </figure>
+          <LiveLeaderboard :standings="standings" />
+          <CommentaryTicker :text="commentaryText" :spoken="spokenCommentary" :live="galloping" />
+        </div>
       </BasePanel>
     </Teleport>
 
@@ -589,6 +662,19 @@ useRaceLoop({
   overscroll-behavior: contain;
 }
 
+.stage {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+
+  > * {
+    flex-shrink: 0;
+    min-width: 0;
+  }
+}
+
+// Camera choice needs room; on small phones the track simply follows.
 .track__camera {
   display: none !important;
 
@@ -597,70 +683,26 @@ useRaceLoop({
   }
 }
 
-.stage {
+// Player bar: play, speed, auto next round | camera, full screen.
+.player {
   display: flex;
-  flex-direction: column;
-  height: 100%;
-
-  > * {
-    flex-shrink: 0;
-  }
-}
-
-.stage__prediction {
-  padding: var(--space-2);
-}
-
-.track__banner {
-  display: flex;
-  flex-shrink: 0;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2);
-  min-height: 48px;
+  gap: var(--space-2) var(--space-3);
   padding: var(--space-2) var(--space-3);
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-surface-sunken);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-
-  strong {
-    color: var(--color-text);
-  }
-  span {
-    flex: 1;
-  }
-}
-
-.track__banner--paused {
-  border-left: 4px solid var(--color-warning);
-  background: var(--color-warning-soft);
-}
-
-.theater__auto {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-size: var(--font-size-sm);
-}
-
-.track-panel--expanded :deep(.panel__header) {
-  flex-wrap: wrap;
-}
-
-.track-panel--expanded :deep(.panel__actions) {
-  flex-wrap: wrap;
-}
-
-.track-panel--expanded :deep(.panel__body) {
-  overflow: auto;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
 }
 
 .track-wrap {
   position: relative;
+  // Lets the result board adapt to the track's height (@container track).
+  container: track / size;
   display: flex;
-  flex: 1 0 340px;
+  flex: 1 1 0;
   flex-direction: column;
-  min-height: 340px;
+  // Short laptop screens (720 px) still fit the whole middle column without scrolling.
+  min-height: 220px;
 }
 
 .track {
@@ -670,7 +712,8 @@ useRaceLoop({
   display: grid;
   flex: 1;
   grid-template-columns: 2rem 1fr;
-  min-height: 340px;
+  // Short laptop screens (720 px) still fit the whole middle column without scrolling.
+  min-height: 220px;
   background: #0f3a22;
 }
 
@@ -704,16 +747,19 @@ useRaceLoop({
 .track__viewport {
   position: relative;
   min-width: 0;
+  // clip, not hidden: a clipped box can never be scrolled, not even by focus or script.
   overflow: hidden;
+  overflow: clip;
 }
 
-// The world: everything placed in metres. Its transform is the camera.
-.track__world {
+// Turf that loops under the camera (see the template): moved by less than one stripe period.
+.track__turf {
   position: absolute;
   inset: 0 auto 0 0;
   transform: translate3d(0, 0, 0);
   background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1 0.35' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.02  0 0 0 0 0.12  0 0 0 0 0.03  0 0 0 0.55 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1 0.35' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.02  0 0 0 0 0.12  0 0 0 0 0.03  0 0 0 0.55 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E")
+      0 0 / var(--grain) 180px,
     linear-gradient(
       180deg,
       var(--color-turf-shade),
@@ -728,7 +774,16 @@ useRaceLoop({
     );
 }
 
-.track--follow .track__world {
+// The world: everything placed in metres. Its transform is the camera. No background: a huge
+// layer of transparent tiles costs nothing to move.
+.track__world {
+  position: absolute;
+  inset: 0 auto 0 0;
+  transform: translate3d(0, 0, 0);
+}
+
+.track--follow .track__world,
+.track--follow .track__turf {
   will-change: transform;
 }
 
@@ -740,7 +795,9 @@ useRaceLoop({
   height: var(--rail);
   background:
     linear-gradient(#f4f4f4, #f4f4f4) 0 2px / 100% 3px no-repeat,
-    repeating-linear-gradient(90deg, #d9dde3 0 3px, transparent 3px 36px) 0 0 / 100% 10px;
+    // Posts every half stripe, so the looping turf layer has no seam.
+    repeating-linear-gradient(90deg, #d9dde3 0 3px, transparent 3px calc(var(--stripe) / 2)) 0 0 /
+      100% 10px;
   filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.35));
 }
 
@@ -860,6 +917,37 @@ useRaceLoop({
   will-change: transform;
 }
 
+// Past the line the horse stands still.
+.carrier--finished :deep(.runner *) {
+  animation: none !important;
+}
+
+// "−23 m": a horse behind the camera, at the left edge of its lane.
+.track__behind {
+  position: absolute;
+  top: calc(var(--rail) + var(--lane) * var(--lane-h) + var(--lane-h) / 2);
+  left: 4px;
+  z-index: 2;
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+  background: rgb(0 0 0 / 0.55);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  transform: translateY(-50%);
+
+  &::before {
+    content: '◀ ';
+    opacity: 0.7;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+}
+
 .carrier :deep(.runner) {
   width: 100%;
   height: 100%;
@@ -889,6 +977,11 @@ useRaceLoop({
   // Keep the horses at the finish line (right) in view.
   justify-items: start;
   padding-left: calc(2rem + var(--space-4));
+}
+
+// The board has buttons (Start now, Resume) and may scroll: unlike the overlay, it takes the pointer.
+.track__overlay--result > * {
+  pointer-events: auto;
 }
 
 .track__message {
@@ -964,6 +1057,28 @@ useRaceLoop({
   background: var(--color-surface-sunken);
 }
 
+.race-map__info {
+  display: flex;
+  gap: var(--space-2);
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.race-map__to-go {
+  color: var(--color-text);
+
+  &::before {
+    margin-right: var(--space-2);
+    color: var(--color-text-muted);
+    content: '·';
+  }
+}
+
 .race-map__label {
   color: var(--color-text-muted);
   font-family: var(--font-display);
@@ -977,6 +1092,10 @@ useRaceLoop({
   position: relative;
   flex: 1;
   height: 16px;
+  // The dot carriers are translated by up to 100 % of this box; clip them so they never widen
+  // the panel (that made the whole track scroll sideways).
+  overflow: hidden;
+  overflow: clip;
   border-radius: var(--radius-pill);
   background: color-mix(in srgb, var(--color-turf-2) 70%, var(--color-surface-sunken));
 }
@@ -991,10 +1110,11 @@ useRaceLoop({
   transform: translate3d(0, 0, 0);
 }
 
-// Same carrier trick as the runners: translateX(progress × 100%) of the run's width.
+// Same carrier trick as the runners: translateX(progress × 100%) of the carrier's width. Inset
+// by a dot radius, so a dot at the start or the finish is still fully inside the clipped run.
 .race-map__carrier {
   position: absolute;
-  inset: 0;
+  inset: 0 6px;
   transform: translate3d(0, 0, 0);
   pointer-events: none;
 }
@@ -1009,17 +1129,6 @@ useRaceLoop({
   border-radius: 50%;
   background: var(--coat);
   transform: translate(-50%, -50%);
-}
-
-.stage__caption {
-  padding: var(--space-2) var(--space-4);
-  border-top: 1px solid var(--color-border);
-  color: var(--color-finish);
-  font-family: var(--font-display);
-  font-size: var(--font-size-lg);
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  text-align: center;
 }
 
 // Theater: a modal <dialog> the live panel is teleported into.

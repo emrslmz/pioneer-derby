@@ -109,11 +109,11 @@ describe('responsive layout & header', () => {
     await wrapper.get('[data-testid="language-switch"] [role="radio"]:last-child').trigger('click')
     expect(document.documentElement.lang).toBe('tr')
 
-    const speeds = wrapper.findAll('.header__speed [role="radio"]')
-    // Turkish formatting: "0,5×"; slow motion is the first option.
-    expect(speeds.map((s) => s.text())).toEqual(['0,5×', '1×', '2×', '4×'])
-    await speeds[3]!.trigger('click')
-    expect(race.speed).toBe(4)
+    // Speed lives in the track's player bar. Turkish formatting: "0,5×"; slow motion first.
+    const speeds = wrapper.findAll('[data-testid="player-speed"] [role="radio"]')
+    expect(speeds.map((s) => s.text())).toEqual(['0,5×', '1×', '2×', '4×', '8×'])
+    await speeds[4]!.trigger('click')
+    expect(race.speed).toBe(8)
     await speeds[0]!.trigger('click')
     expect(race.speed).toBe(0.5)
 
@@ -126,6 +126,7 @@ describe('responsive layout & header', () => {
   it('[X8] announces race progress to screen readers', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'performance', 'Date'] })
     const { wrapper, race } = mountApp()
+    race.setAutoAdvance(false) // manual mode: the break waits and says so
     const announcer = () => wrapper.get('[data-testid="announcer"]')
     expect(announcer().attributes('aria-live')).toBe('polite')
 

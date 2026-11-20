@@ -54,10 +54,6 @@ const shareMessage = computed(() =>
   shareState.value === 'idle' ? '' : t(`share.${shareState.value}`),
 )
 
-const speed = computed({
-  get: () => controls.speed.value,
-  set: (value) => controls.setSpeed(value),
-})
 const language = computed({ get: () => locale.value, set: setLocale })
 </script>
 
@@ -108,22 +104,6 @@ const language = computed({ get: () => locale.value, set: setLocale })
     </div>
 
     <div class="header__utilities">
-      <BaseSegmentedControl
-        v-model="speed"
-        class="header__speed"
-        size="sm"
-        :label="t('speed.label')"
-        :options="controls.speedOptions.value"
-      />
-      <label class="header__auto" :title="t('actions.autoAdvanceHint')">
-        <input
-          type="checkbox"
-          data-testid="auto-advance"
-          :checked="controls.autoAdvance.value"
-          @change="controls.setAutoAdvance(($event.target as HTMLInputElement).checked)"
-        />
-        <span>{{ t('actions.autoAdvance') }}</span>
-      </label>
       <BaseSegmentedControl
         v-model="language"
         data-testid="language-switch"
@@ -229,8 +209,13 @@ const language = computed({ get: () => locale.value, set: setLocale })
   text-transform: uppercase;
 
   @include bp.from(desktop) {
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-lg);
     line-height: 1;
+  }
+
+  // Wide screens have room for the full-size title next to the controls.
+  @media (min-width: 1440px) {
+    font-size: var(--font-size-xl);
   }
 }
 
@@ -316,22 +301,6 @@ const language = computed({ get: () => locale.value, set: setLocale })
   grid-area: utilities;
   align-items: center;
   gap: var(--space-2);
-}
-
-.header__auto {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-  white-space: nowrap;
-  cursor: pointer;
-
-  input {
-    width: 1rem;
-    height: 1rem;
-    accent-color: var(--color-accent);
-  }
 }
 
 @media (max-width: 767px) {

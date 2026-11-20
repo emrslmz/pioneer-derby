@@ -41,6 +41,7 @@ useKeyboardShortcuts({
   '1': () => controls.setSpeed(1),
   '2': () => controls.setSpeed(2),
   '4': () => controls.setSpeed(4),
+  '8': () => controls.setSpeed(8),
   l: toggleLocale,
   t: settings.cycleTheme,
   '?': () => (shortcutsOpen.value = true),
@@ -59,9 +60,8 @@ useKeyboardShortcuts({
 
       <template #track>
         <div class="race-stage">
-          <RaceTrack>
-            <template #prediction><PredictionCard /></template>
-          </RaceTrack>
+          <PredictionCard />
+          <RaceTrack />
         </div>
       </template>
 
@@ -108,8 +108,7 @@ useKeyboardShortcuts({
   display: flex;
   flex-direction: column;
   min-width: 0;
-
-  gap: var(--layout-gap);
+  gap: var(--space-3);
   min-height: 0;
 
   > :last-child {

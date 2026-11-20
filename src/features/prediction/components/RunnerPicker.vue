@@ -78,23 +78,26 @@ async function onKeydown(event: KeyboardEvent, index: number) {
 <style scoped lang="scss">
 .picker {
   display: flex;
+  // Ten chips fit one row from ~340 px; narrower, they wrap instead of overflowing.
   flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: 4px;
+  min-width: 0;
 }
 
 .picker__runner {
   position: relative;
   display: grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
   padding: 0;
   border: 2px solid rgb(0 0 0 / 0.35);
   border-radius: 50%;
   background: var(--coat);
   color: #fff;
   font-family: var(--font-display);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-sm);
   font-weight: 700;
   text-shadow:
     0 0 2px #000,

@@ -107,10 +107,10 @@ describe('RaceTrack', () => {
     expect(runners[0]!.get('svg').attributes('style')).toContain(firstHorse.color.hex)
     expect(runners[0]!.text()).toContain(String(firstHorse.id))
     expect(wrapper.get('[data-testid="track-caption"]').text()).toBe('1st Lap – 1200 m')
-    const banner = wrapper.get('[data-testid="track-banner"]')
-    expect(banner.text()).toContain('Ready')
-    expect(banner.text()).toContain('Press Start or Space to run it.')
-    expect(wrapper.find('[data-testid="track-overlay"]').exists()).toBe(false)
+    const card = wrapper.get('[data-testid="track-banner"]')
+    expect(card.get('.track__eyebrow').text()).toBe('Ready')
+    expect(card.text()).toContain('Press Start or Space to run it.')
+    expect(card.find('[data-testid="track-play"]').exists()).toBe(true)
   })
 
   it('[R6] horses visibly move forward while the round runs, using transform only', async () => {
@@ -200,11 +200,12 @@ describe('RaceTrack', () => {
     const frozen = painted(wrapper)
     await frames(5000)
     expect(painted(wrapper)).toEqual(frozen)
-    expect(wrapper.get('[data-testid="track-banner"] strong').text()).toBe('Paused')
+    expect(wrapper.get('[data-testid="track-banner"] .track__eyebrow').text()).toBe('Paused')
   })
 
   it('[X13] between rounds the finished round stays on screen with its podium', async () => {
     const { wrapper, race } = setup()
+    race.setAutoAdvance(false) // keep the break open to inspect it
     race.generateProgram()
     race.start()
     const firstLineUp = race.currentRound!.horseIds
@@ -255,7 +256,8 @@ describe('RaceTrack', () => {
     const { wrapper, race } = setup()
     race.generateProgram()
     await nextTick()
-    expect(wrapper.find('[data-testid="leaderboard"]').exists()).toBe(false)
+    // Always laid out, so the track keeps its height; before the start it is empty.
+    expect(wrapper.find('[data-testid="commentary-line"]').text()).toBe('')
 
     race.start()
     await frames(50)
@@ -333,17 +335,17 @@ describe('RaceTrack', () => {
     expect(wrapper.get('svg.runner').attributes('aria-hidden')).toBe('true')
   })
 
-  it('[C6] shows a distance marker every 200 m of the round', async () => {
+  it('[C6] true-scale camera: a marker every 50 m; whole track: every 200 m', async () => {
     const { wrapper, race } = setup()
     race.generateProgram()
     await nextTick()
-    expect(wrapper.findAll('.track__marker-label').map((m) => m.text())).toEqual([
-      '200 m',
-      '400 m',
-      '600 m',
-      '800 m',
-      '1000 m',
-    ])
+    const labels = () => wrapper.findAll('.track__marker-label').map((m) => m.text())
+    expect(labels()).toHaveLength(23)
+    expect(labels().slice(0, 3)).toEqual(['50 m', '100 m', '150 m'])
+    expect(labels().at(-1)).toBe('1150 m')
+
+    await wrapper.findAll('[data-testid="camera-mode"] [role="radio"]')[1]!.trigger('click')
+    expect(labels()).toEqual(['200 m', '400 m', '600 m', '800 m', '1000 m'])
   })
 })
 
@@ -353,5 +355,53 @@ describe('HorseRunner', () => {
     expect(wrapper.attributes('style')).toContain('--coat: #1e88e5')
     expect(wrapper.get('.runner__number').text()).toBe('7')
     expect(wrapper.classes()).not.toContain('runner--galloping')
+  })
+
+  it('[R4] pausing mid-race in round 2 says Paused and never shows the previous result', async () => {
+    const { wrapper, race } = setup()
+    race.generateProgram()
+    race.start()
+    await frames(Math.ceil(race.currentRace!.durationMs) + 1)
+    race.nextRound()
+    await frames(5000)
+    race.pause()
+    await nextTick()
+    await nextTick()
+    expect(race.currentRoundIndex).toBe(1)
+    expect(wrapper.find('[data-testid="round-result"]').exists()).toBe(false)
+    expect(wrapper.findAll('.track__number--winner')).toHaveLength(0)
+    expect(wrapper.get('[data-testid="track-banner"] .track__eyebrow').text()).toBe('Paused')
+    expect(painted(wrapper).every((p) => p > 0 && p < 100)).toBe(true)
+  })
+
+  it('[R6] a horse that has crossed the line stands still while the others finish', async () => {
+    const { wrapper, race } = setup()
+    race.generateProgram()
+    race.start()
+    const [first, second] = race.currentRace!.result.placings
+    await frames(Math.ceil((first!.timeMs + second!.timeMs) / 2))
+    const stopped = wrapper
+      .findAll('[data-testid="runner"]')
+      .filter((runner) => runner.classes('carrier--finished'))
+      .map((runner) => Number(runner.attributes('data-horse-id')))
+    expect(stopped).toEqual([first!.horseId])
+    expect(race.status).toBe('running')
+  })
+
+  it('[R6] true scale: the leader’s distance to go, and gaps for horses left behind', async () => {
+    const { wrapper, race } = setup()
+    race.generateProgram()
+    await nextTick()
+    expect(wrapper.find('[data-testid="to-go"]').exists()).toBe(false)
+    race.start()
+    await frames(60_000)
+    const leader = Math.max(...painted(wrapper)) / 100
+    const toGo = Math.ceil(1200 - leader * 1200)
+    expect(wrapper.get('[data-testid="to-go"]').text()).toBe(`${toGo} m to go`)
+    const gaps = wrapper
+      .findAll('[data-testid="behind-gap"]')
+      .filter((gap) => gap.attributes('hidden') === undefined)
+    expect(gaps.length).toBeGreaterThan(0)
+    for (const gap of gaps) expect(gap.text()).toMatch(/^−\d+ m$/)
   })
 })

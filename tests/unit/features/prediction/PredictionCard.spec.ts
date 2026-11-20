@@ -17,23 +17,18 @@ function setup(locale: 'en' | 'tr' = 'en') {
 }
 
 describe('PredictionCard', () => {
-  it('[R3] first visit: a how-to-play guide with a Generate Program button', async () => {
+  it('[R3] before a program: one hint line, the game row reserved but inert', async () => {
     const { wrapper, race } = setup()
     const guide = wrapper.get('[data-testid="onboarding"]')
-    expect(guide.text()).toContain('How to play')
-    expect(guide.findAll('.guide__step').map((s) => s.get('strong').text())).toEqual([
-      'Generate the program',
-      'Predict the winner',
-      'Start the race',
-    ])
+    expect(guide.text()).toBe('Generate a program to start predicting.')
     // The game layer still reserves its space (same card height) but is inert and hidden.
     const game = wrapper.get('.prediction__game')
     expect(game.attributes('inert')).toBeDefined()
     expect(game.classes()).toContain('is-hidden')
     expect(wrapper.findAll('.picker__runner--placeholder')).toHaveLength(10)
 
-    await wrapper.get('[data-testid="onboarding-generate"]').trigger('click')
-    expect(race.status).toBe('ready')
+    race.generateProgram()
+    await nextTick()
     expect(wrapper.get('[data-testid="onboarding"]').attributes('inert')).toBeDefined()
     expect(wrapper.get('.prediction__game').attributes('inert')).toBeUndefined()
     expect(wrapper.get('[data-testid="prediction-score"]').text()).toBe('0 pts')
