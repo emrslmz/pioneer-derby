@@ -117,5 +117,7 @@ const activeTab = computed({
 
 .layout__panel > :deep(*) {
   height: 100%;
+  // Long lists (6 rounds × 10) scroll inside their panel instead of stretching the page.
+  max-height: min(75dvh, 760px);
 }
 </style>
