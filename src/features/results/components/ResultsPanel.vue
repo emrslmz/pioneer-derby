@@ -4,6 +4,7 @@ import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useLocale } from '@/i18n/useLocale'
 import { useReducedMotion } from '@/shared/composables/useMediaQuery'
+import { scrollWithinContainer } from '@/shared/utils/scroll'
 import BasePanel from '@/shared/ui/BasePanel.vue'
 import { useHorsesStore } from '@/stores/horses.store'
 import { useRaceStore } from '@/stores/race.store'
@@ -37,10 +38,8 @@ watch(
     if (count <= previous) return
     await nextTick()
     const rounds = list.value?.querySelectorAll<HTMLElement>('[data-testid="result-round"]')
-    rounds?.[rounds.length - 1]?.scrollIntoView?.({
-      block: 'nearest',
-      behavior: reducedMotion.value ? 'auto' : 'smooth',
-    })
+    const latest = rounds?.[rounds.length - 1]
+    if (latest) scrollWithinContainer(latest, !reducedMotion.value)
   },
 )
 </script>

@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia'
 import { nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useReducedMotion } from '@/shared/composables/useMediaQuery'
+import { scrollWithinContainer } from '@/shared/utils/scroll'
 import BasePanel from '@/shared/ui/BasePanel.vue'
 import { useRaceStore } from '@/stores/race.store'
 import { useScheduleStore } from '@/stores/schedule.store'
@@ -19,7 +20,7 @@ const list = ref<HTMLElement | null>(null)
 watch(currentRoundIndex, async () => {
   await nextTick()
   const current = list.value?.querySelector<HTMLElement>('[aria-current="step"]')
-  current?.scrollIntoView?.({ block: 'nearest', behavior: reducedMotion.value ? 'auto' : 'smooth' })
+  if (current) scrollWithinContainer(current, !reducedMotion.value)
 })
 </script>
 
