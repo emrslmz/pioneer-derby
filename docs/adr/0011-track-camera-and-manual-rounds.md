@@ -1,6 +1,6 @@
 # 0011. Distance-based camera and viewer-controlled rounds
 
-- **Status:** Accepted
+- **Status:** Accepted, partly superseded by [ADR 0012](0012-real-pace-true-scale-broadcast.md) (timing, camera scale, default advance)
 - **Date:** 2026-11-20
 
 ## Context
