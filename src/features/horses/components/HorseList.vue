@@ -148,6 +148,10 @@ function onSort(key: string) {
 
 .name__text {
   position: relative;
+  // The lane badge never shrinks; a long name truncates instead.
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   padding: 0;
   border: 0;
   background: none;
