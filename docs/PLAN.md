@@ -85,16 +85,16 @@ Prensip: **önce MVP kusursuz (Faz 0–5), sonra fark yaratan katmanlar (Faz 6�
 
 ## Faz 7 — Kanıt katmanı (testler & ölçümler) · B1, B2, B3, X1–X3, X8, X10
 
-- [ ] **Adalet simülasyonu**: `npm run simulate` → 10.000 seed'li yarış, kondisyon → kazanma oranı · X1
-- [ ] Simülasyon çıktısından grafik (SVG) + README'ye tablo · X1
-- [ ] İstatistiksel test: kondisyon arttıkça ortalama sıralama iyileşir (monoton) · X1
-- [ ] Property-based testleri tamamla (store geçişleri dahil) · X2
-- [ ] Unit coverage: domain ≥ %95, store ≥ %90
-- [ ] Playwright E2E: tam oyun akışı, pause/resume, generate kuralları, dil değişimi, tahmin akışı
-- [ ] Erişilebilirlik testi: `@axe-core/playwright`, sıfır ciddi ihlal · X8
-- [ ] Visual testler: desktop / tablet / mobil × açık / koyu × TR / EN
-- [ ] Performans kanıtı: Playwright ile FPS/long-task ölçümü + trace ekran görüntüsü · X10
-- [ ] `npm run report:traceability` → test isimlerindeki ID'lerden "Gereksinim → Test → ✅" tablosu · X3
+- [x] **Adalet simülasyonu**: `npm run simulate` → 10.000 seed'li yarış, kondisyon → kazanma oranı · X1
+- [x] Simülasyon çıktısından grafik (SVG) + README'ye tablo · X1
+- [x] İstatistiksel test: kondisyon arttıkça ortalama sıralama iyileşir (monoton) · X1
+- [x] Property-based testleri tamamla (store geçişleri dahil) · X2
+- [x] Unit coverage: domain ≥ %95, store ≥ %90
+- [x] Playwright E2E: tam oyun akışı, pause/resume, generate kuralları, dil değişimi, tahmin akışı
+- [x] Erişilebilirlik testi: `@axe-core/playwright`, sıfır ciddi ihlal · X8
+- [x] Visual testler: desktop / tablet / mobil × açık / koyu × TR / EN
+- [x] Performans kanıtı: Playwright ile FPS/long-task ölçümü (metrikler test raporuna eklenir, README'de özet) · X10
+- [x] `npm run report:traceability` → test isimlerindeki ID'lerden "Gereksinim → Test → ✅" tablosu · X3
 - **Çıktı:** her iddia ölçülmüş ve kanıtlanmış.
 
 ## Faz 8 — Teslim · X6, X14
