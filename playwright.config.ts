@@ -31,7 +31,10 @@ export default defineConfig({
     {
       name: 'visual',
       testDir: './tests/visual',
+      // Baselines are per platform; CI (Linux) is authoritative. See README → Testing.
+      snapshotPathTemplate: '{testDir}/__snapshots__/{arg}-{platform}{ext}',
       use: { ...devices['Desktop Chrome'], reducedMotion: 'reduce' },
+      expect: { toHaveScreenshot: { maxDiffPixelRatio: 0.002, animations: 'disabled' } },
     },
   ],
   webServer: {
