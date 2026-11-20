@@ -20,12 +20,12 @@ const finishRound = async (race: ReturnType<typeof startRace>['race']) => {
 }
 
 describe('ResultsPanel', () => {
-  it('[R5] stays empty while the first round is still running', async () => {
+  it('[R5] while the first round runs it only shows the live block, no official result yet', async () => {
     const { wrapper, race } = startRace()
     vi.advanceTimersByTime(race.currentRace!.durationMs - 100)
     await nextTick()
     expect(wrapper.findAll('[data-testid="result-round"]')).toHaveLength(0)
-    expect(wrapper.text()).toContain('Results appear here')
+    expect(wrapper.text()).toContain('Race in progress')
   })
 
   it('[R5] adds one result block per finished round, in order', async () => {
@@ -85,5 +85,89 @@ describe('ResultsPanel', () => {
     expect(block.get('h3').text()).toBe('1. Tur – 1200 m')
     expect(block.findAll('th').map((th) => th.text())).toEqual(['Sıra', 'İsim', 'Süre'])
     expect(block.text()).toMatch(/\d+,\d{2}sn/)
+  })
+
+  describe('live finishing order', () => {
+    function startFramedRace() {
+      vi.useFakeTimers({
+        toFake: [
+          'setTimeout',
+          'clearTimeout',
+          'requestAnimationFrame',
+          'cancelAnimationFrame',
+          'performance',
+          'Date',
+        ],
+      })
+      const mounted = mountFeature(ResultsPanel)
+      mounted.race.generateProgram()
+      mounted.race.setSpeed(8)
+      mounted.race.start()
+      return mounted
+    }
+    const rows = (wrapper: ReturnType<typeof startFramedRace>['wrapper']) =>
+      wrapper.findAll('[data-testid="result-live"] tbody tr')
+
+    it('[R5] horses appear one by one as they cross the line, before the round is official', async () => {
+      const { wrapper, race } = startFramedRace()
+      const placings = race.currentRace!.result.placings
+      await nextTick()
+      // From the start of the round: its block, with "Race in progress" and no rows yet.
+      expect(wrapper.get('[data-testid="result-live"]').text()).toContain('Race in progress')
+      expect(rows(wrapper)).toHaveLength(0)
+      expect(wrapper.find('.result__dots').exists()).toBe(true)
+
+      // Just after the winner crosses the line: one row, and still no official result.
+      vi.advanceTimersByTime(Math.ceil(placings[0]!.timeMs / 8) + 20)
+      await nextTick()
+      expect(rows(wrapper)).toHaveLength(1)
+      expect(rows(wrapper)[0]!.text()).toContain(
+        useHorsesStore().getHorse(placings[0]!.horseId)!.name.split(' ')[0],
+      )
+      expect(wrapper.findAll('[data-testid="result-round"]')).toHaveLength(0)
+      expect(wrapper.get('[data-testid="result-live"]').text()).toContain('Live')
+
+      // Then the second, in order.
+      vi.advanceTimersByTime(Math.ceil((placings[1]!.timeMs - placings[0]!.timeMs) / 8) + 20)
+      await nextTick()
+      expect(rows(wrapper)).toHaveLength(2)
+      expect(rows(wrapper)[1]!.find('.position').text()).toContain('2')
+    })
+
+    it('[R5] when the last horse finishes the live block becomes the official result', async () => {
+      const { wrapper, race } = startFramedRace()
+      vi.advanceTimersByTime(Math.ceil(race.currentRace!.durationMs / 8) + 50)
+      await nextTick()
+      await nextTick()
+      expect(wrapper.find('[data-testid="result-live"]').exists()).toBe(false)
+      expect(wrapper.findAll('[data-testid="result-round"]')).toHaveLength(1)
+      expect(wrapper.findAll('[data-testid="result-round"] tbody tr')).toHaveLength(10)
+    })
+
+    it('[R4] pausing says so, and resuming carries on', async () => {
+      const { wrapper, race } = startFramedRace()
+      await nextTick()
+      race.pause()
+      await nextTick()
+      expect(wrapper.get('[data-testid="result-live"]').text()).toContain('Race paused')
+      race.resume()
+      await nextTick()
+      expect(wrapper.get('[data-testid="result-live"]').text()).toContain('Race in progress')
+    })
+
+    it('[R4] pausing freezes the live list where it is', async () => {
+      const { wrapper, race } = startFramedRace()
+      const placings = race.currentRace!.result.placings
+      await nextTick() // the frame loop starts once the clock runs
+      vi.advanceTimersByTime(Math.ceil(placings[2]!.timeMs / 8) + 20)
+      await nextTick()
+      const shown = rows(wrapper).length
+      expect(shown).toBeGreaterThanOrEqual(3)
+      race.pause()
+      vi.advanceTimersByTime(60_000)
+      await nextTick()
+      expect(rows(wrapper)).toHaveLength(shown)
+      expect(shown).toBeGreaterThanOrEqual(3)
+    })
   })
 })

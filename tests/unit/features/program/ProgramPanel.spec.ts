@@ -80,4 +80,15 @@ describe('ProgramPanel', () => {
     expect(first.get('h3').text()).toBe('1. Tur – 1200 m')
     expect(first.findAll('th').map((th) => th.text())).toEqual(['Kulvar', 'İsim'])
   })
+
+  it('[R3] a new program shows a brief loading veil that never blocks interaction', async () => {
+    const { wrapper, race } = mountFeature(ProgramPanel)
+    expect(wrapper.find('[data-testid="program-loading"]').exists()).toBe(false)
+    race.generateProgram()
+    await nextTick()
+    const veil = wrapper.get('[data-testid="program-loading"]')
+    expect(veil.attributes('aria-hidden')).toBe('true')
+    expect(veil.text()).toBe('Drawing the program…')
+    expect(wrapper.findAll('[data-testid="program-round"]')).toHaveLength(6) // already there
+  })
 })

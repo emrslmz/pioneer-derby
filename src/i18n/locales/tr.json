@@ -13,7 +13,7 @@
     "close": "Kapat",
     "replay": "Tekrar İzle",
     "nextRound": "Sonraki tur",
-    "autoAdvance": "Oto geçiş",
+    "autoAdvance": "Sıradaki tur otomatik devam etsin",
     "autoAdvanceHint": "Açık: sıradaki tur 6 saniyelik aradan sonra başlar. Kapalı: Sonraki tur'a basın.",
     "startNow": "Şimdi başlat",
     "cancel": "Vazgeç"
@@ -64,9 +64,7 @@
   "empty": {
     "horses": "Atlar burada sıralanacak.",
     "program": "On atlık altı tur çekmek için Program Oluştur'a basın.",
-    "results": "Her tur bittiğinde sonuçlar burada görünür.",
-    "programTitle": "Henüz program yok",
-    "resultsTitle": "Henüz sonuç yok"
+    "results": "Her tur bittiğinde sonuçlar burada görünür."
   },
   "shortcuts": {
     "title": "Klavye kısayolları",
@@ -78,7 +76,9 @@
     "theme": "Temayı değiştir",
     "help": "Bu yardımı göster",
     "close": "Bu pencereyi kapat",
-    "replay": "Aynı yarışı tekrar izle"
+    "replay": "Aynı yarışı tekrar izle",
+    "tour": "Turu yeniden başlat",
+    "tourHint": "Ekranı 30 saniyede tanıtır."
   },
   "announce": {
     "generated": "Yeni program hazır: {rounds} tur. Başlamak için Başlat'a basın.",
@@ -118,7 +118,11 @@
     "color": "Renk",
     "lane": "{lane}. kulvar",
     "inRace": "Bu turda {lane}. kulvarda koşuyor",
-    "laneShort": "K{lane}"
+    "laneShort": "K{lane}",
+    "railTitle": "Atlar",
+    "railLabel": "{name}, kondisyon {condition}, {color}",
+    "expand": "At listesini aç",
+    "collapse": "At listesini daralt"
   },
   "program": {
     "lane": "Kulvar",
@@ -129,7 +133,8 @@
       "next": "Sıradaki",
       "done": "Bitti",
       "upcoming": "Sırada"
-    }
+    },
+    "drawing": "Program çekiliyor…"
   },
   "results": {
     "position": "Sıra",
@@ -141,7 +146,9 @@
       "1": "Altın",
       "2": "Gümüş",
       "3": "Bronz"
-    }
+    },
+    "inProgress": "Yarış devam ediyor",
+    "pausedLine": "Yarış duraklatıldı"
   },
   "track": {
     "label": "Yarış pisti — {lap}. {count} at, 1. kulvar en üstte; bitiş çizgisi sağda.",
@@ -231,7 +238,8 @@
     "live": "Canlı",
     "photoFinish": "Foto-finiş",
     "margin": "fark {time}",
-    "position": "{position}. sıra: {name}"
+    "position": "{position}. sıra: {name}",
+    "waiting": "Canlı anlatım yarışla birlikte başlar."
   },
   "commentary": {
     "START": "{lap} başladı, atlar yola çıktı!",
@@ -278,5 +286,36 @@
     "button": "Programı değiştir",
     "locked": "Programı değiştirmek için yarışı duraklat.",
     "short": "Değiştir"
+  },
+  "tour": {
+    "next": "İleri",
+    "prev": "Geri",
+    "done": "Yarışa başla",
+    "steps": {
+      "welcome": {
+        "title": "Pioneer Derby'ye hoş geldin",
+        "body": "Yirmi bilgisayar öncüsü, altı tur, tek şampiyon. Bu 30 saniyelik tur nasıl oynandığını gösterir."
+      },
+      "program": {
+        "title": "1. Programı oluştur",
+        "body": "Program Oluştur'a (ya da G'ye) bas. Altı tur için, 1200 m'den 2200 m'ye, her tura on at seçilir."
+      },
+      "prediction": {
+        "title": "2. Kazananı tahmin et",
+        "body": "Tur başlamadan bir ata oyna: kazanan 3, podyum 1 puan. Yıldız bizim önerimizi gösterir."
+      },
+      "start": {
+        "title": "3. Yarışı başlat",
+        "body": "Başlat, turları tek tek koşturur. Space de başlatır ve duraklatır."
+      },
+      "player": {
+        "title": "4. İzle ve yönet",
+        "body": "Hızı değiştir, her turu kendin başlatmak için otomatik devamı kapat, Takip ya da Tüm pist kamerasını seç. Tam ekran yarışı pencerede açar."
+      },
+      "results": {
+        "title": "5. Sonuçlar tek tek",
+        "body": "Her sonuç, son at çizgiyi geçtikten sonra burada belirir. Bağlantıyı paylaşarak aynı yarışı tekrar izle."
+      }
+    }
   }
 }

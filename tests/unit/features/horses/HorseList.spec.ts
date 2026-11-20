@@ -1,9 +1,11 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
 import ConditionBar from '@/features/horses/components/ConditionBar.vue'
 import HorseList from '@/features/horses/components/HorseList.vue'
 import { useHorsesStore } from '@/stores/horses.store'
+import { HORSES_PANEL_STORAGE_KEY } from '@/stores/settings.store'
+import { setViewportWidth } from '../../setup'
 import { mountFeature } from '../mount'
 
 const bodyRows = (wrapper: ReturnType<typeof mountFeature>['wrapper']) =>
@@ -105,5 +107,66 @@ describe('ConditionBar', () => {
         .get('.condition__fill')
         .attributes('style'),
     ).toContain('scaleX(0)')
+  })
+
+  describe('folding into a rail', () => {
+    afterEach(() => {
+      localStorage.clear()
+      setViewportWidth(1024)
+    })
+
+    it('[R2] the colour column draws each horse in its colour, with the colour name', () => {
+      const { wrapper } = mountFeature(HorseList)
+      const horse = useHorsesStore().horses[0]!
+      const cell = bodyRows(wrapper)[0]!.findAll('td')[3]!
+      expect(cell.get('svg.runner').attributes('style')).toContain(horse.color.hex)
+      expect(cell.get('.runner__number').text()).toBe(String(horse.id))
+      expect(cell.get('.swatch__label').text()).toBe('Gray')
+    })
+
+    it('[T2] only the wide layout can fold the list', () => {
+      setViewportWidth(1024)
+      const { wrapper } = mountFeature(HorseList)
+      expect(wrapper.find('[data-testid="horses-collapse"]').exists()).toBe(false)
+    })
+
+    it('[T2] folds into a rail of 20 horses with names for screen readers, and unfolds again', async () => {
+      setViewportWidth(1440)
+      const { wrapper } = mountFeature(HorseList)
+      await wrapper.get('[data-testid="horses-collapse"]').trigger('click')
+
+      expect(wrapper.find('[data-testid="horses-panel"]').exists()).toBe(false)
+      const rail = wrapper.findAll('[data-testid="rail-horse"]')
+      expect(rail).toHaveLength(20)
+      expect(rail[0]!.attributes('aria-label')).toBe('Hedy Lamarr, condition 45, Gray')
+      expect(localStorage.getItem(HORSES_PANEL_STORAGE_KEY)).toBe('closed')
+
+      await wrapper.get('[data-testid="horses-expand"]').trigger('click')
+      expect(wrapper.find('[data-testid="horses-rail"]').exists()).toBe(false)
+      expect(wrapper.find('[data-testid="horses-panel"]').exists()).toBe(true)
+      expect(localStorage.getItem(HORSES_PANEL_STORAGE_KEY)).toBe('open')
+    })
+
+    it('[T2] remembers a folded list, and the rail rings the horses of the current round', async () => {
+      localStorage.setItem(HORSES_PANEL_STORAGE_KEY, 'closed')
+      setViewportWidth(1440)
+      const { wrapper, race } = mountFeature(HorseList)
+      expect(wrapper.find('[data-testid="horses-rail"]').exists()).toBe(true)
+      expect(wrapper.findAll('.rail__horse--racing')).toHaveLength(0)
+
+      race.generateProgram()
+      await nextTick()
+      expect(wrapper.findAll('.rail__horse--racing')).toHaveLength(10)
+    })
+
+    it('[X12] a horse in the rail opens its statistics', async () => {
+      localStorage.setItem(HORSES_PANEL_STORAGE_KEY, 'closed')
+      setViewportWidth(1440)
+      const { wrapper } = mountFeature(HorseList, { attachTo: document.body })
+      await wrapper.findAll('[data-testid="rail-horse"]')[1]!.trigger('click')
+      expect(document.querySelector('dialog')?.hasAttribute('open')).toBe(true)
+      expect(document.body.textContent).toContain('Linus Torvalds')
+      wrapper.unmount()
+    })
   })
 })

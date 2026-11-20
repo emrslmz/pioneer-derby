@@ -34,6 +34,7 @@ watch(currentRoundIndex, async () => {
     icon="program"
     :title="t('panels.program')"
     scroll
+    data-tour="program"
     data-testid="program-panel"
   >
     <template v-if="rounds.length > 0" #actions>
@@ -50,7 +51,13 @@ watch(currentRoundIndex, async () => {
         {{ t('changeProgram.short') }}
       </BaseButton>
     </template>
-    <div v-if="rounds.length > 0" ref="list">
+    <div v-if="rounds.length > 0" ref="list" class="program">
+      <!-- A short "drawing the lots" moment: a veil that fades by itself (CSS only, never blocks
+           the pointer or the tests), after which the rounds have dealt in. -->
+      <div :key="seed ?? 0" class="loading" aria-hidden="true" data-testid="program-loading">
+        <span class="loading__spinner" />
+        <span class="loading__text">{{ t('program.drawing') }}</span>
+      </div>
       <RoundTable
         v-for="round in rounds"
         :key="`${seed}-${round.index}`"
@@ -58,12 +65,7 @@ watch(currentRoundIndex, async () => {
         :state="roundState(round.index, currentRoundIndex, status, completedResults.length)"
       />
     </div>
-    <BaseEmptyState
-      v-else
-      icon="program"
-      :title="t('empty.programTitle')"
-      :description="t('empty.program')"
-    >
+    <BaseEmptyState v-else :description="t('empty.program')">
       <BaseButton
         variant="primary"
         icon="generate"
@@ -76,3 +78,65 @@ watch(currentRoundIndex, async () => {
     </BaseEmptyState>
   </BasePanel>
 </template>
+
+<style scoped lang="scss">
+.program {
+  position: relative;
+}
+
+.loading {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding-top: var(--space-8);
+  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  pointer-events: none;
+  animation: veil 1000ms ease forwards;
+}
+
+.loading__spinner {
+  width: 34px;
+  height: 34px;
+  border: 4px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+}
+
+.loading__text {
+  color: var(--color-text-muted);
+  font-family: var(--font-display);
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+@keyframes veil {
+  0%,
+  65% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading {
+    display: none;
+  }
+}
+</style>

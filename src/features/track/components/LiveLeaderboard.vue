@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { PODIUM_SIZE } from '@/domain/constants'
 import type { HorseId } from '@/domain/types'
+import HorseRunner from '@/shared/components/HorseRunner.vue'
 import { shortName } from '@/shared/utils/names'
 import { useHorsesStore } from '@/stores/horses.store'
 
@@ -31,6 +32,16 @@ const entries = computed(() =>
     :aria-label="t('broadcast.standings')"
     data-testid="leaderboard"
   >
+    <!-- Before the race: the ten places, empty, so the strip is not a blank band. -->
+    <li
+      v-for="place in entries.length === 0 ? 10 : 0"
+      :key="`ghost-${place}`"
+      class="leaderboard__entry leaderboard__entry--ghost"
+      aria-hidden="true"
+    >
+      <span class="leaderboard__position">{{ place }}</span>
+      <span class="leaderboard__ghost-horse" />
+    </li>
     <li
       v-for="{ position, horse } in entries"
       :key="horse.id"
@@ -41,9 +52,12 @@ const entries = computed(() =>
       :data-horse-id="horse.id"
     >
       <span class="leaderboard__position" aria-hidden="true">{{ position }}</span>
-      <span class="leaderboard__coat" :style="{ '--coat': horse.color.hex }" aria-hidden="true">
-        {{ horse.id }}
-      </span>
+      <HorseRunner
+        class="leaderboard__horse"
+        :color="horse.color.hex"
+        :number="horse.id"
+        :galloping="false"
+      />
       <span v-if="position <= PODIUM_SIZE" class="leaderboard__name" aria-hidden="true">
         {{ shortName(horse.name) }}
       </span>
@@ -78,6 +92,19 @@ const entries = computed(() =>
   font-size: var(--font-size-xs);
 }
 
+.leaderboard__entry--ghost {
+  background: transparent;
+  opacity: 0.8;
+}
+
+// An empty place: a dashed horse-shaped slot.
+.leaderboard__ghost-horse {
+  width: 34px;
+  height: 22px;
+  border: 1.5px dashed var(--color-border-strong);
+  border-radius: var(--radius-sm);
+}
+
 .leaderboard__entry--podium {
   background: color-mix(in srgb, var(--color-gold) 14%, var(--color-surface-raised));
 }
@@ -90,20 +117,11 @@ const entries = computed(() =>
   text-align: center;
 }
 
-.leaderboard__coat {
-  display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border: 1.5px solid rgb(0 0 0 / 0.35);
-  border-radius: 50%;
-  background: var(--coat);
-  color: #fff;
-  font-family: var(--font-display);
-  font-weight: 700;
-  text-shadow:
-    0 0 2px #000,
-    0 0 2px #000;
+// The horse in its own colour, number on the saddle cloth.
+.leaderboard__horse {
+  width: 34px;
+  height: auto;
+  flex-shrink: 0;
 }
 
 .leaderboard__name {

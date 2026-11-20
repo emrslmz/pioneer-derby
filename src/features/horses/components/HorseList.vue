@@ -3,6 +3,9 @@ import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Horse, HorseId } from '@/domain/types'
+import { useSettingsStore } from '@/stores/settings.store'
+import { useBreakpoint } from '@/shared/composables/useBreakpoint'
+import BaseButton from '@/shared/ui/BaseButton.vue'
 import BaseColorSwatch from '@/shared/ui/BaseColorSwatch.vue'
 import BaseShortName from '@/shared/ui/BaseShortName.vue'
 import BasePanel from '@/shared/ui/BasePanel.vue'
@@ -11,12 +14,18 @@ import { useHorsesStore } from '@/stores/horses.store'
 import { useRaceStore } from '@/stores/race.store'
 import { analytics } from '@/shared/analytics'
 import ConditionBar from './ConditionBar.vue'
+import HorseRail from './HorseRail.vue'
 import HorseStatsDrawer from './HorseStatsDrawer.vue'
 
 /** R2 — "Horse List (1-20)": number, name, condition and colour, sortable, with live lane badges. */
 const { t } = useI18n()
 const { horses } = storeToRefs(useHorsesStore())
 const { currentRound, status } = storeToRefs(useRaceStore())
+
+const settings = useSettingsStore()
+const breakpoint = useBreakpoint()
+/** Only the wide layout folds the list; tablet and phone show it in a tab. */
+const folded = computed(() => breakpoint.value === 'desktop' && !settings.horsesPanelOpen)
 
 const sort = ref<TableSort>({ key: 'number', direction: 'ascending' })
 
@@ -45,8 +54,8 @@ const rows = computed(() => {
 const columns = computed<TableColumn<Horse>[]>(() => [
   { key: 'number', label: t('horses.number'), align: 'end', width: '2.75rem', sortable: true },
   { key: 'name', label: t('horses.name') },
-  { key: 'condition', label: t('horses.condition'), width: '4.75rem', sortable: true },
-  { key: 'color', label: t('horses.color'), width: '5.5rem' },
+  { key: 'condition', label: t('horses.condition'), width: '4.25rem', sortable: true },
+  { key: 'color', label: t('horses.color'), width: '6.25rem' },
 ])
 
 function onSort(key: string) {
@@ -63,46 +72,84 @@ function onSort(key: string) {
 </script>
 
 <template>
-  <BasePanel
-    class="horse-list"
-    tone="horses"
-    icon="horses"
-    :title="t('panels.horses', { count: horses.length })"
-    scroll
-    data-testid="horses-panel"
-  >
-    <BaseTable
-      :columns="columns"
-      :rows="rows"
-      :row-key="(horse) => horse.id"
-      :caption="t('horses.caption', { count: horses.length })"
-      hide-caption
-      :sort="sort"
-      @sort="onSort"
+  <!-- The column glides (ResponsiveLayout); the two views swap with a quick fade and slide. -->
+  <Transition name="fold" mode="out-in">
+    <HorseRail
+      v-if="folded"
+      :horses="horses"
+      :lanes="lanes"
+      @expand="settings.setHorsesPanelOpen(true)"
+      @select="openStats"
+    />
+    <BasePanel
+      v-else
+      class="horse-list"
+      tone="horses"
+      icon="horses"
+      :title="t('panels.horses', { count: horses.length })"
+      scroll
+      data-testid="horses-panel"
     >
-      <template #cell="{ row, column }">
-        <span v-if="column.key === 'number'" class="number">{{ row.id }}</span>
-        <span v-else-if="column.key === 'name'" class="name">
-          <button type="button" class="name__text" data-testid="horse-name" @click="openStats(row)">
-            <BaseShortName :name="row.name" />
-            <span class="visually-hidden">{{ t('stats.openSuffix') }}</span>
-          </button>
-          <span
-            v-if="lanes.has(row.id)"
-            class="name__lane"
-            :title="t('horses.inRace', { lane: lanes.get(row.id) })"
-            data-testid="lane-badge"
-          >
-            <span aria-hidden="true">{{ t('horses.laneShort', { lane: lanes.get(row.id) }) }}</span>
-            <span class="visually-hidden">{{ t('horses.lane', { lane: lanes.get(row.id) }) }}</span>
-          </span>
-        </span>
-        <ConditionBar v-else-if="column.key === 'condition'" :value="row.condition" />
-        <BaseColorSwatch v-else :hex="row.color.hex" :label="t(`colors.${row.color.key}`)" />
+      <template v-if="breakpoint === 'desktop'" #actions>
+        <BaseButton
+          variant="ghost"
+          size="sm"
+          icon="panelClose"
+          icon-only
+          :aria-label="t('horses.collapse')"
+          :title="t('horses.collapse')"
+          aria-expanded="true"
+          data-testid="horses-collapse"
+          @click="settings.setHorsesPanelOpen(false)"
+        />
       </template>
-    </BaseTable>
-    <HorseStatsDrawer v-model:open="statsOpen" :horse-id="statsHorseId" />
-  </BasePanel>
+      <BaseTable
+        :columns="columns"
+        :rows="rows"
+        :row-key="(horse) => horse.id"
+        :caption="t('horses.caption', { count: horses.length })"
+        hide-caption
+        :sort="sort"
+        @sort="onSort"
+      >
+        <template #cell="{ row, column }">
+          <span v-if="column.key === 'number'" class="number">{{ row.id }}</span>
+          <span v-else-if="column.key === 'name'" class="name">
+            <button
+              type="button"
+              class="name__text"
+              data-testid="horse-name"
+              @click="openStats(row)"
+            >
+              <BaseShortName :name="row.name" />
+              <span class="visually-hidden">{{ t('stats.openSuffix') }}</span>
+            </button>
+            <span
+              v-if="lanes.has(row.id)"
+              class="name__lane"
+              :title="t('horses.inRace', { lane: lanes.get(row.id) })"
+              data-testid="lane-badge"
+            >
+              <span aria-hidden="true">{{
+                t('horses.laneShort', { lane: lanes.get(row.id) })
+              }}</span>
+              <span class="visually-hidden">{{
+                t('horses.lane', { lane: lanes.get(row.id) })
+              }}</span>
+            </span>
+          </span>
+          <ConditionBar v-else-if="column.key === 'condition'" :value="row.condition" />
+          <BaseColorSwatch
+            v-else
+            :hex="row.color.hex"
+            :label="t(`colors.${row.color.key}`)"
+            :horse-number="row.id"
+          />
+        </template>
+      </BaseTable>
+    </BasePanel>
+  </Transition>
+  <HorseStatsDrawer v-model:open="statsOpen" :horse-id="statsHorseId" />
 </template>
 
 <style scoped lang="scss">
@@ -156,5 +203,18 @@ function onSort(key: string) {
   font-weight: 700;
   letter-spacing: 0.04em;
   white-space: nowrap;
+}
+
+.fold-enter-active,
+.fold-leave-active {
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.fold-enter-from,
+.fold-leave-to {
+  opacity: 0;
+  transform: translateX(-10px);
 }
 </style>

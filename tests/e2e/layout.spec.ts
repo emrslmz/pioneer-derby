@@ -9,7 +9,9 @@ test.describe('first visit', () => {
     // Generate lives where the program will appear, not in the header.
     await expect(page.locator('header').getByTestId('generate-button')).toHaveCount(0)
     await expect(page.getByTestId('program-panel').getByTestId('generate-button')).toBeVisible()
-    await expect(page.getByTestId('results-panel')).toContainText('No results yet')
+    await expect(page.getByTestId('results-panel')).toContainText(
+      'Results appear here as each round finishes.',
+    )
 
     await page.getByTestId('track-generate').click()
     await expect(page.getByTestId('race-status')).toContainText('Ready')
@@ -129,5 +131,48 @@ test.describe('responsive layout', () => {
     await expect(tabbar).toBeVisible()
     await tabbar.getByRole('tab', { name: 'Results' }).click()
     await expect(page.getByTestId('results-panel')).toBeVisible()
+  })
+
+  test.describe('horse list rail', () => {
+    test('[T2] folds into a rail of horses, names on hover to the right, and is remembered', async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 1440, height: 900 })
+      await page.goto('/?seed=42')
+      const horses = page.getByTestId('horses-panel')
+      await expect(horses).toBeVisible()
+      const open = (await page.locator('.layout__horses').boundingBox())!.width
+
+      await page.getByTestId('horses-collapse').click()
+      const rail = page.getByTestId('horses-rail')
+      await expect(rail).toBeVisible()
+      await expect(page.getByTestId('rail-horse')).toHaveCount(20)
+      await expect
+        .poll(async () => (await page.locator('.layout__horses').boundingBox())!.width)
+        .toBeLessThan(open / 3)
+
+      const first = page.getByTestId('rail-horse').first()
+      await first.hover()
+      const tooltip = page.getByTestId('tooltip')
+      await expect(tooltip).toHaveText(/^Hedy Lamarr · 45$/)
+      const horse = (await first.boundingBox())!
+      const bubble = (await tooltip.boundingBox())!
+      expect(bubble.x).toBeGreaterThan(horse.x + horse.width) // opens to the right
+
+      await page.reload()
+      await expect(page.getByTestId('horses-rail')).toBeVisible()
+      await page.getByTestId('horses-expand').click()
+      await expect(page.getByTestId('horses-panel')).toBeVisible()
+      await expect(page.getByTestId('horses-rail')).toHaveCount(0)
+    })
+
+    test('[T2] the footer credits the author', async ({ page }) => {
+      await page.goto('/?seed=42')
+      await expect(page.getByTestId('app-footer')).toHaveText('Created by emresolmaz.com.tr')
+      await expect(page.getByTestId('footer-link')).toHaveAttribute(
+        'href',
+        'https://emresolmaz.com.tr',
+      )
+    })
   })
 })

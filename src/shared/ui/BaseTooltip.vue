@@ -19,8 +19,10 @@ const props = withDefaults(
      * inside the trigger (or the trigger itself).
      */
     whenTruncated?: boolean
+    /** `right` opens beside the trigger (for a slim side rail); `auto` is above, or below at the top. */
+    side?: 'auto' | 'right'
   }>(),
-  { hideDelayMs: 120 },
+  { hideDelayMs: 120, side: 'auto' },
 )
 
 defineSlots<{ default(): unknown }>()
@@ -29,7 +31,7 @@ const id = useId()
 const trigger = ref<HTMLElement | null>(null)
 const tooltip = ref<HTMLElement | null>(null)
 const visible = ref(false)
-const position = ref({ top: 0, left: 0, placement: 'top' as 'top' | 'bottom' })
+const position = ref({ top: 0, left: 0, placement: 'top' as 'top' | 'bottom' | 'right' })
 let hideTimer: ReturnType<typeof setTimeout> | null = null
 
 function cancelHide() {
@@ -46,6 +48,11 @@ async function show() {
     if (measured.scrollWidth <= measured.clientWidth) return
   }
   const rect = element.getBoundingClientRect()
+  if (props.side === 'right') {
+    position.value = { top: rect.top + rect.height / 2, left: rect.right + 8, placement: 'right' }
+    visible.value = true
+    return
+  }
   const placement = rect.top < 48 ? 'bottom' : 'top'
   position.value = {
     top: placement === 'top' ? rect.top - 8 : rect.bottom + 8,
@@ -168,6 +175,18 @@ onBeforeUnmount(() => {
   &::after {
     bottom: 100%;
     border-bottom-color: var(--color-text);
+  }
+}
+
+.tooltip--right {
+  transform: translate(0, -50%);
+
+  &::after {
+    top: 50%;
+    right: 100%;
+    left: auto;
+    border-right-color: var(--color-text);
+    transform: translateY(-50%);
   }
 }
 

@@ -4,6 +4,25 @@ import { defineConfig, devices } from '@playwright/test'
 const isCI = !!process.env.CI
 // A dedicated port, so E2E never talks to some other dev server already running on 5173.
 const port = isCI ? 4173 : 5199
+const baseURL = `http://localhost:${port}`
+
+/**
+ * What a returning visitor has stored. Every test starts as one: the first-visit tour would cover
+ * the page, and the light default theme would hide the emulated colour scheme. Tests of the first
+ * visit itself opt out with `test.use({ storageState: FIRST_VISIT })`.
+ */
+const RETURNING_VISITOR = {
+  cookies: [],
+  origins: [
+    {
+      origin: baseURL,
+      localStorage: [
+        { name: 'pioneer-derby:tour', value: '1' },
+        { name: 'pioneer-derby:theme', value: 'system' },
+      ],
+    },
+  ],
+}
 
 /**
  * Two projects share one config:
@@ -19,7 +38,8 @@ export default defineConfig({
   workers: isCI ? 1 : undefined,
   reporter: isCI ? [['github'], ['html', { open: 'never' }]] : 'html',
   use: {
-    baseURL: `http://localhost:${port}`,
+    baseURL,
+    storageState: RETURNING_VISITOR,
     trace: 'on-first-retry',
   },
   projects: [

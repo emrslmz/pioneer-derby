@@ -505,6 +505,19 @@ useRaceLoop({
               </div>
             </div>
 
+            <!-- The same "drawing the program" moment as in the Program panel, over the track:
+                 whichever Generate button was pressed, the track shows it too. CSS only. -->
+            <div
+              v-if="displayRace"
+              :key="seed ?? 0"
+              class="track__loading"
+              aria-hidden="true"
+              data-testid="track-loading"
+            >
+              <span class="track__spinner" />
+              <span class="track__loading-text">{{ t('program.drawing') }}</span>
+            </div>
+
             <div v-if="flash" class="track__flash" aria-hidden="true" data-testid="photo-flash" />
 
             <div v-if="overlay" class="track__overlay" data-testid="track-overlay">
@@ -516,6 +529,7 @@ useRaceLoop({
                   v-if="status === 'idle'"
                   variant="primary"
                   icon="generate"
+                  shortcut="G"
                   class="track__cta"
                   data-testid="track-generate"
                   @click="race.generateProgram()"
@@ -600,7 +614,13 @@ useRaceLoop({
           </div>
 
           <!-- Player bar: everything that controls playback, in one place under the picture. -->
-          <div class="player" role="group" :aria-label="t('track.controls')" data-testid="player">
+          <div
+            class="player"
+            role="group"
+            :aria-label="t('track.controls')"
+            data-tour="player"
+            data-testid="player"
+          >
             <BaseButton
               variant="primary"
               size="sm"
@@ -1165,5 +1185,62 @@ useRaceLoop({
 
 .track-panel--expanded .track {
   min-height: 300px;
+}
+
+// "Drawing the program": a veil over the track that lifts by itself (never blocks the pointer).
+.track__loading {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  background: rgb(8 20 14 / 0.86);
+  color: #fff;
+  pointer-events: none;
+  animation: track-veil 1000ms ease forwards;
+}
+
+.track__spinner {
+  width: 38px;
+  height: 38px;
+  border: 4px solid rgb(255 255 255 / 0.22);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: track-spin 700ms linear infinite;
+}
+
+.track__loading-text {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+@keyframes track-veil {
+  0%,
+  65% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes track-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track__loading {
+    display: none;
+  }
 }
 </style>

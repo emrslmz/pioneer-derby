@@ -59,7 +59,7 @@ describe('App', () => {
     expect(wrapper.get('[data-testid="shortcuts-list"]').text()).toContain('Space')
   })
 
-  it('[X9] keyboard: L switches language, T cycles theme, 4 sets speed', async () => {
+  it('[X9] keyboard: L switches language, T cycles theme (light → dark), 4 sets speed', async () => {
     const { wrapper, race } = mountApp()
 
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'l' }))
@@ -69,8 +69,8 @@ describe('App', () => {
 
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 't' }))
     await nextTick()
-    expect(useSettingsStore().theme).toBe('light')
-    expect(document.documentElement.dataset.theme).toBe('light')
+    expect(useSettingsStore().theme).toBe('dark')
+    expect(document.documentElement.dataset.theme).toBe('dark')
 
     window.dispatchEvent(new KeyboardEvent('keydown', { key: '4' }))
     expect(race.speed).toBe(4)

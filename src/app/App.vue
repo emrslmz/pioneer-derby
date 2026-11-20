@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { ref, watchEffect } from 'vue'
+import { nextTick, ref, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import HorseList from '@/features/horses/components/HorseList.vue'
 import ProgramPanel from '@/features/program/components/ProgramPanel.vue'
@@ -11,12 +11,15 @@ import RaceTrack from '@/features/track/components/RaceTrack.vue'
 import AnalyticsDebugPanel from '@/shared/analytics/AnalyticsDebugPanel.vue'
 import { isDebugMode } from '@/shared/utils/debug'
 import { useLocale } from '@/i18n/useLocale'
+import { useReducedMotion } from '@/shared/composables/useMediaQuery'
 import { useKeyboardShortcuts } from '@/shared/composables/useKeyboardShortcuts'
 import { useRaceStore } from '@/stores/race.store'
 import { useScheduleStore } from '@/stores/schedule.store'
 import { useSettingsStore } from '@/stores/settings.store'
+import AppFooter from './layout/AppFooter.vue'
 import AppHeader from './layout/AppHeader.vue'
 import ChangeProgramDialog from './layout/ChangeProgramDialog.vue'
+import { startTour } from './tour/startTour'
 import KeyboardShortcutsDialog from './layout/KeyboardShortcutsDialog.vue'
 import ResponsiveLayout from './layout/ResponsiveLayout.vue'
 import StatusAnnouncer from './layout/StatusAnnouncer.vue'
@@ -30,6 +33,14 @@ const race = useRaceStore()
 const schedule = useScheduleStore()
 const shortcutsOpen = ref(false)
 const changeProgramOpen = ref(false)
+const reducedMotion = useReducedMotion()
+
+/** "Take the tour again" in the help dialog: close it first, so the page underneath is usable. */
+async function restartTour() {
+  shortcutsOpen.value = false
+  await nextTick()
+  await startTour({ t, reducedMotion: reducedMotion.value, source: 'manual' })
+}
 
 /** The first program is drawn straight away; replacing one asks first (it discards the results). */
 function requestProgram() {
@@ -87,7 +98,9 @@ useKeyboardShortcuts({
     </ResponsiveLayout>
   </main>
 
-  <KeyboardShortcutsDialog v-model:open="shortcutsOpen" />
+  <AppFooter />
+
+  <KeyboardShortcutsDialog v-model:open="shortcutsOpen" @start-tour="restartTour" />
   <ChangeProgramDialog v-model:open="changeProgramOpen" @confirm="race.generateProgram()" />
   <StatusAnnouncer />
   <AnalyticsDebugPanel v-if="debug" />

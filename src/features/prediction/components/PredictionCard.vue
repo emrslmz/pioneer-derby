@@ -130,6 +130,7 @@ const canBackTip = computed(
     class="prediction"
     :class="{ 'prediction--waiting': isOpen && currentPick === null }"
     aria-labelledby="prediction-title"
+    data-tour="prediction"
     data-testid="prediction-card"
   >
     <header class="prediction__header">

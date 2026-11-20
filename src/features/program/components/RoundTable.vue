@@ -65,6 +65,7 @@ const tones = { done: 'success', live: 'live', next: 'accent', upcoming: 'neutra
           v-else
           :hex="horsesStore.getHorse(row.horseId)?.color.hex ?? 'transparent'"
           :label="horsesStore.getHorse(row.horseId)?.name ?? ''"
+          :horse-number="row.horseId"
         />
       </template>
     </BaseTable>
@@ -78,7 +79,7 @@ const tones = { done: 'success', live: 'live', next: 'accent', upcoming: 'neutra
   // A fresh program deals its rounds in one after another. `backwards` only holds the start
   // frame during the delay, so the settled block is never touched; reduced motion skips it.
   animation: round-in 460ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
-  animation-delay: calc(var(--i, 0) * 80ms);
+  animation-delay: calc(450ms + var(--i, 0) * 80ms);
 }
 
 @media (prefers-reduced-motion: reduce) {

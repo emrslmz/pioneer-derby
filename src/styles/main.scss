@@ -1,5 +1,14 @@
 @use './reset';
 @use './tokens';
+@use './tour';
+
+// Lets the horse column's width be transitioned (see ResponsiveLayout): a plain custom property
+// would jump from one value to the other.
+@property --col-horses {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 340px;
+}
 
 body {
   background: var(--color-bg-glow), var(--color-bg);
