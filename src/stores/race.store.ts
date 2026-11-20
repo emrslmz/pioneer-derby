@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, onScopeDispose, ref, shallowRef } from 'vue'
-import { INTERMISSION_MS } from '@/domain/constants'
+import { DEFAULT_RACE_SPEED, INTERMISSION_MS } from '@/domain/constants'
 import { roundRaceForSeed } from '@/domain/game'
 import { can, transition, type RaceEvent } from '@/domain/race-machine'
 import type { Placing, RaceSpeed, RaceStatus, RoundResult } from '@/domain/types'
@@ -24,8 +24,12 @@ export const useRaceStore = defineStore('race', () => {
   const seed = ref<number | null>(null)
   const currentRoundIndex = ref(0)
   const results = shallowRef<readonly RoundResult[]>([])
-  const speed = ref<RaceSpeed>(1)
-  const autoAdvance = ref(false)
+  const speed = ref<RaceSpeed>(DEFAULT_RACE_SPEED)
+  // Start runs the whole program, one round at a time (R4); Next round is opt-in via the switch.
+  const autoAdvance = ref(true)
+
+  /** Paused during the break between rounds (true) or in the middle of a round (false). */
+  const pausedBetweenRounds = ref(false)
 
   const elapsedAtCheckpoint = ref(0)
   const checkpointAt = ref<number | null>(null)
@@ -47,6 +51,11 @@ export const useRaceStore = defineStore('race', () => {
   const completedResults = computed(() => results.value)
   const isLastRound = computed(() => currentRoundIndex.value >= scheduleStore.roundCount - 1)
   const isClockRunning = computed(() => checkpointAt.value !== null)
+  /** The break after a round: its result is on screen and the next round has not started. */
+  const isBetweenRounds = computed(
+    () =>
+      status.value === 'intermission' || (status.value === 'paused' && pausedBetweenRounds.value),
+  )
 
   const canGenerate = computed(() => can(status.value, 'GENERATE'))
   const canToggle = computed(() =>
@@ -162,7 +171,9 @@ export const useRaceStore = defineStore('race', () => {
   }
 
   function pause(): boolean {
+    const fromBreak = status.value === 'intermission'
     if (!send('PAUSE')) return false
+    pausedBetweenRounds.value = fromBreak
     stopClock()
     analytics.track('race_paused', {
       roundIndex: currentRoundIndex.value,
@@ -223,7 +234,7 @@ export const useRaceStore = defineStore('race', () => {
     scheduleNextRound()
   }
 
-  /** Manual by default: predictions stay open until the viewer chooses to continue. */
+  /** Starts the next round now (Next round / Start now), cancelling the auto-advance countdown. */
   function nextRound(): boolean {
     if (!send('NEXT_ROUND')) return false
     clearTimer()
@@ -272,6 +283,7 @@ export const useRaceStore = defineStore('race', () => {
     completedResults,
     isLastRound,
     isClockRunning,
+    isBetweenRounds,
     canGenerate,
     canToggle,
     canReplay,

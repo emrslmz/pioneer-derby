@@ -20,14 +20,22 @@ export function formatOrdinal(value: number, locale: AppLocale): string {
   return `${value}${EN_SUFFIXES[rule]}`
 }
 
+// Building an Intl formatter is costly and the track formats distances every frame: one per locale.
+const distanceFormats = new Map<AppLocale, Intl.NumberFormat>()
+
 /** "1200 m" — no thousands separator, matching how race distances are written. */
 export function formatDistance(metres: number, locale: AppLocale): string {
-  return new Intl.NumberFormat(locale, {
-    style: 'unit',
-    unit: 'meter',
-    unitDisplay: 'short',
-    useGrouping: false,
-  }).format(metres)
+  let format = distanceFormats.get(locale)
+  if (!format) {
+    format = new Intl.NumberFormat(locale, {
+      style: 'unit',
+      unit: 'meter',
+      unitDisplay: 'short',
+      useGrouping: false,
+    })
+    distanceFormats.set(locale, format)
+  }
+  return format.format(metres)
 }
 
 /** Race time in seconds with two decimals, compact for narrow tables: "6.42s" / "6,42sn". */

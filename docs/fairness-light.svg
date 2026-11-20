@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" width="720" height="360" role="img" aria-labelledby="title desc" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
   <title id="title">Win rate by condition</title>
-  <desc id="desc">60,000 seeded rounds. Win rate rises with condition from 0.0 % to 35.2 %; Spearman rho -0.641.</desc>
+  <desc id="desc">60,000 seeded rounds. Win rate rises with condition from 0.0 % to 35.7 %; Spearman rho -0.647.</desc>
   <rect width="720" height="360" fill="#ffffff"/>
   <text x="56" y="28" font-size="16" font-weight="700" fill="#1f2328">Win rate by condition</text>
-  <text x="56" y="48" font-size="12" fill="#59636e">10,000 programs · 60,000 rounds · Spearman ρ (condition, position) = -0.641</text>
+  <text x="56" y="48" font-size="12" fill="#59636e">10,000 programs · 60,000 rounds · Spearman ρ (condition, position) = -0.647</text>
   <line x1="56" x2="696" y1="304" y2="304" stroke="#d1d9e0" stroke-width="1"/>
   <text x="48" y="308" text-anchor="end" font-size="12" fill="#59636e">0%</text>
   <line x1="56" x2="696" y1="244" y2="244" stroke="#d1d9e0" stroke-width="1"/>
@@ -17,32 +17,32 @@
   <path d="M66 304 V304 Q66 304 66 304 H110 Q110 304 110 304 V304 Z" fill="#f4482b"><title>Condition 1–10: 0.0 % wins, 1.0 % podiums, avg. position 8.35</title></path>
   <text x="88" y="298" text-anchor="middle" font-size="12" font-weight="600" fill="#1f2328">0.0 %</text>
   <text x="88" y="322" text-anchor="middle" font-size="12" fill="#59636e">1–10</text>
-  <path d="M130 304 V304 Q130 303.4 130.60000000000002 303.4 H173.39999999999998 Q174 303.4 174 304 V304 Z" fill="#f4482b"><title>Condition 11–20: 0.1 % wins, 3.1 % podiums, avg. position 7.79</title></path>
+  <path d="M130 304 V304 Q130 303.4 130.60000000000002 303.4 H173.39999999999998 Q174 303.4 174 304 V304 Z" fill="#f4482b"><title>Condition 11–20: 0.1 % wins, 3.2 % podiums, avg. position 7.79</title></path>
   
   <text x="152" y="322" text-anchor="middle" font-size="12" fill="#59636e">11–20</text>
-  <path d="M194 304 V304 Q194 301.6 196.39999999999998 301.6 H235.60000000000002 Q238 301.6 238 304 V304 Z" fill="#f4482b"><title>Condition 21–30: 0.4 % wins, 7.4 % podiums, avg. position 7.13</title></path>
+  <path d="M194 304 V304 Q194 301.6 196.39999999999998 301.6 H235.60000000000002 Q238 301.6 238 304 V304 Z" fill="#f4482b"><title>Condition 21–30: 0.4 % wins, 7.3 % podiums, avg. position 7.15</title></path>
   
   <text x="216" y="322" text-anchor="middle" font-size="12" fill="#59636e">21–30</text>
-  <path d="M258 304 V300.2 Q258 296.2 262 296.2 H298 Q302 296.2 302 300.2 V304 Z" fill="#f4482b"><title>Condition 31–40: 1.3 % wins, 13.5 % podiums, avg. position 6.49</title></path>
+  <path d="M258 304 V300.8 Q258 296.8 262 296.8 H298 Q302 296.8 302 300.8 V304 Z" fill="#f4482b"><title>Condition 31–40: 1.2 % wins, 13.2 % podiums, avg. position 6.51</title></path>
   
   <text x="280" y="322" text-anchor="middle" font-size="12" fill="#59636e">31–40</text>
-  <path d="M322 304 V290.6 Q322 286.6 326 286.6 H362 Q366 286.6 366 290.6 V304 Z" fill="#f4482b"><title>Condition 41–50: 2.9 % wins, 22.0 % podiums, avg. position 5.80</title></path>
+  <path d="M322 304 V291.2 Q322 287.2 326 287.2 H362 Q366 287.2 366 291.2 V304 Z" fill="#f4482b"><title>Condition 41–50: 2.8 % wins, 21.5 % podiums, avg. position 5.83</title></path>
   
   <text x="344" y="322" text-anchor="middle" font-size="12" fill="#59636e">41–50</text>
-  <path d="M386 304 V273.2 Q386 269.2 390 269.2 H426 Q430 269.2 430 273.2 V304 Z" fill="#f4482b"><title>Condition 51–60: 5.8 % wins, 31.1 % podiums, avg. position 5.13</title></path>
+  <path d="M386 304 V273.8 Q386 269.8 390 269.8 H426 Q430 269.8 430 273.8 V304 Z" fill="#f4482b"><title>Condition 51–60: 5.7 % wins, 30.6 % podiums, avg. position 5.14</title></path>
   
   <text x="408" y="322" text-anchor="middle" font-size="12" fill="#59636e">51–60</text>
-  <path d="M450 304 V242.60000000000002 Q450 238.60000000000002 454 238.60000000000002 H490 Q494 238.60000000000002 494 242.60000000000002 V304 Z" fill="#f4482b"><title>Condition 61–70: 10.9 % wins, 41.1 % podiums, avg. position 4.46</title></path>
+  <path d="M450 304 V243.2 Q450 239.2 454 239.2 H490 Q494 239.2 494 243.2 V304 Z" fill="#f4482b"><title>Condition 61–70: 10.8 % wins, 40.9 % podiums, avg. position 4.46</title></path>
   
   <text x="472" y="322" text-anchor="middle" font-size="12" fill="#59636e">61–70</text>
-  <path d="M514 304 V202.4 Q514 198.4 518 198.4 H554 Q558 198.4 558 202.4 V304 Z" fill="#f4482b"><title>Condition 71–80: 17.6 % wins, 50.9 % podiums, avg. position 3.84</title></path>
+  <path d="M514 304 V203 Q514 199 518 199 H554 Q558 199 558 203 V304 Z" fill="#f4482b"><title>Condition 71–80: 17.5 % wins, 50.9 % podiums, avg. position 3.83</title></path>
   
   <text x="536" y="322" text-anchor="middle" font-size="12" fill="#59636e">71–80</text>
-  <path d="M578 304 V153.2 Q578 149.2 582 149.2 H618 Q622 149.2 622 153.2 V304 Z" fill="#f4482b"><title>Condition 81–90: 25.8 % wins, 60.4 % podiums, avg. position 3.26</title></path>
+  <path d="M578 304 V152.60000000000002 Q578 148.60000000000002 582 148.60000000000002 H618 Q622 148.60000000000002 622 152.60000000000002 V304 Z" fill="#f4482b"><title>Condition 81–90: 25.9 % wins, 60.9 % podiums, avg. position 3.23</title></path>
   
   <text x="600" y="322" text-anchor="middle" font-size="12" fill="#59636e">81–90</text>
-  <path d="M642 304 V96.80000000000001 Q642 92.80000000000001 646 92.80000000000001 H682 Q686 92.80000000000001 686 96.80000000000001 V304 Z" fill="#f4482b"><title>Condition 91–100: 35.2 % wins, 69.7 % podiums, avg. position 2.75</title></path>
-  <text x="664" y="86.80000000000001" text-anchor="middle" font-size="12" font-weight="600" fill="#1f2328">35.2 %</text>
+  <path d="M642 304 V93.80000000000001 Q642 89.80000000000001 646 89.80000000000001 H682 Q686 89.80000000000001 686 93.80000000000001 V304 Z" fill="#f4482b"><title>Condition 91–100: 35.7 % wins, 70.8 % podiums, avg. position 2.70</title></path>
+  <text x="664" y="83.80000000000001" text-anchor="middle" font-size="12" font-weight="600" fill="#1f2328">35.7 %</text>
   <text x="664" y="322" text-anchor="middle" font-size="12" fill="#59636e">91–100</text>
   <text x="376" y="348" text-anchor="middle" font-size="12" fill="#59636e">Condition</text>
 </svg>

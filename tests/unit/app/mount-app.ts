@@ -9,6 +9,8 @@ export function mountApp({ locale = 'en' as AppLocale, seed = 42 } = {}) {
   const pinia = createPinia()
   setActivePinia(pinia)
   useRaceStore(pinia).initialize(seed)
+  // Real time (1×), so race time equals fake-timer time; the 2× default is tested in the store.
+  useRaceStore(pinia).$patch({ speed: 1 })
   const wrapper = mount(App, {
     attachTo: document.body,
     global: { plugins: [pinia, createAppI18n(locale)] },

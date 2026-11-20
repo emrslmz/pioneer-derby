@@ -1,10 +1,4 @@
-import {
-  CONDITION_MAX,
-  CONDITION_MIN,
-  RACE_TIMING,
-  ROUND_DISTANCES,
-  SPEED_MODEL,
-} from './constants'
+import { CONDITION_MAX, CONDITION_MIN, RACE_TIMING, SPEED_MODEL } from './constants'
 import { randomFloat, randomInt, type Rng } from './random'
 import type { Horse, HorseId, Placing, Round, RoundRace, SpeedProfile, Surge } from './types'
 
@@ -26,12 +20,9 @@ function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value))
 }
 
-/** Race time for an average-speed horse: 6 s for the shortest round up to 9 s for the longest. */
+/** Race time for a horse with speed factor 1: the distance at a real racing pace (~73 s for 1200 m). */
 export function roundDurationMs(distance: number): number {
-  const shortest = Math.min(...ROUND_DISTANCES)
-  const longest = Math.max(...ROUND_DISTANCES)
-  const t = clamp((distance - shortest) / (longest - shortest), 0, 1)
-  return lerp(RACE_TIMING.shortestRoundMs, RACE_TIMING.longestRoundMs, t)
+  return (distance / RACE_TIMING.metresPerSecond) * 1000
 }
 
 /** Expected speed from condition alone: CONDITION_MIN → minFactor, CONDITION_MAX → maxFactor. */

@@ -11,6 +11,8 @@ export function setupRace(seed = 42) {
   window.history.replaceState(null, '', '/')
   const race = useRaceStore()
   race.initialize(seed)
+  // Real time (1×), so race time equals fake-timer time; the 2× default has its own test.
+  race.$patch({ speed: 1 })
   return race
 }
 

@@ -35,11 +35,11 @@ describe('race engine', () => {
   if (!firstRound) throw new Error('schedule is empty')
   const race = createRoundRace(firstRound, horses, createRng(13))
 
-  it('[R6] rounds last 12 s for 1200 m up to 18 s for 2200 m', () => {
-    expect(roundDurationMs(1200)).toBe(RACE_TIMING.shortestRoundMs)
-    expect(roundDurationMs(2200)).toBe(RACE_TIMING.longestRoundMs)
-    expect(roundDurationMs(1700)).toBe(15000)
-    expect(roundDurationMs(100)).toBe(RACE_TIMING.shortestRoundMs)
+  it('[R6] rounds run at a real racing pace: duration grows with the distance', () => {
+    expect(RACE_TIMING.metresPerSecond).toBe(16.5)
+    expect(roundDurationMs(1650)).toBe(100_000)
+    expect(roundDurationMs(1200) / 1000).toBeCloseTo(72.7, 1)
+    expect(roundDurationMs(2200)).toBeCloseTo((2200 / 1200) * roundDurationMs(1200))
   })
 
   it('[X1] better condition means a higher base speed', () => {

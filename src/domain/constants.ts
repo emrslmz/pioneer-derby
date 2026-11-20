@@ -71,14 +71,13 @@ export const HORSE_NAMES = [
 ] as const
 
 /**
- * Race engine tuning (docs/ARCHITECTURE.md §5, ADR 0001).
- * Rounds take 12–18 s of race time whatever their length, so long rounds stay watchable.
+ * Race engine tuning (docs/ARCHITECTURE.md §5, ADR 0012).
+ * Races run at a real thoroughbred pace: a speed factor of 1 is 16.5 m/s (~59 km/h), so 1200 m
+ * takes ~73 s of race time. The playback speed (default 2×) makes it shorter to watch.
  */
 export const RACE_TIMING = {
-  /** Race time of an average-speed horse in the shortest round. */
-  shortestRoundMs: 12000,
-  /** Race time of an average-speed horse in the longest round. */
-  longestRoundMs: 18000,
+  /** Metres per second of a horse with speed factor 1. */
+  metresPerSecond: 16.5,
 } as const
 
 /**
@@ -87,12 +86,14 @@ export const RACE_TIMING = {
  * so favourites usually — but not always — win (decision A5).
  */
 export const SPEED_MODEL = {
-  minFactor: 0.85,
+  // A realistic field: the slowest horse is ~6 % slower than the best, so margins stay in lengths.
+  minFactor: 0.94,
   maxFactor: 1,
-  variance: 0.08,
+  variance: 0.03,
   /** Mid-race surges reshuffle the field without changing finish times. Sum must stay < 1. */
   surgeCount: 2,
-  maxSurgeAmplitude: 0.2,
+  // Small: at true scale a surge is a few lengths, not a hundred metres.
+  maxSurgeAmplitude: 0.04,
   maxSurgeFrequency: 3,
 } as const
 
@@ -100,13 +101,16 @@ export const SPEED_MODEL = {
 export const PODIUM_SIZE = 3
 
 /**
- * Pause between two rounds before the next one starts on its own (A4), in real time.
- * Not scaled by the race speed: the podium needs a moment to be read even at 4× (A28).
+ * Break between two rounds when Auto advance is on (the default, A4), in real time: long enough to
+ * read the result and pick the next winner. Not scaled by the race speed (A28).
  */
-export const INTERMISSION_MS = 2500
+export const INTERMISSION_MS = 6000
 
-/** Playback speeds the race clock supports (0.5× is slow motion). */
-export const RACE_SPEEDS = [0.5, 1, 2, 4] as const
+/** Playback speeds the race clock supports: 1× is real time, 0.5× slow motion. */
+export const RACE_SPEEDS = [0.5, 1, 2, 4, 8] as const
+
+/** Real time is long (a 1200 m round is over a minute), so a race is watched at 2× by default. */
+export const DEFAULT_RACE_SPEED = 2
 
 /**
  * Independent random streams derived from one game seed (A11).
@@ -134,12 +138,12 @@ export const COMMENTARY = {
   /** Ignore lead changes in the first part of the race (everyone is bunched at the gate). */
   ignoreLeadChangesBelow: 0.12,
   /** Minimum race time between two lead-change calls, so the ticker stays readable. */
-  minLeadChangeGapMs: 700,
+  minLeadChangeGapMs: 4000,
   halfway: 0.5,
   finalStretch: 0.8,
   /** A photo finish is called this long before the winner reaches the line. */
-  photoFinishLeadMs: 400,
+  photoFinishLeadMs: 2500,
 } as const
 
-/** X13 — a finish this close between 1st and 2nd (race time) is a photo finish (~15 % of rounds). */
+/** X13 — a finish this close between 1st and 2nd (race time, ~1.5 m) is a photo finish (~6 % of rounds). */
 export const PHOTO_FINISH_MS = 90
