@@ -7,6 +7,7 @@ import type { RoundResult } from '@/domain/types'
 import { useAnimationFrame } from '@/shared/composables/useAnimationFrame'
 import { useReducedMotion } from '@/shared/composables/useMediaQuery'
 import { scrollWithinContainer } from '@/shared/utils/scroll'
+import BaseButton from '@/shared/ui/BaseButton.vue'
 import BaseEmptyState from '@/shared/ui/BaseEmptyState.vue'
 import BasePanel from '@/shared/ui/BasePanel.vue'
 import { useHorsesStore } from '@/stores/horses.store'
@@ -20,6 +21,7 @@ import RoundResultTable from './RoundResultTable.vue'
  */
 const { t } = useI18n()
 const { lapLabel } = useLocale()
+const emit = defineEmits<{ summary: [] }>()
 const race = useRaceStore()
 const { completedResults, currentRace, status, isClockRunning } = storeToRefs(race)
 const horsesStore = useHorsesStore()
@@ -100,6 +102,11 @@ watch(
     data-tour="results"
     data-testid="results-panel"
   >
+    <template v-if="status === 'finished'" #actions>
+      <BaseButton size="sm" icon="results" data-testid="summary-open" @click="emit('summary')">
+        {{ t('summary.open') }}
+      </BaseButton>
+    </template>
     <p class="visually-hidden" aria-live="polite" data-testid="results-announcer">
       {{ announcement }}
     </p>

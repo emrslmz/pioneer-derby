@@ -302,5 +302,24 @@
         "body": "Each result appears here only after the last horse crosses the line. Share the link to replay the same race."
       }
     }
+  },
+  "summary": {
+    "title": "Program summary",
+    "champion": "Champion",
+    "record": "{wins} wins · {podiums} podiums",
+    "score": "Your predictions",
+    "points": "{points} pts",
+    "called": "{winners} of {made} winners called",
+    "noPicks": "You made no predictions this time.",
+    "chart": "Wins and podiums",
+    "chartHorse": "Horse",
+    "chartWins": "Wins",
+    "chartPodiums": "Podiums",
+    "rounds": "Winner of each round",
+    "lap": "Round",
+    "winner": "Winner",
+    "time": "Time",
+    "open": "Summary",
+    "intro": "All six rounds are done."
   }
 }

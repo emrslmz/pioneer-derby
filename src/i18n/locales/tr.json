@@ -302,5 +302,24 @@
         "body": "Her sonuç, son at çizgiyi geçtikten sonra burada belirir. Bağlantıyı paylaşarak aynı yarışı tekrar izle."
       }
     }
+  },
+  "summary": {
+    "title": "Program özeti",
+    "champion": "Şampiyon",
+    "record": "{wins} galibiyet · {podiums} podyum",
+    "score": "Tahminlerin",
+    "points": "{points} puan",
+    "called": "{made} tahminde {winners} kazanan bildin",
+    "noPicks": "Bu sefer tahmin yapmadın.",
+    "chart": "Galibiyet ve podyumlar",
+    "chartHorse": "At",
+    "chartWins": "Galibiyet",
+    "chartPodiums": "Podyum",
+    "rounds": "Her turun kazananı",
+    "lap": "Tur",
+    "winner": "Kazanan",
+    "time": "Süre",
+    "open": "Özet",
+    "intro": "Altı tur da bitti."
   }
 }
