@@ -76,6 +76,7 @@ describe('responsive layout & header', () => {
     const { wrapper, race } = mountApp({ seed: 7 })
     race.generateProgram()
     race.start()
+    race.setAutoAdvance(true)
     vi.runAllTimers()
     await nextTick()
 
@@ -87,6 +88,7 @@ describe('responsive layout & header', () => {
     expect(race.seed).toBe(7)
 
     race.start()
+    race.setAutoAdvance(true)
     vi.runAllTimers()
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'r' }))
     expect(race.status).toBe('ready')
@@ -146,8 +148,11 @@ describe('responsive layout & header', () => {
 
     vi.advanceTimersByTime(race.currentRace!.durationMs + 1)
     await nextTick()
-    expect(announcer().text()).toBe('Round finished. 2nd Lap – 1400 m starts shortly.')
+    expect(announcer().text()).toBe(
+      'Round finished. Next: 2nd Lap – 1400 m. Press Next round when ready.',
+    )
 
+    race.setAutoAdvance(true)
     vi.runAllTimers()
     await nextTick()
     expect(announcer().text()).toBe('All rounds finished.')

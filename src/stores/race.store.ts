@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { computed, ref, shallowRef } from 'vue'
+import { computed, onScopeDispose, ref, shallowRef } from 'vue'
 import { INTERMISSION_MS } from '@/domain/constants'
 import { roundRaceForSeed } from '@/domain/game'
 import { can, transition, type RaceEvent } from '@/domain/race-machine'
@@ -25,10 +25,12 @@ export const useRaceStore = defineStore('race', () => {
   const currentRoundIndex = ref(0)
   const results = shallowRef<readonly RoundResult[]>([])
   const speed = ref<RaceSpeed>(1)
+  const autoAdvance = ref(false)
 
   const elapsedAtCheckpoint = ref(0)
   const checkpointAt = ref<number | null>(null)
   let timer: ReturnType<typeof setTimeout> | null = null
+  onScopeDispose(clearTimer)
 
   // ── Getters ──────────────────────────────────────────────────────────────
 
@@ -48,7 +50,7 @@ export const useRaceStore = defineStore('race', () => {
 
   const canGenerate = computed(() => can(status.value, 'GENERATE'))
   const canToggle = computed(() =>
-    (['START', 'PAUSE', 'RESUME'] as const).some((event) => can(status.value, event)),
+    (['START', 'PAUSE', 'RESUME', 'NEXT_ROUND'] as const).some((event) => can(status.value, event)),
   )
   const canReplay = computed(
     () => seed.value !== null && scheduleStore.hasProgram && canGenerate.value,
@@ -181,6 +183,7 @@ export const useRaceStore = defineStore('race', () => {
 
   /** The single Start / Pause button. */
   function toggle(): boolean {
+    if (status.value === 'intermission') return nextRound()
     if (can(status.value, 'START')) return start()
     if (can(status.value, 'PAUSE')) return pause()
     if (can(status.value, 'RESUME')) return resume()
@@ -217,13 +220,30 @@ export const useRaceStore = defineStore('race', () => {
     send('ROUND_FINISHED')
     currentRoundIndex.value += 1
     elapsedAtCheckpoint.value = 0
-    timer = setTimeout(beginNextRound, INTERMISSION_MS)
+    scheduleNextRound()
   }
 
-  /** Intermission timer. Pausing clears it, so the transition is always valid here. */
-  function beginNextRound(): void {
-    send('NEXT_ROUND')
+  /** Manual by default: predictions stay open until the viewer chooses to continue. */
+  function nextRound(): boolean {
+    if (!send('NEXT_ROUND')) return false
+    clearTimer()
     runClock()
+    return true
+  }
+
+  function scheduleNextRound(): void {
+    if (autoAdvance.value && status.value === 'intermission') {
+      timer = setTimeout(nextRound, INTERMISSION_MS)
+    }
+  }
+
+  function setAutoAdvance(enabled: boolean): void {
+    if (autoAdvance.value === enabled) return
+    autoAdvance.value = enabled
+    if (status.value === 'intermission') {
+      clearTimer()
+      scheduleNextRound()
+    }
   }
 
   /** 1× / 2× / 4×. Rebases the clock so the race continues smoothly from the same spot. */
@@ -246,6 +266,7 @@ export const useRaceStore = defineStore('race', () => {
     seed,
     currentRoundIndex,
     speed,
+    autoAdvance,
     currentRound,
     currentRace,
     completedResults,
@@ -262,6 +283,8 @@ export const useRaceStore = defineStore('race', () => {
     pause,
     resume,
     toggle,
+    nextRound,
+    setAutoAdvance,
     setSpeed,
   }
 })

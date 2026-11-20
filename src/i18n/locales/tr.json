@@ -12,7 +12,10 @@
     "resume": "Devam Et",
     "shortcuts": "Klavye kısayolları",
     "close": "Kapat",
-    "replay": "Tekrar İzle"
+    "replay": "Tekrar İzle",
+    "nextRound": "Sonraki tur",
+    "autoAdvance": "Otomatik ilerlet",
+    "autoAdvanceHint": "Tur bitince kısa bir aradan sonra sıradaki turu başlat."
   },
   "status": {
     "label": "Yarış durumu",
@@ -78,8 +81,9 @@
     "generated": "Yeni program hazır: {rounds} tur. Başlamak için Başlat'a basın.",
     "paused": "Yarış duraklatıldı.",
     "resumed": "Yarış devam ediyor.",
-    "intermission": "Tur bitti. {lap} birazdan başlıyor.",
-    "finished": "Tüm turlar bitti."
+    "intermission": "Tur bitti. Sıradaki: {lap}. Hazır olduğunda Sonraki tur düğmesine bas.",
+    "finished": "Tüm turlar bitti.",
+    "autoIntermission": "Tur bitti. {lap} birazdan başlıyor."
   },
   "colors": {
     "red": "Kırmızı",
@@ -147,7 +151,17 @@
     "readyEyebrow": "Hazır",
     "readyHint": "Başlatmak için Başlat'a ya da Space'e basın.",
     "pausedEyebrow": "Duraklatıldı",
-    "pausedHint": "Devam etmek için Devam Et'e ya da Space'e basın."
+    "pausedHint": "Devam etmek için Devam Et'e ya da Space'e basın.",
+    "camera": {
+      "label": "Kamera",
+      "follow": "Takip",
+      "overview": "Tüm pist"
+    },
+    "expand": "Tam ekran izle",
+    "collapse": "Tam ekrandan çık",
+    "theater": "Yarış pisti, tam ekran",
+    "mapStart": "Start",
+    "mapFinish": "Bitiş"
   },
   "prediction": {
     "title": "Kazananı Tahmin Et",
@@ -232,7 +246,8 @@
       "winner": "Tahminin kazandı: +{points} puan",
       "podium": "Tahminin {ordinal} oldu: +{points} puan",
       "miss": "Tahminin {ordinal} oldu: puan yok"
-    }
+    },
+    "waiting": "Tahminini yap, hazır olduğunda devam et."
   },
   "onboarding": {
     "title": "Nasıl oynanır?",

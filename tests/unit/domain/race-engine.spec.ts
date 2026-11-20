@@ -35,10 +35,10 @@ describe('race engine', () => {
   if (!firstRound) throw new Error('schedule is empty')
   const race = createRoundRace(firstRound, horses, createRng(13))
 
-  it('[R6] rounds last 6 s for 1200 m up to 9 s for 2200 m', () => {
+  it('[R6] rounds last 12 s for 1200 m up to 18 s for 2200 m', () => {
     expect(roundDurationMs(1200)).toBe(RACE_TIMING.shortestRoundMs)
     expect(roundDurationMs(2200)).toBe(RACE_TIMING.longestRoundMs)
-    expect(roundDurationMs(1700)).toBe(7500)
+    expect(roundDurationMs(1700)).toBe(15000)
     expect(roundDurationMs(100)).toBe(RACE_TIMING.shortestRoundMs)
   })
 

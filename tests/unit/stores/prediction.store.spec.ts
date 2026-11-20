@@ -85,7 +85,7 @@ describe('prediction store', () => {
       vi.advanceTimersByTime(msToRoundEnd(race))
       await nextTick()
       if (prediction.isOpen) prediction.pick(prediction.recommendation!.horseId)
-      vi.runOnlyPendingTimers()
+      if (race.status === 'intermission') race.nextRound()
       await nextTick()
     }
     expect(race.status).toBe('finished')

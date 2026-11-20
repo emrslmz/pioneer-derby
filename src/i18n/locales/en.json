@@ -12,7 +12,10 @@
     "resume": "Resume",
     "shortcuts": "Keyboard shortcuts",
     "close": "Close",
-    "replay": "Replay"
+    "replay": "Replay",
+    "nextRound": "Next round",
+    "autoAdvance": "Auto advance",
+    "autoAdvanceHint": "Start the next round automatically after a short break."
   },
   "status": {
     "label": "Race status",
@@ -78,8 +81,9 @@
     "generated": "New program ready: {rounds} rounds. Press Start to begin.",
     "paused": "Race paused.",
     "resumed": "Race resumed.",
-    "intermission": "Round finished. {lap} starts shortly.",
-    "finished": "All rounds finished."
+    "intermission": "Round finished. Next: {lap}. Press Next round when ready.",
+    "finished": "All rounds finished.",
+    "autoIntermission": "Round finished. {lap} starts shortly."
   },
   "colors": {
     "red": "Red",
@@ -147,7 +151,17 @@
     "readyEyebrow": "Ready",
     "readyHint": "Press Start or Space to run it.",
     "pausedEyebrow": "Paused",
-    "pausedHint": "Press Resume or Space to continue."
+    "pausedHint": "Press Resume or Space to continue.",
+    "camera": {
+      "label": "Camera",
+      "follow": "Follow",
+      "overview": "Whole track"
+    },
+    "expand": "Watch full screen",
+    "collapse": "Close full screen",
+    "theater": "Race track, full screen",
+    "mapStart": "Start",
+    "mapFinish": "Finish"
   },
   "prediction": {
     "title": "Predict the Winner",
@@ -232,7 +246,8 @@
       "winner": "Your pick won: +{points} pts",
       "podium": "Your pick finished {ordinal}: +{points} pt",
       "miss": "Your pick finished {ordinal}: no points"
-    }
+    },
+    "waiting": "Make your pick, then continue when ready."
   },
   "onboarding": {
     "title": "How to play",
