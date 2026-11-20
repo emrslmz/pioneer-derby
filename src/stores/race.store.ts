@@ -3,7 +3,7 @@ import { computed, onScopeDispose, ref, shallowRef } from 'vue'
 import { DEFAULT_RACE_SPEED, INTERMISSION_MS } from '@/domain/constants'
 import { roundRaceForSeed } from '@/domain/game'
 import { can, transition, type RaceEvent } from '@/domain/race-machine'
-import type { Placing, RaceSpeed, RaceStatus, RoundResult } from '@/domain/types'
+import type { RaceSpeed, RaceStatus, RoundResult } from '@/domain/types'
 import { analytics } from '@/shared/analytics'
 import { createRandomSeed, writeSeedToUrl } from '@/shared/utils/seed'
 import { useHorsesStore } from './horses.store'
@@ -148,8 +148,14 @@ export const useRaceStore = defineStore('race', () => {
     return buildProgram('replay')
   }
 
+  /** The game seed; every action that needs it runs after `initialize()` has set it. */
+  function requireSeed(): number {
+    if (seed.value === null) throw new Error('The game has no seed: call initialize() first')
+    return seed.value
+  }
+
   function buildProgram(source: 'initial' | 'regenerate' | 'replay'): boolean {
-    const gameSeed = seed.value as number
+    const gameSeed = requireSeed()
     resetProgress()
     scheduleStore.generate(horsesStore.horses, gameSeed)
     send('GENERATE')
@@ -166,7 +172,7 @@ export const useRaceStore = defineStore('race', () => {
     if (!send('START')) return false
     resetProgress()
     runClock()
-    analytics.track('race_started', { seed: seed.value as number })
+    analytics.track('race_started', { seed: requireSeed() })
     return true
   }
 
@@ -211,18 +217,20 @@ export const useRaceStore = defineStore('race', () => {
     checkpointAt.value = null
     results.value = [...results.value, race.result]
 
-    const [winner] = race.result.placings
-    analytics.track('round_finished', {
-      roundIndex: race.round.index,
-      distance: race.round.distance,
-      winnerId: (winner as Placing).horseId,
-      durationMs: race.durationMs,
-    })
+    const winner = race.result.placings[0]
+    if (winner) {
+      analytics.track('round_finished', {
+        roundIndex: race.round.index,
+        distance: race.round.distance,
+        winnerId: winner.horseId,
+        durationMs: race.durationMs,
+      })
+    }
 
     if (isLastRound.value) {
       send('PROGRAM_FINISHED')
       analytics.track('race_finished', {
-        seed: seed.value as number,
+        seed: requireSeed(),
         rounds: results.value.length,
       })
       return

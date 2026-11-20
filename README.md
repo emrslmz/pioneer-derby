@@ -161,18 +161,18 @@ npm ci
 npm run dev        # http://localhost:5173
 ```
 
-| Script                            | What it does                                                            |
-| --------------------------------- | ----------------------------------------------------------------------- |
-| `npm run verify`                  | Lint + format check + type-check + unit tests (run before every commit) |
-| `npm run build`                   | Type-check and production build                                         |
-| `npm run test:unit`               | Vitest in watch mode                                                    |
-| `npm run test:coverage`           | Unit tests with coverage thresholds                                     |
-| `npm run test:e2e`                | Playwright end-to-end tests (`npx playwright install chromium` once)    |
-| `npm run test:visual`             | Playwright screenshot tests                                             |
-| `npm run check:bundle`            | Compressed bundle size against the budget (after `npm run build-only`)  |
-| `npm run test:lighthouse`         | Lighthouse CI on the production build (needs Chrome)                    |
-| `npm run media`                   | README screenshots and GIF from the seeded game (needs ffmpeg)          |
-| `npm run lint` / `npm run format` | Auto-fix lint and formatting                                            |
+| Script                            | What it does                                                                |
+| --------------------------------- | --------------------------------------------------------------------------- |
+| `npm run verify`                  | Lint + format check + type-check + unit tests (run before every commit)     |
+| `npm run build`                   | Type-check and production build                                             |
+| `npm run test:unit`               | Vitest in watch mode                                                        |
+| `npm run test:coverage`           | Unit tests with coverage thresholds                                         |
+| `npm run test:e2e`                | Playwright end-to-end tests (`npx playwright install chromium` once)        |
+| `npm run test:visual`             | Playwright screenshot tests (Linux baselines from CI; see Visual baselines) |
+| `npm run check:bundle`            | Compressed bundle size against the budget (after `npm run build-only`)      |
+| `npm run test:lighthouse`         | Lighthouse CI on the production build (needs Chrome)                        |
+| `npm run media`                   | README screenshots and GIF from the seeded game (needs ffmpeg)              |
+| `npm run lint` / `npm run format` | Auto-fix lint and formatting                                                |
 
 ## Contributing
 

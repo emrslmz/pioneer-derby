@@ -1,0 +1,849 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Pioneer Derby — Teknik Doküman</title>
+    <style>
+      @font-face {
+        font-family: 'Inter';
+        src: url('../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2')
+          format('woff2');
+        font-weight: 100 900;
+      }
+      @font-face {
+        font-family: 'Inter';
+        src: url('../../node_modules/@fontsource-variable/inter/files/inter-latin-ext-wght-normal.woff2')
+          format('woff2');
+        font-weight: 100 900;
+        unicode-range:
+          U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+          U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+          U+2C60-2C7F, U+A720-A7FF;
+      }
+      @font-face {
+        font-family: 'Barlow Condensed';
+        src: url('../../node_modules/@fontsource/barlow-condensed/files/barlow-condensed-latin-700-normal.woff2')
+          format('woff2');
+        font-weight: 700;
+      }
+      @font-face {
+        font-family: 'Barlow Condensed';
+        src: url('../../node_modules/@fontsource/barlow-condensed/files/barlow-condensed-latin-600-normal.woff2')
+          format('woff2');
+        font-weight: 600;
+      }
+      :root {
+        --ink: #101828;
+        --muted: #4a5468;
+        --line: #dfe3ec;
+        --accent: #d9361b;
+        --soft: #f5f6fa;
+      }
+      @page {
+        size: A4;
+        margin: 18mm 17mm 20mm;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        color: var(--ink);
+        font:
+          9.6pt/1.5 'Inter',
+          Arial,
+          sans-serif;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+        font-weight: 700;
+        line-height: 1.1;
+      }
+      h2 {
+        margin: 22pt 0 8pt;
+        padding-bottom: 4pt;
+        border-bottom: 2px solid var(--accent);
+        font-size: 17pt;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        break-after: avoid;
+      }
+      h3 {
+        margin: 12pt 0 4pt;
+        font-size: 12pt;
+        letter-spacing: 0.03em;
+        break-after: avoid;
+      }
+      p {
+        margin: 0 0 7pt;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      ul {
+        margin: 0 0 7pt;
+        padding-left: 15pt;
+      }
+      li {
+        margin-bottom: 2.5pt;
+      }
+      code {
+        padding: 0 3pt;
+        border-radius: 3pt;
+        background: var(--soft);
+        font:
+          8.6pt/1.3 'SF Mono',
+          Menlo,
+          Consolas,
+          monospace;
+      }
+      pre {
+        margin: 0 0 8pt;
+        padding: 8pt 10pt;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 6pt;
+        background: var(--soft);
+        font:
+          8pt/1.45 'SF Mono',
+          Menlo,
+          Consolas,
+          monospace;
+        white-space: pre-wrap;
+        break-inside: avoid;
+      }
+      table {
+        width: 100%;
+        margin: 0 0 9pt;
+        border-collapse: collapse;
+        font-size: 8.8pt;
+        break-inside: auto;
+      }
+      th,
+      td {
+        padding: 4pt 6pt;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: var(--soft);
+        font-weight: 700;
+      }
+      tr {
+        break-inside: avoid;
+      }
+      figure {
+        margin: 6pt 0 10pt;
+        break-inside: avoid;
+      }
+      figure img {
+        display: block;
+        max-width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 6pt;
+      }
+      figcaption {
+        margin-top: 3pt;
+        color: var(--muted);
+        font-size: 8.2pt;
+      }
+      .cover {
+        display: flex;
+        min-height: 255mm;
+        flex-direction: column;
+        justify-content: space-between;
+        break-after: page;
+      }
+      .cover h1 {
+        margin: 0;
+        font-size: 46pt;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .cover .tag {
+        margin: 6pt 0 0;
+        color: var(--accent);
+        font:
+          700 15pt 'Barlow Condensed',
+          sans-serif;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .cover .lead {
+        max-width: 135mm;
+        margin: 14pt 0 0;
+        color: var(--muted);
+        font-size: 11.5pt;
+      }
+      .cover img {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 8pt;
+        box-shadow: 0 8pt 24pt rgb(16 24 40 / 0.14);
+      }
+      .meta {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10pt;
+        margin-top: 14pt;
+        font-size: 9pt;
+      }
+      .meta b {
+        display: block;
+        color: var(--muted);
+        font-size: 7.6pt;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 7pt;
+        margin: 8pt 0 10pt;
+      }
+      .stat {
+        padding: 7pt 8pt;
+        border: 1px solid var(--line);
+        border-radius: 6pt;
+        background: var(--soft);
+      }
+      .stat b {
+        display: block;
+        font:
+          700 17pt 'Barlow Condensed',
+          sans-serif;
+      }
+      .stat span {
+        color: var(--muted);
+        font-size: 7.8pt;
+      }
+      .layers {
+        display: grid;
+        gap: 4pt;
+        margin: 6pt 0 10pt;
+        font-size: 8.6pt;
+        break-inside: avoid;
+      }
+      .layer {
+        display: grid;
+        grid-template-columns: 78pt 1fr;
+        gap: 8pt;
+        align-items: center;
+        padding: 6pt 9pt;
+        border: 1px solid var(--line);
+        border-radius: 6pt;
+      }
+      .layer b {
+        font:
+          700 11pt 'Barlow Condensed',
+          sans-serif;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .layer:nth-child(1) {
+        border-left: 5px solid #5b8def;
+      }
+      .layer:nth-child(2) {
+        border-left: 5px solid #f4b400;
+      }
+      .layer:nth-child(3) {
+        border-left: 5px solid #34a853;
+      }
+      .layer:nth-child(4) {
+        border-left: 5px solid var(--accent);
+      }
+      .layer:nth-child(5) {
+        border-left: 5px solid #8a94a8;
+      }
+      .two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12pt;
+      }
+      .note {
+        margin: 6pt 0 9pt;
+        padding: 7pt 10pt;
+        border-left: 4px solid var(--accent);
+        background: var(--soft);
+        font-size: 9pt;
+      }
+      .pagebreak {
+        break-after: page;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Cover -->
+    <section class="cover">
+      <div>
+        <p class="tag" lang="en">Insider One · Front-end Developer Case</p>
+        <h1 lang="en">Pioneer<br />Derby</h1>
+        <p class="lead">
+          Yirmi bilgisayar öncüsünün altı turda yarıştığı, tarayıcıda çalışan etkileşimli bir at
+          yarışı oyunu. Vue 3, TypeScript ve Pinia ile; tekrar üretilebilir bir yarış motoru, gerçek
+          ölçekli yayın kamerası, iki dil ve ölçülmüş kalite kapılarıyla.
+        </p>
+        <div class="meta">
+          <div>
+            <b>Hazırlayan</b>Emre Solmaz<br /><a href="https://emresolmaz.com.tr"
+              >emresolmaz.com.tr</a
+            >
+          </div>
+          <div>
+            <b>Canlı demo</b><a href="https://pioneerderby.netlify.app">pioneerderby.netlify.app</a>
+          </div>
+          <div>
+            <b>Kaynak kod</b
+            ><a href="https://github.com/emrslmz/pioneer-derby">github.com/emrslmz/pioneer-derby</a>
+          </div>
+        </div>
+      </div>
+      <img src="../media/desktop-light.png" alt="Pioneer Derby ana ekranı" />
+    </section>
+
+    <h2>1. Özet</h2>
+    <p>
+      Case, 20 atlık bir havuzdan her turda 10 at seçilen, 1200 m ile 2200 m arasında altı turluk
+      bir yarışı; <b>Generate</b> ve <b>Start/Pause</b> düğmeleriyle, sonuçları tur bittikçe sırayla
+      gösteren, atların görünür biçimde hareket ettiği bir oyun olarak tarif ediyor. Beklenen: Vue,
+      Pinia/Vuex, bileşen tabanlı tasarım ve büyük bir proje gibi temiz kod; bonus olarak unit, E2E
+      ve görsel test.
+    </p>
+    <p>
+      Bu çalışmada zorunlu maddelerin hepsini karşıladım ve fazlasını <b>ölçülebilir</b> kılmaya
+      çalıştım: her gereksinimin bir kimliği var, her kimlik en az bir testle bağlı ve bu bağ CI'da
+      denetleniyor. Oyun mantığı arayüzden bağımsız, saf TypeScript olarak yazıldı; aynı tohum
+      (seed) her zaman aynı yarışı üretiyor, bu yüzden yarışlar paylaşılabiliyor ve testler kararlı.
+    </p>
+    <div class="stats">
+      <div class="stat"><b>308</b><span>unit ve property testi</span></div>
+      <div class="stat"><b>58</b><span>uçtan uca (E2E) test</span></div>
+      <div class="stat"><b>33 / 33</b><span>gereksinim testle bağlı</span></div>
+      <div class="stat"><b>0</b><span>ciddi erişilebilirlik ihlali (axe)</span></div>
+      <div class="stat"><b>%100</b><span>domain kapsamı (eşik %95)</span></div>
+      <div class="stat"><b>95–96 · 100</b><span>Lighthouse performans · diğerleri</span></div>
+      <div class="stat"><b>92 KiB</b><span>JavaScript, gzip (bütçe 120)</span></div>
+      <div class="stat"><b>60 fps</b><span>yarış sırasında, uzun görev yok</span></div>
+    </div>
+
+    <h2>2. Case gereksinimlerinin karşılanması</h2>
+    <table>
+      <tr>
+        <th style="width: 15%">Kimlik</th>
+        <th style="width: 34%">Case maddesi</th>
+        <th>Nasıl karşılandı</th>
+      </tr>
+      <tr>
+        <td>R1, T2</td>
+        <td>Vue, bileşen tabanlı tasarım</td>
+        <td>
+          Vue 3, <code>&lt;script setup lang="ts"&gt;</code>, Composition API. Özellik başına
+          klasör; ortak parçalar <code>shared/</code> altında.
+        </td>
+      </tr>
+      <tr>
+        <td>R2, C1–C3</td>
+        <td>20 at, benzersiz renk, kondisyon 1–100</td>
+        <td>
+          <code>domain/horses.ts</code>: 20 at, 20 adlandırılmış ayrı renk, tohumdan üretilen 1–100
+          kondisyon. Atlar bilgisayar öncülerinin adını taşıyor.
+        </td>
+      </tr>
+      <tr>
+        <td>R3, C4–C6</td>
+        <td>Generate: 6 tur, her turda 20'den 10 rastgele at, 1200–2200 m</td>
+        <td>
+          <code>domain/schedule.ts</code>. Sabitler tek yerde:
+          <code>domain/constants.ts</code> (<code>ROUND_DISTANCES</code>,
+          <code>HORSES_PER_ROUND</code>). Her turda 10 ayrı at, property testle doğrulandı.
+        </td>
+      </tr>
+      <tr>
+        <td>R4</td>
+        <td>Start: turlar tek tek koşulur</td>
+        <td>
+          Durum makinesi (<code>domain/race-machine.ts</code>): idle, ready, running, paused,
+          intermission, finished. Tek düğme Start / Duraklat / Devam.
+        </td>
+      </tr>
+      <tr>
+        <td>R5</td>
+        <td>Sonuçlar, tur bittikçe sırayla</td>
+        <td>
+          Resmi sonuç, turun son atı çizgiyi geçtikten sonra yayınlanır. Ayrıca yarış sürerken
+          bitiren atlar canlı bir blokta sırayla görünür (bkz. bölüm 9).
+        </td>
+      </tr>
+      <tr>
+        <td>R6</td>
+        <td>Atlar görünür biçimde hareket eder</td>
+        <td>
+          <code>requestAnimationFrame</code> ile yalnızca <code>transform</code>; gerçek ölçekli
+          kamera, koşu animasyonu, bitiren at durur.
+        </td>
+      </tr>
+      <tr>
+        <td>R7</td>
+        <td>Büyük proje gibi temiz kod</td>
+        <td>
+          Katmanlı mimari ve <code>eslint-plugin-boundaries</code> ile zorlanan bağımlılık yönü,
+          strict TypeScript, <code>any</code> yok, 14 mimari karar kaydı (ADR).
+        </td>
+      </tr>
+      <tr>
+        <td>T1</td>
+        <td>Pinia / Vuex</td>
+        <td>
+          Pinia, setup store'lar: <code>horses</code>, <code>schedule</code>, <code>race</code>,
+          <code>prediction</code>, <code>settings</code>.
+        </td>
+      </tr>
+      <tr>
+        <td>B1, B2, B3</td>
+        <td>Unit, E2E, görsel test</td>
+        <td>
+          Vitest + fast-check, Playwright, Playwright ekran görüntüsü (Linux referansları CI'da
+          üretilir).
+        </td>
+      </tr>
+    </table>
+
+    <h2>3. Mimari</h2>
+    <p>
+      Bağımlılık tek yönlüdür ve ESLint ile derleme öncesinde denetlenir: bir katman yalnızca
+      altındakini bilir.
+    </p>
+    <div class="layers">
+      <div class="layer">
+        <b>app</b
+        ><span
+          >Kabuk: <code>App.vue</code>, yerleşim, başlık, alt bilgi, ilk açılış ekranı, tanıtım
+          turu. Her şeyi bir araya getirir.</span
+        >
+      </div>
+      <div class="layer">
+        <b>features</b
+        ><span
+          ><code>horses</code>, <code>track</code>, <code>program</code>, <code>results</code>,
+          <code>prediction</code>, <code>race</code>. Bir özellik diğerini içe aktaramaz; ortak olan
+          <code>shared/</code>'a taşınır.</span
+        >
+      </div>
+      <div class="layer">
+        <b>stores</b
+        ><span
+          >Pinia. Domain fonksiyonlarını yönetir; durum geçişlerini ve yarış saatini tutar.</span
+        >
+      </div>
+      <div class="layer">
+        <b>domain</b
+        ><span
+          >Saf TypeScript: Vue, Pinia ve DOM'dan bağımsız. Tohumlu rastgelelik
+          (<code>mulberry32</code>), at üretimi, program, yarış motoru, istatistik, öneri, yayın
+          akışı.</span
+        >
+      </div>
+      <div class="layer">
+        <b>shared</b
+        ><span
+          >Taban arayüz bileşenleri (<code>Base*</code>), ortak composable'lar, tipli analitik
+          katmanı, yardımcılar.</span
+        >
+      </div>
+    </div>
+    <p>
+      Tasarım sistemi hazır bir UI kitine dayanmıyor: kapsamlı SCSS değişkenleri (design token) ve
+      <code>Base</code> bileşenleri var; açık ve koyu tema aynı token'lardan türüyor (ADR 0007).
+    </p>
+
+    <h2>4. Oyun mantığı ve yarış motoru</h2>
+    <h3>Tekrar üretilebilirlik</h3>
+    <p>
+      Tüm rastgelelik <code>domain/random.ts</code> içindeki tohumlu üreteçten geçer (<code
+        >Math.random</code
+      >
+      yasaktır). Bir tohumdan her kaygı kendi akışını türetir: atlar, program ve her turun yarışı
+      ayrı akıştır; bir turu yeniden oynatmak diğerlerine bağlı değildir. Bu sayede
+      <code>?seed=1234</code>
+      bağlantısı aynı oyunu açar, E2E ve görsel testler kararlıdır ve sonuçlar animasyon olmadan
+      test edilebilir.
+    </p>
+    <h3>Hız profili ve konum</h3>
+    <ul>
+      <li>
+        Hız çarpanı 1 olan bir at 16,5 m/s koşar; 1200 m ortalama 73 sn, 2200 m ortalama 133 sn
+        sürer.
+      </li>
+      <li>
+        Kondisyon çarpanı 0,94 ile 1,0 arasındadır; tur başına ±%3 tohumlu gürültü eklenir. Böylece
+        güçlü atlar çoğunlukla ama her zaman değil kazanır.
+      </li>
+      <li>
+        Orta yarışta küçük "hamleler" (en çok %4) sırayı değiştirir ama bitiş süresini değiştirmez:
+        ilerleme eğrisi <code>p(u) = u + Σ a·(sin(2πfu + φ) − sin φ) / 2πf</code>, tam sayı
+        <code>f</code> için <code>p(1) = 1</code>; <code>Σa &lt; 1</code> atın geri gitmesini önler.
+      </li>
+      <li>
+        <code>positionAt(profil, süre)</code> saf bir fonksiyondur. Bitiş sırası yarış başlamadan
+        hesaplanır, arayüz yalnızca "t anında at X nerede?" diye sorar (ADR 0001).
+      </li>
+    </ul>
+    <h3>Adalet ölçümü</h3>
+    <p>
+      10.000 tohumlu programın (60.000 tur) benzetimi: kondisyon arttıkça kazanma oranı tekdüze
+      artıyor (kondisyon 1–10: %0,0; 91–100: %35,7). En iyi kondisyonlu at turların %40,4'ünü
+      kazanıyor (rastgele olsa %10); ilk üç kondisyonun dışındaki bir at ise %18,8'ini kazanıyor:
+      favoriler çoğunlukla ama her zaman değil kazanıyor. Bu, istatistiksel bir testle CI'da
+      denetleniyor.
+    </p>
+    <figure>
+      <img src="../fairness-light.svg" alt="Kondisyona göre kazanma oranı" style="border: 0" />
+      <figcaption>Kondisyon aralığına göre kazanma oranı (npm run simulate).</figcaption>
+    </figure>
+
+    <h2>5. State yönetimi</h2>
+    <h3>Store'lar</h3>
+    <table>
+      <tr>
+        <th style="width: 22%">Store</th>
+        <th>Sorumluluk</th>
+      </tr>
+      <tr>
+        <td><code>horses</code></td>
+        <td>20 atın listesi (tohumdan türetilir).</td>
+      </tr>
+      <tr>
+        <td><code>schedule</code></td>
+        <td>6 turluk program: tur indeksi, mesafe, 10 atın kulvar sırası.</td>
+      </tr>
+      <tr>
+        <td><code>race</code></td>
+        <td>
+          Durum makinesi, geçerli tur, yarış saati, sonuçlar, hız, tohum, otomatik geçiş. Tek yazma
+          noktası.
+        </td>
+      </tr>
+      <tr>
+        <td><code>prediction</code></td>
+        <td>Kazananı tahmin et: seçim, puan, öneri (3 puan kazanan, 1 puan podyum).</td>
+      </tr>
+      <tr>
+        <td><code>settings</code></td>
+        <td>Tema ve at listesi daralması; <code>localStorage</code>'da kalıcı.</td>
+      </tr>
+    </table>
+    <p>
+      Bileşenler store'dan <code>storeToRefs</code> ile okur ve yalnızca store eylemleriyle
+      değiştirir.
+    </p>
+    <h3>Her karede store'a yazılmaz</h3>
+    <p>
+      Yarış saati <b>kontrol noktalarıyla</b> tutulur (ADR 0005, 0002):
+      <code>geçen süre = kontrolNoktasındakiSüre + (şimdi − kontrolNoktasıZamanı) × hız</code>.
+      Store yalnızca gerçek olaylarda değişir (başlat, duraklat, hız değişimi, tur sonu); tur başına
+      tek zamanlayıcı vardır. Animasyon döngüsü saati okur, <code>positionAt</code> ile konumu
+      hesaplar ve atların <code>transform</code> değerini doğrudan DOM'a yazar (ADR 0008).
+      Duraklatma saati dondurur, devam ettirme kaldığı yerden sürer, hız değişimi atları yerinde
+      bırakır.
+    </p>
+    <div class="note">
+      Sonuçlar panelindeki canlı sıra da böyledir: sayaç her karede saatten okunur ama durum
+      yalnızca bir at bitirdiğinde değişir, yani tur başına yaklaşık on kez.
+    </div>
+
+    <h2>6. Arayüz, animasyon ve performans</h2>
+    <figure>
+      <img src="../media/desktop-dark-race.png" alt="Koyu tema, yarış sürüyor" />
+      <figcaption>
+        Koyu tema: yayın kamerası liderleri izliyor; geride kalan atların farkı etiketli; sonuçlar
+        bitiren atlarla sırayla doluyor.
+      </figcaption>
+    </figure>
+    <h3>Yayın kamerası ve ölçek</h3>
+    <ul>
+      <li>
+        Pist metre cinsinden çizilir. "Takip" kamerası gerçek ölçektedir: at çizimi 2,5 m olduğu
+        için ekranda yaklaşık 20–30 m görünür; lider ekranın %80'inde tutulur. "Tüm pist" bütün
+        mesafeyi sığdırır.
+      </li>
+      <li>
+        Kameranın gerisinde kalan atlar liderden farkı (örneğin "−23 m"), lider ise kalan mesafeyi
+        gösterir.
+      </li>
+      <li>
+        Çim, korkuluk ve kulvar çizgileri, ekrandan bir şerit genişliğinde bir katmanda tekrar eder;
+        bu sayede 50.000 px genişliğindeki dünya dokulu bir katman gerektirmez ve yük altında bile
+        60 fps korunur (ADR 0012).
+      </li>
+      <li>
+        Tam ekran, aynı canlı paneli yerel <code>&lt;dialog&gt;</code> içine taşır; bileşen yeniden
+        oluşturulmadığı için yarış kesilmez.
+      </li>
+    </ul>
+    <h3>Yerleşim</h3>
+    <p>
+      Üç kademe: masaüstünde at listesi · pist · program + sonuçlar; tabletde pist üstte ve altında
+      sekmeler; telefonda pist üstte ve alt sekme çubuğu. Masaüstünde at listesi, atları kendi
+      renginde gösteren dar bir şeride katlanır ve pist genişler. Yatay sayfa kaydırması yoktur (360
+      px'te bile).
+    </p>
+    <h3>Erişilebilirlik ve uluslararasılaştırma</h3>
+    <ul>
+      <li>
+        Her ekran durumunda axe (WCAG 2.2 AA) testi; klavye kısayolları (<code>G</code>,
+        <code>Space</code>, <code>R</code>, hız tuşları, <code>?</code>); <code>aria-live</code> ile
+        sonuç duyuruları; <code>prefers-reduced-motion</code> saygı görür (hareket azaltmada tüm
+        giriş animasyonları kapanır).
+      </li>
+      <li>
+        Türkçe ve İngilizce: 231 anahtar, <code>tr.json</code> tipi <code>en.json</code>'a karşı
+        denetlenir (eksik anahtar derleme hatasıdır). Sıra sayıları ve birimler
+        <code>Intl</code> ile; domain metin değil kod döndürür (örneğin öneri gerekçe kodları).
+      </li>
+      <li>
+        İlk ziyarette dil sorulur ve 6 adımlık bir tanıtım turu başlar (driver.js, gerektiğinde
+        yüklenir); sayfa yenilense kaldığı adımdan sürer.
+      </li>
+    </ul>
+    <h3>Ek özellikler (brief'in ötesinde)</h3>
+    <ul>
+      <li>
+        <b>Kazananı tahmin et</b> ve öneri: kondisyon ve önceki turlardaki forma göre, gerekçesiyle
+        (yalnızca puan; para veya oran yok).
+      </li>
+      <li>
+        <b>Canlı sıralama</b>, anlatım şeridi, foto-finiş, podyum; at istatistikleri (koştuğu tur,
+        ortalama sıra, form).
+      </li>
+      <li><b>Paylaş ve tekrar izle</b>: tohum bağlantısı, "Replay".</li>
+      <li><b>Tipli analitik katmanı</b> (takılabilir adaptör) ve <code>?debug=1</code> paneli.</li>
+    </ul>
+
+    <h2>7. Test ve kalite</h2>
+    <table>
+      <tr>
+        <th style="width: 22%">Katman</th>
+        <th style="width: 24%">Araç</th>
+        <th>Ne kanıtlıyor</th>
+      </tr>
+      <tr>
+        <td>Unit ve bileşen</td>
+        <td>Vitest, Vue Test Utils</td>
+        <td>Oyun kuralları, store geçişleri (sahte saatle), bileşenlerin ARIA sözleşmeleri.</td>
+      </tr>
+      <tr>
+        <td>Özellik tabanlı</td>
+        <td>fast-check</td>
+        <td>
+          Her tohum için tüm kurallar: 20 benzersiz at, 10 ayrı at/tur, mesafeler, bitiş sırası.
+        </td>
+      </tr>
+      <tr>
+        <td>İstatistiksel</td>
+        <td>Vitest + benzetim</td>
+        <td>Kondisyon arttıkça ortalama sıra iyileşir; küçük atlar da kazanabilir.</td>
+      </tr>
+      <tr>
+        <td>E2E</td>
+        <td>Playwright (sahte saat, tohum)</td>
+        <td>
+          Program üretimi, başlat/duraklat, tur sırası, dil, tahmin, tanıtım turu, yeniden oynatma,
+          klavye ve yatay kaydırma olmaması.
+        </td>
+      </tr>
+      <tr>
+        <td>Görsel</td>
+        <td>Playwright ekran görüntüsü</td>
+        <td>
+          Masaüstü, tablet, telefon × açık, koyu × TR, EN (14 ekran, Linux referansları CI'da).
+        </td>
+      </tr>
+      <tr>
+        <td>Erişilebilirlik</td>
+        <td>axe</td>
+        <td>Boş, koşan, biten durumlar, tur ve diyaloglar: 0 ciddi ihlal.</td>
+      </tr>
+      <tr>
+        <td>Performans</td>
+        <td>Playwright, Lighthouse CI</td>
+        <td>Medyan kare ≤ 20 ms, uzun görev yok; Lighthouse üretim derlemesinde 3 koşu.</td>
+      </tr>
+    </table>
+    <p>
+      Test adları gereksinim kimliğiyle başlar (<code>[C5] …</code>);
+      <code>scripts/traceability.ts</code> bunlardan "gereksinim → test" tablosunu üretir ve CI, her
+      gereksinimin kapsandığını denetler (33/33; <code>docs/TRACEABILITY.md</code>).
+    </p>
+    <h3>CI kalite kapıları</h3>
+    <p>Her PR'da sekiz iş ayrı bir zorunlu kontroldür; hepsi geçmeden birleştirme yapılamaz.</p>
+    <table>
+      <tr>
+        <th style="width: 28%">Kapı</th>
+        <th style="width: 36%">Eşik</th>
+        <th>Ölçülen</th>
+      </tr>
+      <tr>
+        <td>Lint ve biçim</td>
+        <td>0 hata, mimari sınırlar</td>
+        <td>temiz</td>
+      </tr>
+      <tr>
+        <td>Tip denetimi (vue-tsc, strict)</td>
+        <td>0 hata</td>
+        <td>temiz</td>
+      </tr>
+      <tr>
+        <td>Unit kapsamı</td>
+        <td>domain %95, store %90</td>
+        <td>domain %100, store %99</td>
+      </tr>
+      <tr>
+        <td>E2E ve görsel</td>
+        <td>hepsi yeşil</td>
+        <td>58 test, 14 ekran</td>
+      </tr>
+      <tr>
+        <td>Kanıt raporları</td>
+        <td>izlenebilirlik 33/33, benzetim yeniden üretilir</td>
+        <td>geçti</td>
+      </tr>
+      <tr>
+        <td>Paket boyutu (gzip)</td>
+        <td>JS 120, CSS 30, tümü 650 KiB</td>
+        <td>JS 92, CSS 14, tümü 480 KiB</td>
+      </tr>
+      <tr>
+        <td>Lighthouse (medyan, 3 koşu)</td>
+        <td>performans 90; erişilebilirlik ve en iyi uygulamalar 95</td>
+        <td>95–96 · 100 · 100 · SEO 100</td>
+      </tr>
+    </table>
+    <p>
+      Lighthouse, ilk ziyaretçi gibi açtığı sayfada gerçek bir hata yakaladı: tanıtım turu
+      kütüphanesi (driver.js), görünmez bir yardımcı öğeye izin verilmeyen bir
+      <code>aria-expanded</code> koyuyordu. Düzeltildi ve tüm sayfayı kapsayan bir axe testiyle
+      korunuyor.
+    </p>
+
+    <h2>8. Teslim ve geliştirme akışı</h2>
+    <ul>
+      <li>
+        <b>GitHub Flow</b> (ADR 0004): <code>main</code> her zaman yayına hazır; her faz kısa ömürlü
+        bir dalda, küçük Conventional Commit'lerle yapılır ve CI yeşilse birleştirilir. Fazlar:
+        iskelet ve CI, domain, state, arayüz iskeleti, özellik bileşenleri, pist, ürün katmanı,
+        kanıt katmanı, teslim.
+      </li>
+      <li>
+        <b>Netlify</b> (ADR 0014): <code>main</code> her birleşmede yayınlanır ve her PR için
+        önizleme bağlantısı üretilir; <code>netlify.toml</code> hash'li dosyaları bir yıl önbelleğe
+        alır ve güvenlik başlıklarını ekler. Yayını CI karar verir, Netlify yalnızca onaylananı
+        yayınlar.
+      </li>
+      <li>
+        <b>Kararlar kayıt altında</b>: 14 ADR ve 46 numaralı belirsizlik/karar tablosu
+        (<code>docs/REQUIREMENTS.md</code>).
+      </li>
+    </ul>
+
+    <h2>9. Yorumlanan noktalar ve sınırlar</h2>
+    <table>
+      <tr>
+        <th style="width: 30%">Konu</th>
+        <th>Karar</th>
+      </tr>
+      <tr>
+        <td>"1 ile 20 arası at" ve "toplam 20 at"</td>
+        <td>
+          Her zaman tam 20 at üretilir; "1–20" liste numaralamasıdır (örnek ekran görüntüsüyle
+          uyumlu).
+        </td>
+      </tr>
+      <tr>
+        <td>Aynı at birden çok turda koşabilir mi?</td>
+        <td>Evet; her tur 20'den bağımsız 10 at seçer, tur içinde tekrar yoktur.</td>
+      </tr>
+      <tr>
+        <td>Start turları kendiliğinden mi ilerletir?</td>
+        <td>
+          Varsayılan olarak evet: tur arası 6 sn geri sayım ve "Şimdi başlat". Anahtar kapatılırsa
+          her tur "Sonraki tur" bekler (sınırsız süre, tahmin için).
+        </td>
+      </tr>
+      <tr>
+        <td>Sonuçlar ne zaman görünür?</td>
+        <td>
+          Resmi sonuç turun son atı bitince yayınlanır (R5). Yarış sürerken, çizgiyi geçen atlar
+          ayrı bir "canlı" blokta sırayla görünür; sıralamaları bitiş süresi sabit olduğu için bir
+          daha değişmez. Resmi sonuç bu blokun yerini alır.
+        </td>
+      </tr>
+      <tr>
+        <td>Yarış süresi</td>
+        <td>
+          Gerçek tempo (1200 m ≈ 73 sn); varsayılan oynatma 2×, 0,5× ile 8× arası seçilebilir.
+        </td>
+      </tr>
+      <tr>
+        <td>Bahis</td>
+        <td>Yok; tahmin yalnızca puanla çalışır.</td>
+      </tr>
+    </table>
+    <h3>Bilinçli olarak yapılmayanlar</h3>
+    <ul>
+      <li>
+        Sunucu veya kullanıcı hesabı yok; oyun tarayıcıda çalışır. Oyun durumu sayfa yenilemesinde
+        saklanmaz (tema, dil, tur ilerlemesi ve at listesi tercihi saklanır); aynı yarış tohum
+        bağlantısıyla yeniden açılır.
+      </li>
+      <li>
+        İçerik Güvenlik Politikası (CSP) yok: sayfada satır içi tema betiği ve açılış ekranı stili
+        var, politika her değişiklikte değişen özet (hash) gerektirir. Sonraki adım olarak not
+        edildi (ADR 0014).
+      </li>
+      <li>
+        <code>RaceTrack.vue</code> en büyük bileşendir; kamera, boyama ve oynatıcı çubuğu ayrı
+        bileşenlere bölünebilir.
+      </li>
+    </ul>
+
+    <h2>10. Çalıştırma</h2>
+    <pre>
+nvm use          # Node 24 (.nvmrc)
+npm ci
+npm run dev      # http://localhost:5173
+npm run verify   # lint + format + tip + unit
+npm run test:e2e # Playwright (bir kez: npx playwright install chromium)
+npm run build && npm run check:bundle
+npm run test:lighthouse</pre>
+    <table>
+      <tr>
+        <th style="width: 30%">Belge</th>
+        <th>İçerik</th>
+      </tr>
+      <tr>
+        <td><code>docs/REQUIREMENTS.md</code></td>
+        <td>Gereksinimler, kimlikler, belirsizlikler ve kararlar</td>
+      </tr>
+      <tr>
+        <td><code>docs/ARCHITECTURE.md</code></td>
+        <td>Yığın, klasör yapısı, yarış motoru, durum makinesi, yerleşim</td>
+      </tr>
+      <tr>
+        <td><code>docs/adr/</code></td>
+        <td>14 mimari karar kaydı</td>
+      </tr>
+      <tr>
+        <td><code>docs/TRACEABILITY.md</code></td>
+        <td>Gereksinim → test tablosu (üretilir)</td>
+      </tr>
+    </table>
+    <p>
+      Teşekkürler. Soru ya da geri bildirim için:
+      <a href="https://emresolmaz.com.tr">emresolmaz.com.tr</a>
+    </p>
+  </body>
+</html>

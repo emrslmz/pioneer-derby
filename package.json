@@ -21,12 +21,14 @@
     "test:visual": "playwright test --project=visual",
     "simulate": "tsx scripts/simulate.ts",
     "report:traceability": "tsx scripts/traceability.ts",
-    "verify": "run-s lint:check format:check type-check \"test:unit --run\"",
+    "verify": "run-s lint:check format:check type-check test:unit:run",
     "test:visual:update": "playwright test --project=visual --update-snapshots",
     "visual:pull": "bash scripts/pull-visual-baselines.sh",
     "check:bundle": "tsx scripts/check-bundle.ts",
     "test:lighthouse": "lhci autorun",
-    "media": "tsx scripts/capture-media.ts"
+    "media": "tsx scripts/capture-media.ts",
+    "doc:pdf": "tsx scripts/render-technical-document.ts",
+    "test:unit:run": "vitest run"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",

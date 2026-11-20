@@ -262,22 +262,7 @@
     "waiting": "Make your pick, then continue when ready."
   },
   "onboarding": {
-    "title": "How to play",
-    "cta": "Generate Program",
-    "steps": {
-      "generate": {
-        "title": "Generate the program",
-        "text": "Six rounds of ten horses are drawn."
-      },
-      "predict": {
-        "title": "Predict the winner",
-        "text": "Pick a horse before each round: winner 3 pts, podium 1 pt."
-      },
-      "start": {
-        "title": "Start the race",
-        "text": "Rounds run one by one; results appear as each finishes."
-      }
-    }
+    "cta": "Generate Program"
   },
   "changeProgram": {
     "title": "Change the program?",

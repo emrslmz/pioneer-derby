@@ -262,22 +262,7 @@
     "waiting": "Tahminini yap, hazır olduğunda devam et."
   },
   "onboarding": {
-    "title": "Nasıl oynanır?",
-    "cta": "Program Oluştur",
-    "steps": {
-      "generate": {
-        "title": "Programı oluştur",
-        "text": "On atlık altı tur çekilir."
-      },
-      "predict": {
-        "title": "Kazananı tahmin et",
-        "text": "Her turdan önce bir at seç: kazanan 3, podyum 1 puan."
-      },
-      "start": {
-        "title": "Yarışı başlat",
-        "text": "Turlar sırayla koşulur; sonuçlar bitince görünür."
-      }
-    }
+    "cta": "Program Oluştur"
   },
   "changeProgram": {
     "title": "Program değişsin mi?",

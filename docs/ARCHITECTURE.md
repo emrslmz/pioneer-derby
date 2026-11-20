@@ -88,8 +88,8 @@ src/
 │  ├─ track/components/     # RaceTrack, TrackLane, HorseRunner, FinishLine, LiveLeaderboard, CommentaryTicker
 │  ├─ track/composables/    # useRaceLoop (rAF → progressAt → transform, ADR 0008), useBroadcast
 │  ├─ program/components/   # ProgramPanel, RoundTable
-│  ├─ results/components/   # ResultsPanel, RoundResultTable, Podium
-│  ├─ prediction/components/# PredictionCard, RecommendedHorse, ScoreBadge
+│  ├─ results/components/   # ResultsPanel, RoundResultTable
+│  ├─ prediction/components/# PredictionCard, RunnerPicker
 │  └─ race/composables/     # useRaceControls
 ├─ shared/
 │  ├─ components/           # HorseRunner (a horse in its colour, reused by several features)
@@ -163,7 +163,7 @@ type RaceStatus = 'idle' | 'ready' | 'running' | 'paused' | 'intermission' | 'fi
 - `positionAt(profile, elapsedMs)` is a **pure function** → the UI just asks "where is horse X at time t".
 - Finishing order = sorted finish times, computed up front ⇒ results are testable without animation.
 - Pause = freeze the clock; resume = continue from the same elapsed time. Speed multiplier scales the clock.
-- Visual duration is normalized (6 s for 1200 m → 9 s for 2200 m for an average horse) for good UX.
+- Races run at a real pace (ADR 0012): a speed factor of 1 is 16.5 m/s, so 1200 m takes about 73 s and 2200 m about 133 s of race time for an average horse. The viewer watches at 2× by default and can choose 0.5× to 8×.
 - Progress curve: `p(u) = u + Σ a·(sin(2πfu + φ) − sin φ) / 2πf` with `u = t / finishTime`.
   Whole-number `f` makes `p(1) = 1`; `Σ a < 1` keeps `p′ > 0`, so horses surge and fade but never stop,
   and each one crosses the line exactly at its precomputed finish time.
